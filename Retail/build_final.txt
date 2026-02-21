@@ -1,0 +1,11 @@
+﻿  Определение проектов для восстановления...
+  Все проекты обновлены для восстановления.
+C:\Program Files\dotnet\sdk\9.0.308\Microsoft.Common.CurrentVersion.targets(5394,5): error MSB3030: не удалось скопировать файл "C:\Users\farha\OneDrive\Рабочий стол\praca inzynierska\English\Retail\Retail.Tests\bin\Debug\net9.0\Retail.Tests\bin\Debug\net9.0\Retail.Tests\bin\Debug\net9.0\Retail.Tests\bin\Debug\net9.0\Retail.Tests\bin\Debug\net9.0\Retail.Tests\obj\Debug\net9.0\MvcTestingAppManifest.json" - файл не найден. [C:\Users\farha\OneDrive\Рабочий стол\praca inzynierska\English\Retail\Retail.csproj]
+
+Ошибка сборки.
+
+C:\Program Files\dotnet\sdk\9.0.308\Microsoft.Common.CurrentVersion.targets(5394,5): error MSB3030: не удалось скопировать файл "C:\Users\farha\OneDrive\Рабочий стол\praca inzynierska\English\Retail\Retail.Tests\bin\Debug\net9.0\Retail.Tests\bin\Debug\net9.0\Retail.Tests\bin\Debug\net9.0\Retail.Tests\bin\Debug\net9.0\Retail.Tests\bin\Debug\net9.0\Retail.Tests\obj\Debug\net9.0\MvcTestingAppManifest.json" - файл не найден. [C:\Users\farha\OneDrive\Рабочий стол\praca inzynierska\English\Retail\Retail.csproj]
+    Предупреждений: 0
+    Ошибок: 1
+
+Прошло времени 00:00:03.72

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belo.fur - Catalog</title>
+    <style>
+        :root {
+            --primary: #1a202c; /* Темно-синий */
+            --text: #333;
+            --gray-light: #f7f7f7;
+            --border: #e2e8f0;
+            --accent: #d97706; /* Оранжевый для цен */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { color: var(--text); }
+
+        /* Header */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 40px; border-bottom: 1px solid var(--border);
+        }
+        .logo { font-weight: bold; font-size: 1.5rem; }
+        .icons span { margin-left: 15px; cursor: pointer; font-size: 1.2rem; }
+
+        /* Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr; /* Сайдбар и контент */
+            gap: 40px;
+            padding: 40px;
+        }
+
+        /* Sidebar Filters */
+        .sidebar h3 { margin-bottom: 15px; font-size: 1rem; margin-top: 20px; }
+        .filter-group ul { list-style: none; }
+        .filter-group li {
+            display: flex; justify-content: space-between;
+            padding: 8px 0; cursor: pointer; color: #555; font-size: 0.9rem;
+        }
+        .filter-group li:hover { color: var(--primary); }
+        
+        /* Color Swatches */
+        .colors { display: flex; gap: 10px; }
+        .color-circle { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 1px solid #ddd; }
+
+        /* Tags */
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag {
+            padding: 6px 12px; border: 1px solid var(--border);
+            font-size: 0.8rem; cursor: pointer;
+        }
+        .tag.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            display: flex; flex-direction: column;
+        }
+
+        .image-container {
+            background-color: var(--gray-light);
+            height: 300px;
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .image-container img { max-width: 80%; max-height: 80%; mix-blend-mode: multiply; }
+        
+        .heart-icon {
+            position: absolute; top: 15px; right: 15px;
+            cursor: pointer; font-size: 1.2rem;
+        }
+
+        .product-info h4 { font-size: 0.95rem; margin-bottom: 5px; }
+        .price { font-weight: bold; font-size: 0.9rem; }
+        .old-price { text-decoration: line-through; color: #999; margin-left: 10px; font-size: 0.8rem; }
+        .discount-price { color: var(--accent); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar { display: none; /* В мобильной версии обычно скрывают в меню */ }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">Belo.fur</div>
+    <div class="icons">
+        <span>🛍️</span>
+        <span>🔍</span>
+        <span>☰</span>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="filter-group">
+            <h3>Category</h3>
+            <ul>
+                <li>Living Room Furniture <span>›</span></li>
+                <li>Sofas & Sectionals <span>›</span></li>
+                <li>Coffee Tables <span>›</span></li>
+                <li>Ottomans <span>›</span></li>
+            </ul>
+        </div>
+
+        <div class="filter-group">
+            <h3>Price Range</h3>
+            <input type="range" style="width: 100%">
+            <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                <span style="border:1px solid #ddd; padding:5px;">$500</span>
+                <span style="border:1px solid #ddd; padding:5px;">$2,000</span>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h3>Colors Available</h3>
+            <div class="colors">
+                <div class="color-circle" style="background:#d2b48c"></div>
+                <div class="color-circle" style="background:#1a202c"></div>
+                <div class="color-circle" style="background:#8b4513"></div>
+                <div class="color-circle" style="background:#556b2f"></div>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <h3>Furniture Style</h3>
+            <div class="tags">
+                <span class="tag">Victorian</span>
+                <span class="tag active">Mid-Century Modern</span>
+                <span class="tag">Urban</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="product-grid">
+        <!-- Card 1 -->
+        <div class="product-card">
+            <div class="image-container">
+                <span class="heart-icon">♡</span>
+                <!-- Заглушка вместо картинки -->
+                <div style="font-size:3rem; color:#ccc;">🪑</div>
+            </div>
+            <div class="product-info">
+                <h4>Rune 38" Bouclé Accent Chair</h4>
+                <div class="price">$449.95</div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="product-card">
+            <div class="image-container">
+                <span class="heart-icon">♡</span>
+                <div style="font-size:3rem; color:#ccc;">🛋️</div>
+            </div>
+            <div class="product-info">
+                <h4>Aurelia Living</h4>
+                <div class="price">
+                    <span class="discount-price">$699.95</span>
+                    <span class="old-price">$799.95</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="product-card">
+            <div class="image-container">
+                <span class="heart-icon">♡</span>
+                <div style="font-size:3rem; color:#ccc;">🪑</div>
+            </div>
+            <div class="product-info">
+                <h4>Liliana Armrest Fur</h4>
+                <div class="price">$459.95</div>
+            </div>
+        </div>
+        
+        <!-- Card 4 -->
+        <div class="product-card">
+            <div class="image-container">
+                <span class="heart-icon">♡</span>
+                <div style="font-size:3rem; color:#ccc;">🪵</div>
+            </div>
+            <div class="product-info">
+                <h4>Petit 3 Chair</h4>
+                <div class="price">
+                    <span class="discount-price">$389.95</span>
+                    <span class="old-price">$689.95</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+</body>
+</html>

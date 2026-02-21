@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belo.fur - Checkout</title>
+    <style>
+        :root {
+            --primary: #1a202c;
+            --border: #e2e8f0;
+            --bg-input: #fff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        
+        body { background: #fff; color: #333; }
+
+        .checkout-container {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr; /* Левая колонка шире */
+            min-height: 100vh;
+        }
+
+        /* Left Column: Forms */
+        .main-content {
+            padding: 40px 80px;
+            border-right: 1px solid var(--border);
+        }
+
+        .breadcrumbs { font-size: 0.85rem; color: #666; margin-bottom: 30px; }
+        .breadcrumbs span { margin: 0 5px; }
+        .breadcrumbs .active { color: #000; font-weight: bold; }
+
+        h2 { margin-bottom: 20px; font-size: 1.2rem; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-row { display: flex; gap: 20px; }
+        .form-row .form-group { flex: 1; }
+
+        label { display: block; font-size: 0.8rem; margin-bottom: 5px; color: #555; }
+        input[type="text"], input[type="email"] {
+            width: 100%; padding: 12px;
+            border: 1px solid var(--border); border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary); color: white;
+            width: 100%; padding: 15px; border: none; border-radius: 4px;
+            cursor: pointer; font-size: 1rem; margin-top: 20px;
+        }
+
+        /* Payment Methods Radio */
+        .payment-methods { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+        .payment-option {
+            padding: 15px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; cursor: pointer;
+        }
+        .payment-option:last-child { border-bottom: none; }
+        .payment-option input { margin-right: 10px; }
+
+        /* Right Column: Summary */
+        .order-summary {
+            padding: 40px;
+            background: #fff;
+        }
+
+        .cart-item {
+            display: flex; align-items: center;
+            margin-bottom: 20px;
+        }
+        .item-img {
+            width: 60px; height: 60px; background: #f7f7f7;
+            border-radius: 4px; margin-right: 15px;
+        }
+        .item-details { flex: 1; }
+        .item-name { font-size: 0.9rem; font-weight: bold; }
+        .item-qty { font-size: 0.8rem; color: #666; }
+        .item-price { font-weight: bold; }
+
+        .totals { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; }
+        .total-row {
+            display: flex; justify-content: space-between;
+            margin-bottom: 10px; font-size: 0.9rem;
+        }
+        .grand-total {
+            font-size: 1.2rem; font-weight: bold; margin-top: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .checkout-container { grid-template-columns: 1fr; }
+            .main-content { border-right: none; padding: 20px; }
+            .order-summary { background: #f9fafb; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="checkout-container">
+    <!-- Left Side: Form -->
+    <div class="main-content">
+        <div class="breadcrumbs">
+            Cart <span>›</span> <span class="active">Information</span> <span>›</span> Shipping <span>›</span> Payment
+        </div>
+
+        <h2>Contact Information</h2>
+        <div class="form-group">
+            <input type="email" placeholder="Enter Your Email">
+        </div>
+
+        <h2 style="margin-top: 30px;">Shipping Address</h2>
+        <div class="form-row">
+            <div class="form-group"><input type="text" placeholder="First Name"></div>
+            <div class="form-group"><input type="text" placeholder="Last Name"></div>
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="Address">
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="Apartment, suite, etc. (optional)">
+        </div>
+        <div class="form-row">
+            <div class="form-group"><input type="text" placeholder="City"></div>
+            <div class="form-group"><input type="text" placeholder="Country"></div>
+            <div class="form-group"><input type="text" placeholder="ZIP Code"></div>
+        </div>
+
+        <button class="btn-primary">Continue to Shipping</button>
+    </div>
+
+    <!-- Right Side: Summary -->
+    <div class="order-summary">
+        <h2>Order Summary</h2>
+        
+        <div class="cart-item">
+            <div class="item-img"></div>
+            <div class="item-details">
+                <div class="item-name">Willow Accent Chair</div>
+                <div class="item-qty">Qty: 2</div>
+            </div>
+            <div class="item-price">$1,224.00</div>
+        </div>
+
+        <div class="cart-item">
+            <div class="item-img"></div>
+            <div class="item-details">
+                <div class="item-name">Marbleen Table</div>
+                <div class="item-qty">Qty: 2</div>
+            </div>
+            <div class="item-price">$240.00</div>
+        </div>
+
+        <div class="totals">
+            <div class="total-row">
+                <span>Subtotal</span>
+                <span>$2,640.00</span>
+            </div>
+            <div class="total-row">
+                <span>Shipping</span>
+                <span>Free</span>
+            </div>
+            <div class="total-row grand-total">
+                <span>Grand Total</span>
+                <span>$2,254.00</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

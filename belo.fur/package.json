@@ -1,0 +1,27 @@
+{
+  "name": "belo.fur-furniture-store",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
+    "lucide-react": "^0.562.0",
+    "powerbi-client": "^2.23.9",
+    "powerbi-client-react": "^2.0.2",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-hook-form": "^7.71.1",
+    "react-router-dom": "^7.13.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

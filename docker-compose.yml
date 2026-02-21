@@ -1,0 +1,56 @@
+# ──────────────────────────────────────────
+# docker-compose.yml — Full stack deployment
+# SQL Server + ASP.NET Core API + React Frontend
+# ──────────────────────────────────────────
+
+services:
+  # ── SQL Server Database ──
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: retailen-db
+    environment:
+      SA_PASSWORD: "YourStrong!Pass123"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong!Pass123" -Q "SELECT 1" -C -No || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── Backend API (ASP.NET Core) ──
+  api:
+    build:
+      context: ./Retail
+      dockerfile: Dockerfile
+    container_name: retailen-api
+    ports:
+      - "5200:5200"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=db;Database=RETAILEN;User Id=sa;Password=YourStrong!Pass123;TrustServerCertificate=true;
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Frontend (React + Nginx) ──
+  frontend:
+    build:
+      context: ./belo.fur
+      dockerfile: Dockerfile
+    container_name: retailen-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:
+    driver: local

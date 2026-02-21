@@ -1,0 +1,6 @@
+08.02.2026 20:36:30: Adding to cart - ProductId: 16, Qty: 1, Session: , User: 37
+08.02.2026 20:36:37: Updating cart - KoszykId: 66, PozycjaId: 151, NewQty: 2
+08.02.2026 20:36:37: Updating cart - KoszykId: 66, PozycjaId: 151, NewQty: 3
+08.02.2026 20:36:37: Updating cart - KoszykId: 66, PozycjaId: 151, NewQty: 6
+08.02.2026 20:36:38: Updating cart - KoszykId: 66, PozycjaId: 151, NewQty: 5
+08.02.2026 20:36:39: Updating cart - KoszykId: 66, PozycjaId: 151, NewQty: 5
