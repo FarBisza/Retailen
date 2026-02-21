@@ -9,7 +9,7 @@ import {
     Phone,
     CheckCircle,
 } from 'lucide-react';
-import { UserProfile } from '../api/types';
+import { UserProfile } from '../../api/types';
 
 interface AuthModalProps {
     isOpen: boolean;

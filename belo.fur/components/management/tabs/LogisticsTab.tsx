@@ -3,9 +3,9 @@ import {
     ShoppingCart, FileCheck, PlusCircle, PackageCheck, Clock,
     Truck, CheckCircle, XCircle, Package, ArrowDownToLine, X, Trash2,
 } from 'lucide-react';
-import * as logisticsApi from '../../api/logisticsApi';
-import { Product } from '../../api/types';
-import { fetchProducts } from '../../api/productApi';
+import * as logisticsApi from '../../../api/logisticsApi';
+import { Product } from '../../../api/types';
+import { fetchProducts } from '../../../api/productApi';
 
 interface AdminLogisticsTabProps {
     products: Product[];

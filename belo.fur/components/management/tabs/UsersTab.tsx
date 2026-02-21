@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Edit3, Trash2, UserX, CheckCircle, Eye } from 'lucide-react';
-import { User, getAllUsers, setUserActive, setUserRole, deleteUser } from '../../api/adminApi';
+import { User, getAllUsers, setUserActive, setUserRole, deleteUser } from '../../../api/adminApi';
 
 interface AdminUsersTabProps {
     users: User[];

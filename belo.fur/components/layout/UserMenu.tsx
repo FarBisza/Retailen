@@ -6,7 +6,7 @@ import {
     Wallet, HelpCircle, MessageSquare, AlertTriangle,
     Settings, ChevronRight
 } from 'lucide-react';
-import { UserProfile } from '../api/types';
+import { UserProfile } from '../../api/types';
 
 interface UserMenuProps {
     isOpen: boolean;

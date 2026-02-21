@@ -4,7 +4,7 @@ import {
     Truck, Box, CreditCard, ChevronDown, MapPin,
     ShieldCheck, Wallet, Info, Edit2, Lock
 } from 'lucide-react';
-import { CartItem } from '../api/types';
+import { CartItem } from '../../api/types';
 
 interface CheckoutPageProps {
     items: CartItem[];
@@ -859,7 +859,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                                 }
 
                                                 const { checkout, requestInvoice } = await import(
-                                                    '../api/orderApi'
+                                                    '../../api/orderApi'
                                                 );
 
                                                 const addressData = {
@@ -921,7 +921,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
                                                 if (shouldPayNow) {
                                                     try {
-                                                        const { payOrder } = await import('../api/orderApi');
+                                                        const { payOrder } = await import('../../api/orderApi');
                                                         await payOrder(orderRes.orderId, {
                                                             paymentTypeId,
                                                             amount: orderRes.total,

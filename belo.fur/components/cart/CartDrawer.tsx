@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Trash2 } from 'lucide-react';
-import { CartItem } from '../api/types';
+import { CartItem } from '../../api/types';
 
 interface CartDrawerProps {
     isOpen: boolean;

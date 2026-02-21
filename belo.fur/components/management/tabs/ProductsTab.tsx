@@ -1,11 +1,11 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Edit3, Trash2, Plus, X } from 'lucide-react';
 import { type ColumnDef } from '@tanstack/react-table';
-import { Product, Attribute } from '../../api/types';
-import { createProduct, updateProduct, deleteProduct, CreateProductRequest } from '../../api/productApi';
-import { fetchCategories, CategoryFromApi } from '../../api/categoryApi';
-import { getAllAttributes } from '../../api/attributeApi';
-import { DataGrid } from '../DataGrid';
+import { Product, Attribute } from '../../../api/types';
+import { createProduct, updateProduct, deleteProduct, CreateProductRequest } from '../../../api/productApi';
+import { fetchCategories, CategoryFromApi } from '../../../api/categoryApi';
+import { getAllAttributes } from '../../../api/attributeApi';
+import { DataGrid } from '../../shared/DataGrid';
 
 interface AdminProductsTabProps {
     products: Product[];

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, User, MapPin, Phone, Mail, Calendar, Save, Edit3, Check } from 'lucide-react';
-import { getMyProfile, updateMyProfile, CustomerProfile } from '../api/profileApi';
+import { getMyProfile, updateMyProfile, CustomerProfile } from '../../api/profileApi';
 
 interface ProfileModalProps {
     isOpen: boolean;
@@ -154,8 +154,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                             onChange={(e) => setFirstName(e.target.value)}
                                             disabled={!editing}
                                             className={`w-full border p-3 text-sm font-bold outline-none transition-colors ${editing
-                                                    ? 'border-gray-200 focus:border-slate-900'
-                                                    : 'border-gray-100 bg-gray-50 text-gray-600'
+                                                ? 'border-gray-200 focus:border-slate-900'
+                                                : 'border-gray-100 bg-gray-50 text-gray-600'
                                                 }`}
                                         />
                                     </div>
@@ -168,8 +168,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                             onChange={(e) => setLastName(e.target.value)}
                                             disabled={!editing}
                                             className={`w-full border p-3 text-sm font-bold outline-none transition-colors ${editing
-                                                    ? 'border-gray-200 focus:border-slate-900'
-                                                    : 'border-gray-100 bg-gray-50 text-gray-600'
+                                                ? 'border-gray-200 focus:border-slate-900'
+                                                : 'border-gray-100 bg-gray-50 text-gray-600'
                                                 }`}
                                         />
                                     </div>
@@ -186,8 +186,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                         disabled={!editing}
                                         placeholder={editing ? 'Enter phone number' : '—'}
                                         className={`w-full border p-3 text-sm font-bold outline-none transition-colors ${editing
-                                                ? 'border-gray-200 focus:border-slate-900'
-                                                : 'border-gray-100 bg-gray-50 text-gray-600'
+                                            ? 'border-gray-200 focus:border-slate-900'
+                                            : 'border-gray-100 bg-gray-50 text-gray-600'
                                             }`}
                                     />
                                 </div>
@@ -203,8 +203,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                         disabled={!editing}
                                         placeholder={editing ? 'Enter street address' : '—'}
                                         className={`w-full border p-3 text-sm font-bold outline-none transition-colors ${editing
-                                                ? 'border-gray-200 focus:border-slate-900'
-                                                : 'border-gray-100 bg-gray-50 text-gray-600'
+                                            ? 'border-gray-200 focus:border-slate-900'
+                                            : 'border-gray-100 bg-gray-50 text-gray-600'
                                             }`}
                                     />
                                 </div>
@@ -221,8 +221,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                             disabled={!editing}
                                             placeholder={editing ? 'City' : '—'}
                                             className={`w-full border p-3 text-sm font-bold outline-none transition-colors ${editing
-                                                    ? 'border-gray-200 focus:border-slate-900'
-                                                    : 'border-gray-100 bg-gray-50 text-gray-600'
+                                                ? 'border-gray-200 focus:border-slate-900'
+                                                : 'border-gray-100 bg-gray-50 text-gray-600'
                                                 }`}
                                         />
                                     </div>
@@ -236,8 +236,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                             disabled={!editing}
                                             placeholder={editing ? 'Zip' : '—'}
                                             className={`w-full border p-3 text-sm font-bold outline-none transition-colors ${editing
-                                                    ? 'border-gray-200 focus:border-slate-900'
-                                                    : 'border-gray-100 bg-gray-50 text-gray-600'
+                                                ? 'border-gray-200 focus:border-slate-900'
+                                                : 'border-gray-100 bg-gray-50 text-gray-600'
                                                 }`}
                                         />
                                     </div>
@@ -254,8 +254,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                         disabled={!editing}
                                         placeholder={editing ? 'Country' : '—'}
                                         className={`w-full border p-3 text-sm font-bold outline-none transition-colors ${editing
-                                                ? 'border-gray-200 focus:border-slate-900'
-                                                : 'border-gray-100 bg-gray-50 text-gray-600'
+                                            ? 'border-gray-200 focus:border-slate-900'
+                                            : 'border-gray-100 bg-gray-50 text-gray-600'
                                             }`}
                                     />
                                 </div>

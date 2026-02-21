@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
-import { Product } from '../api/types';
+import { Product } from '../../api/types';
 
 interface ProductCardProps {
   product: Product;

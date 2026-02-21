@@ -4,9 +4,9 @@ import {
     ChevronRight, LogOut, User,
     ShieldCheck, MapPin, ExternalLink, MessageSquare
 } from 'lucide-react';
-import { UserProfile } from '../api/types';
-import { OrderTab } from './OrderModal';
-import { getOrderCounts, OrderCounts } from '../api/orderApi';
+import { UserProfile } from '../../api/types';
+import { OrderTab } from '../order/OrderModal';
+import { getOrderCounts, OrderCounts } from '../../api/orderApi';
 
 interface NavMenuProps {
     isOpen: boolean;

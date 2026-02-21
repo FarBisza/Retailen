@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Package, FileText, CheckCircle2, BarChart3 } from 'lucide-react';
-import { Product } from '../../api/types';
-import { User, getAllUsers } from '../../api/adminApi';
-import * as logisticsApi from '../../api/logisticsApi';
-import { fetchProducts } from '../../api/productApi';
-import PowerBIReport from '../PowerBIReport';
+import { Product } from '../../../api/types';
+import { User, getAllUsers } from '../../../api/adminApi';
+import * as logisticsApi from '../../../api/logisticsApi';
+import { fetchProducts } from '../../../api/productApi';
+import PowerBIReport from '../../shared/PowerBIReport';
 
 const statusColorMap: Record<string, string> = {
     'Draft': 'bg-gray-200 text-gray-600',

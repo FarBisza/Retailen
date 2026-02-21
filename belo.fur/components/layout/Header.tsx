@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { ShoppingBag, Search, Menu, User, ShieldCheck, Briefcase, Truck } from 'lucide-react';
-import { UserProfile, Product } from '../api/types';
+import { UserProfile, Product } from '../../api/types';
 
 interface HeaderProps {
   onCartClick: () => void;

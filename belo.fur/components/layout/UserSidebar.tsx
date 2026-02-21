@@ -6,8 +6,8 @@ import {
     Settings, ChevronRight, LogOut, LogIn, UserPlus,
     ShieldCheck
 } from 'lucide-react';
-import { UserProfile } from '../api/types';
-import { getOrderCounts, OrderCounts } from '../api/orderApi';
+import { UserProfile } from '../../api/types';
+import { getOrderCounts, OrderCounts } from '../../api/orderApi';
 
 interface UserSidebarProps {
     isOpen: boolean;

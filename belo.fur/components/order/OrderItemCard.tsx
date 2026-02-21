@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Truck, FileText } from 'lucide-react';
 import { Order } from '../../api/orderApi';
-import { OrderTab } from '../OrderModal';
+import { OrderTab } from './OrderModal';
 import { getEstimatedDelivery } from './orderConstants';
 
 interface OrderItemCardProps {

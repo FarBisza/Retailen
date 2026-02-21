@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
-import { Attribute } from '../../api/types';
-import * as attributeApi from '../../api/attributeApi';
+import { Attribute } from '../../../api/types';
+import * as attributeApi from '../../../api/attributeApi';
 
 interface AdminAttributesTabProps {
     onCreateAttribute: () => void;

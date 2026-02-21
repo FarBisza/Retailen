@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Lock, ArrowRight, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
-import { resetPassword } from '../api/authApi';
+import { resetPassword } from '../../api/authApi';
 
 interface ResetPasswordPageProps {
     onNavigateToLogin: () => void;

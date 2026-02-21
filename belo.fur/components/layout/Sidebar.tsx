@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronRight, Check, X, Sofa, Smartphone, Shirt, Filter, RotateCcw } from 'lucide-react';
-import { UserProfile } from '../api/types';
-import { COLOR_MAP, DISPLAY_COLORS } from '../constants';
+import { UserProfile } from '../../api/types';
+import { COLOR_MAP, DISPLAY_COLORS } from '../../constants';
 
 interface SidebarProps {
   selectedCategory: string | null;

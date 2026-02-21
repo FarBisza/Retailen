@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Minus, Plus, Heart, ShieldCheck, Truck, RefreshCcw, ChevronDown, ChevronUp, Ruler, Star, MessageSquare, Send, CheckCircle2 } from 'lucide-react';
-import { Product, UserProfile, Review } from '../api/types';
+import { Product, UserProfile, Review } from '../../api/types';
 
 interface ProductDetailProps {
     product: Product;
@@ -52,7 +52,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
     React.useEffect(() => {
         (async () => {
             try {
-                const { fetchProductById } = await import('../api/productApi');
+                const { fetchProductById } = await import('../../api/productApi');
                 const refreshed = await fetchProductById(initialProduct.id);
                 if (refreshed) setProduct(refreshed);
             } catch {
@@ -69,7 +69,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
         }
         (async () => {
             try {
-                const { getMyOrders } = await import('../api/orderApi');
+                const { getMyOrders } = await import('../../api/orderApi');
                 const orders = await getMyOrders();
                 const purchased = orders.some(
                     o => o.items.some(item => item.productId === Number(product.id)) && o.statusId >= 2 && o.statusId !== 6
@@ -112,12 +112,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
         if (!currentUser || !newComment.trim()) return;
 
         try {
-            const { submitReview } = await import('../api/reviewApi');
+            const { submitReview } = await import('../../api/reviewApi');
             await submitReview(product.id, newRating, newComment);
 
             // Re-fetch product to get all reviews from the backend
             try {
-                const { fetchProductById } = await import('../api/productApi');
+                const { fetchProductById } = await import('../../api/productApi');
                 const refreshed = await fetchProductById(product.id);
                 if (refreshed) {
                     setProduct(refreshed);

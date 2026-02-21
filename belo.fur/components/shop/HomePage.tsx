@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Smartphone, Shirt, Sofa, ChevronLeft, ChevronRight } from 'lucide-react';
-import { fetchProducts } from '../api/productApi';
+import { fetchProducts } from '../../api/productApi';
 import ProductCard from './ProductCard';
-import { Product } from '../api/types';
+import { Product } from '../../api/types';
 
 interface HomePageProps {
     onShopNow: () => void;

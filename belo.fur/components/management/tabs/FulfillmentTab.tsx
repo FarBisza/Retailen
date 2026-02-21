@@ -32,7 +32,7 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
 
         const silentRefreshOrders = async () => {
             try {
-                const { getAllOrders } = await import('../../api/adminApi');
+                const { getAllOrders } = await import('../../../api/adminApi');
                 const data = await getAllOrders();
                 setOrders(
                     data
@@ -59,7 +59,7 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
         autoProcessEligible.forEach(async (order) => {
             autoShippedRef.current.add(order.id);
             try {
-                const { startProcessing } = await import('../../api/adminApi');
+                const { startProcessing } = await import('../../../api/adminApi');
                 await startProcessing(order.id);
                 loadOrders();
             } catch (err) {
@@ -79,7 +79,7 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
 
         autoShipEligible.forEach(async (order) => {
             try {
-                const { shipOrder } = await import('../../api/adminApi');
+                const { shipOrder } = await import('../../../api/adminApi');
                 const trk = `TRK-AUTO-${order.id}-${Date.now().toString(36).toUpperCase()}`;
                 await shipOrder(order.id, 'DHL Express', trk);
                 loadOrders();
@@ -101,7 +101,7 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
             if (simDays >= 4) {
                 autoDeliveredRef.current.add(order.id);
                 try {
-                    const { deliverOrder } = await import('../../api/adminApi');
+                    const { deliverOrder } = await import('../../../api/adminApi');
                     await deliverOrder(order.id);
                     loadOrders();
                 } catch (err) {
@@ -115,7 +115,7 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
     const loadOrders = async () => {
         try {
             setLoading(true);
-            const { getAllOrders } = await import('../../api/adminApi');
+            const { getAllOrders } = await import('../../../api/adminApi');
             const data = await getAllOrders();
             setOrders(
                 data
@@ -131,7 +131,7 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
 
     const handleStartProcessing = async (order: AdminOrder) => {
         try {
-            const { startProcessing } = await import('../../api/adminApi');
+            const { startProcessing } = await import('../../../api/adminApi');
             await startProcessing(order.id);
             loadOrders();
         } catch (err) {
@@ -150,7 +150,7 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
         e.preventDefault();
         if (!selectedOrder) return;
         try {
-            const { shipOrder } = await import('../../api/adminApi');
+            const { shipOrder } = await import('../../../api/adminApi');
             await shipOrder(selectedOrder.id, carrier, tracking);
             setShippingModalOpen(false);
             loadOrders();
@@ -162,7 +162,7 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
 
     const handleDeliverOrder = async (order: AdminOrder) => {
         try {
-            const { deliverOrder } = await import('../../api/adminApi');
+            const { deliverOrder } = await import('../../../api/adminApi');
             await deliverOrder(order.id);
             loadOrders();
         } catch (err) {

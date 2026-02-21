@@ -15,13 +15,13 @@ import {
     fetchProducts,
 } from '../api/productApi';
 import * as attributeApi from '../api/attributeApi';
-import { AdminProductsTab } from './admin/AdminProductsTab';
-import { AdminUsersTab } from './admin/AdminUsersTab';
-import { AdminLogisticsTab } from './admin/AdminLogisticsTab';
-import { AdminReturnsTab } from './admin/AdminReturnsTab';
-import { AdminAttributesTab } from './admin/AdminAttributesTab';
-import { AdminAnalyticsTab } from './admin/AdminAnalyticsTab';
-import { AdminFulfillmentTab } from './admin/AdminFulfillmentTab';
+import { AdminProductsTab } from './management/tabs/ProductsTab';
+import { AdminUsersTab } from './management/tabs/UsersTab';
+import { AdminLogisticsTab } from './management/tabs/LogisticsTab';
+import { AdminReturnsTab } from './management/tabs/ReturnsTab';
+import { AdminAttributesTab } from './management/tabs/AttributesTab';
+import { AdminAnalyticsTab } from './management/tabs/AnalyticsTab';
+import { AdminFulfillmentTab } from './management/tabs/FulfillmentTab';
 
 const AdminPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>('products');

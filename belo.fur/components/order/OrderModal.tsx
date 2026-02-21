@@ -3,15 +3,15 @@ import {
     X, ArrowLeft, CreditCard, Box, Truck, Star, RefreshCcw,
     MapPin
 } from 'lucide-react';
-import { getMyOrders, Order, getInvoice } from '../api/orderApi';
-import { getMyReturns, cancelReturn, ReturnDTO, RETURN_STATUS } from '../api/returnApi';
+import { getMyOrders, Order, getInvoice } from '../../api/orderApi';
+import { getMyReturns, cancelReturn, ReturnDTO, RETURN_STATUS } from '../../api/returnApi';
 
 // Extracted sub-components
-import PaymentModal from './order/PaymentModal';
-import OrderDetailsModal from './order/OrderDetailsModal';
-import ReviewModal from './order/ReviewModal';
-import ReturnRequestModal from './order/ReturnRequestModal';
-import OrderItemCard from './order/OrderItemCard';
+import PaymentModal from './PaymentModal';
+import OrderDetailsModal from './OrderDetailsModal';
+import ReviewModal from './ReviewModal';
+import ReturnRequestModal from './ReturnRequestModal';
+import OrderItemCard from './OrderItemCard';
 
 export type OrderTab = 'to-pay' | 'to-ship' | 'shipped' | 'to-review' | 'returns';
 
