@@ -1,4 +1,3 @@
-//not executed
 import React from 'react';
 import {
     X, CreditCard, Box, Truck, Star, RefreshCcw,
@@ -51,7 +50,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, currentUser, onAut
             <div
                 className={`fixed top-0 right-0 h-full w-full max-w-[380px] bg-white z-[120] shadow-2xl transition-transform duration-500 transform flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
             >
-                {/* User Header */}
                 <div className="px-8 pt-10 pb-8 border-b border-gray-50 bg-gray-50/30">
                     <div className="flex items-center justify-between mb-8">
                         <div className="text-2xl font-black tracking-tighter">My Account</div>
@@ -84,7 +82,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, currentUser, onAut
                     )}
                 </div>
 
-                {/* Scrollable Content (только для авторизованных) */}
                 <div className={`flex-1 overflow-y-auto pt-8 pb-10 custom-scrollbar ${!currentUser && 'opacity-30 pointer-events-none grayscale'}`}>
                     <MenuSection title="Order Management">
                         <MenuItem icon={CreditCard} label="To Pay" badge="2" />
@@ -114,7 +111,6 @@ const UserMenu: React.FC<UserMenuProps> = ({ isOpen, onClose, currentUser, onAut
                     </MenuSection>
                 </div>
 
-                {/* Fixed Footer */}
                 <div className="p-6 border-t border-gray-50 bg-white">
                     <button className="w-full border border-gray-200 text-slate-900 py-4 text-[10px] font-black uppercase tracking-[0.2em] rounded-sm hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
                         <MessageSquare size={14} /> Contact Support

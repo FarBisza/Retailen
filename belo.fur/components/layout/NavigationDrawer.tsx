@@ -16,7 +16,6 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
     onHomeClick,
     categories
 }) => {
-    // Dynamically filter categories into groups
     const furnitureCategories = categories.filter(c =>
         c.includes('Furniture') || c.includes('Sofa') || c.includes('Table') ||
         c.includes('Ottoman') || c.includes('Dresser') || c.includes('Sideboard') ||
@@ -58,14 +57,12 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
                 </div>
 
                 <div className="flex-1 overflow-y-auto pt-8 pb-10 px-8 custom-scrollbar">
-                    {/* Core Navigation */}
                     <div className="mb-12">
                         <NavItem icon={Home} label="Home" onClick={() => { onHomeClick(); onClose(); }} />
                         <NavItem icon={Package} label="Entire Shop" onClick={() => { onCategorySelect(null); onClose(); }} />
                         <NavItem icon={Sparkles} label="Latest Drops" onClick={() => { onCategorySelect(null); onClose(); }} badge="NEW" />
                     </div>
 
-                    {/* Furniture */}
                     <div className="mb-10">
                         <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-amber-600 mb-6 flex items-center gap-2">
                             <Sofa size={14} /> Furniture Design
@@ -84,7 +81,6 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
                         </div>
                     </div>
 
-                    {/* Tech */}
                     <div className="mb-10">
                         <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-500 mb-6 flex items-center gap-2">
                             <Smartphone size={14} /> Technology
@@ -103,7 +99,6 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
                         </div>
                     </div>
 
-                    {/* Apparel */}
                     <div>
                         <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500 mb-6 flex items-center gap-2">
                             <Shirt size={14} /> Apparel & Essentials

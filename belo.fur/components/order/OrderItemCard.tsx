@@ -33,7 +33,6 @@ const OrderItemCard: React.FC<OrderItemCardProps> = ({ order, activeTab, onActio
                 <span className="text-lg font-black text-slate-900">
                     ${order.total.toFixed(2)}
                 </span>
-                {/* Invoice button — only when an invoice exists for this order */}
                 {order.hasInvoice && onViewInvoice && (
                     <button
                         onClick={() => onViewInvoice(order)}
@@ -60,7 +59,6 @@ const OrderItemCard: React.FC<OrderItemCardProps> = ({ order, activeTab, onActio
             </div>
         </div>
 
-        {/* Product images */}
         <div className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
             {order.items.map((item, i) => (
                 <div
@@ -76,7 +74,6 @@ const OrderItemCard: React.FC<OrderItemCardProps> = ({ order, activeTab, onActio
             ))}
         </div>
 
-        {/* Product names + quantities */}
         <div className="mt-3 space-y-1">
             {order.items.map((item, i) => (
                 <div key={i} className="flex items-center justify-between text-xs">
@@ -90,7 +87,6 @@ const OrderItemCard: React.FC<OrderItemCardProps> = ({ order, activeTab, onActio
             ))}
         </div>
 
-        {/* Shipped tab — tracking info */}
         {activeTab === 'shipped' && order.shipment && (
             <div className="mt-6 pt-6 border-t border-gray-50">
                 <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">

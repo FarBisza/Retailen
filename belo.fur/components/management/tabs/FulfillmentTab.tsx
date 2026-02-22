@@ -48,7 +48,6 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
         return () => clearInterval(interval);
     }, []);
 
-    // Auto-process paid orders when sim is active (day 1+)
     useEffect(() => {
         if (!simEnabled || simDays < 1) return;
 
@@ -69,7 +68,6 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
         });
     }, [simEnabled, simDays, orders]);
 
-    // Auto-ship processing orders when sim is active (day 2+)
     useEffect(() => {
         if (!simEnabled || simDays < 2) return;
 
@@ -89,7 +87,6 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
         });
     }, [simEnabled, simDays, orders]);
 
-    // Auto-deliver shipped orders when sim is active and enough days have passed
     useEffect(() => {
         if (!simEnabled || simDays < 4) return;
 
@@ -314,7 +311,6 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
                 )}
             </div>
 
-            {/* Show More / Counter */}
             {orders.length > 0 && (
                 <div className="flex items-center justify-between mt-4 px-2">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -331,7 +327,6 @@ export const AdminFulfillmentTab: React.FC<AdminFulfillmentTabProps> = ({ simEna
                 </div>
             )}
 
-            {/* Shipping Modal */}
             {shippingModalOpen && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm">
                     <div className="bg-white p-8 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">

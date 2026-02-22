@@ -14,7 +14,6 @@ interface AdminProductsTabProps {
 }
 
 export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, loading, onRefresh }) => {
-    // Product Edit Modal State
     const [showProductModal, setShowProductModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
     const [productFormData, setProductFormData] = useState<CreateProductRequest>({
@@ -28,7 +27,6 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
     });
     const [productSaving, setProductSaving] = useState(false);
 
-    // Category & Attribute state for form
     const [categories, setCategories] = useState<CategoryFromApi[]>([]);
     const [allAttributes, setAllAttributes] = useState<Attribute[]>([]);
 
@@ -39,9 +37,7 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
         }
     }, [showProductModal]);
 
-    // Handlers
     const openProductModal = async (product?: Product) => {
-        // Eagerly load categories & attributes so the form is fully populated
         try {
             const [cats, attrs] = await Promise.all([
                 fetchCategories(),
@@ -51,7 +47,6 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
             setAllAttributes(attrs);
 
             if (product) {
-                // Resolve categoryId from the category name
                 const matchedCat = cats.find(
                     (c) => c.name.toLowerCase() === (product.category || '').toLowerCase()
                 );
@@ -120,7 +115,6 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
         }
     };
 
-    // ─── Column Definitions ───
     const columns = useMemo<ColumnDef<Product, any>[]>(
         () => [
             {
@@ -218,7 +212,6 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
                 loadingMessage="Loading products..."
             />
 
-            {/* Product Modal */}
             {showProductModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
                     <div className="bg-white rounded-sm shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-300">
@@ -311,7 +304,6 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
                                     />
                                 </div>
 
-                                {/* Category */}
                                 <div>
                                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1.5">
                                         Category
@@ -337,7 +329,6 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
                                     </select>
                                 </div>
 
-                                {/* Dynamic Attributes */}
                                 <div>
                                     <div className="flex justify-between items-center mb-2">
                                         <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500">

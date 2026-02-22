@@ -6,7 +6,6 @@ import {
 import { getMyOrders, Order, getInvoice } from '../../api/orderApi';
 import { getMyReturns, cancelReturn, ReturnDTO, RETURN_STATUS } from '../../api/returnApi';
 
-// Extracted sub-components
 import PaymentModal from './PaymentModal';
 import OrderDetailsModal from './OrderDetailsModal';
 import ReviewModal from './ReviewModal';
@@ -28,12 +27,10 @@ const OrderModal: React.FC<OrderModalProps> = ({
     initialTab,
     onBackToAccount,
 }) => {
-    // ─── Core State ───
     const [activeTab, setActiveTab] = React.useState<OrderTab>(initialTab);
     const [orders, setOrders] = React.useState<Order[]>([]);
     const [loading, setLoading] = React.useState(false);
 
-    // ─── Sub-modal visibility ───
     const [showPaymentModal, setShowPaymentModal] = React.useState(false);
     const [selectedOrderForPayment, setSelectedOrderForPayment] = React.useState<Order | null>(null);
     const [showDetailsModal, setShowDetailsModal] = React.useState(false);
@@ -43,10 +40,8 @@ const OrderModal: React.FC<OrderModalProps> = ({
     const [showReturnRequestModal, setShowReturnRequestModal] = React.useState(false);
     const [selectedOrderForReturn, setSelectedOrderForReturn] = React.useState<Order | null>(null);
 
-    // ─── Returns ───
     const [returnsList, setReturnsList] = React.useState<ReturnDTO[]>([]);
 
-    // ─── Load / Refresh Orders ───
     const loadOrders = React.useCallback(() => {
         setLoading(true);
         getMyOrders()
@@ -81,7 +76,6 @@ const OrderModal: React.FC<OrderModalProps> = ({
 
     if (!isOpen) return null;
 
-    // ─── Filter orders by status ───
     const toPay = orders.filter(o => o.status === 'AwaitingPayment');
     const toShip = orders.filter(o => o.status === 'Paid' || o.status === 'Processing');
     const shipped = orders.filter(o => o.status === 'Shipped');
@@ -159,7 +153,6 @@ const OrderModal: React.FC<OrderModalProps> = ({
                 />
 
                 <div className="relative w-full max-w-5xl bg-gray-50/80 backdrop-blur-md rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 fade-in duration-300 max-h-[90vh]">
-                    {/* Modal Header */}
                     <div className="px-8 py-6 bg-white border-b border-gray-100 flex items-center justify-between">
                         <button
                             onClick={onBackToAccount}
@@ -180,7 +173,6 @@ const OrderModal: React.FC<OrderModalProps> = ({
                         </div>
                     </div>
 
-                    {/* Tab Navigation */}
                     <div className="flex items-center gap-2 px-8 py-4 bg-white/50 border-b border-gray-100 overflow-x-auto scrollbar-hide">
                         {tabs.map((tab) => (
                             <button
@@ -207,14 +199,12 @@ const OrderModal: React.FC<OrderModalProps> = ({
                         ))}
                     </div>
 
-                    {/* Content Area */}
                     <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                         {loading ? (
                             <div className="flex items-center justify-center py-20">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900" />
                             </div>
                         ) : activeTab === 'returns' ? (
-                            /* Returns tab */
                             returnsList.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-700">
                                     <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center text-gray-300 mb-6">
@@ -292,7 +282,6 @@ const OrderModal: React.FC<OrderModalProps> = ({
                                     {activeTab === 'to-ship' && <Box size={32} />}
                                     {activeTab === 'shipped' && <Truck size={32} />}
                                     {activeTab === 'to-review' && <Star size={32} />}
-                                    {activeTab === 'returns' && <RefreshCcw size={32} />}
                                 </div>
                                 <h3 className="text-lg font-black text-slate-900 uppercase tracking-widest mb-2">
                                     No Orders
@@ -400,7 +389,6 @@ const OrderModal: React.FC<OrderModalProps> = ({
                         )}
                     </div>
 
-                    {/* Modal Footer */}
                     <div className="px-8 py-6 bg-white border-t border-gray-100 flex items-center justify-between">
                         <div className="flex items-center gap-2 text-[10px] font-black text-gray-300 uppercase tracking-widest">
                             <MapPin size={12} /> Shipping to: {(() => {
@@ -415,7 +403,6 @@ const OrderModal: React.FC<OrderModalProps> = ({
                 </div>
             </div>
 
-            {/* Sub-modals */}
             {showPaymentModal && selectedOrderForPayment && (
                 <PaymentModal
                     order={selectedOrderForPayment}

@@ -1,7 +1,3 @@
-// ============================================================
-// authApi.ts — Shared authentication utilities
-// ============================================================
-
 export const API_URL = '/api';
 
 export const getHeaders = (): HeadersInit => {
@@ -19,7 +15,6 @@ export const getHeaders = (): HeadersInit => {
     return headers;
 };
 
-// Forgot Password
 export const forgotPassword = async (email: string) => {
     const response = await fetch(`${API_URL}/auth/forgot-password`, {
         method: 'POST',
@@ -35,7 +30,6 @@ export const forgotPassword = async (email: string) => {
     return await response.json();
 };
 
-// Reset Password
 export const resetPassword = async (data: any) => {
     const response = await fetch(`${API_URL}/auth/reset-password`, {
         method: 'POST',

@@ -7,7 +7,6 @@ const Footer: React.FC = () => {
             <div className="max-w-[1400px] mx-auto px-6">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
 
-                    {/* Logo and Newsletter Column */}
                     <div className="lg:col-span-4 flex flex-col gap-8">
                         <div className="text-4xl font-bold tracking-tighter">Belo.fur</div>
 
@@ -38,7 +37,6 @@ const Footer: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Links Columns */}
                     <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div className="flex flex-col gap-6">
                             <h4 className="text-sm font-bold uppercase tracking-widest text-slate-900">Company</h4>
@@ -83,7 +81,6 @@ const Footer: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
                 <div className="border-t border-gray-50 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
                     <div className="text-[10px] font-medium text-gray-400 flex gap-4">
                         <a href="#" className="hover:text-black">Privacy</a>

@@ -39,7 +39,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Registration fields
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phone, setPhone] = useState('');
@@ -76,7 +75,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
                 sessionStorage.removeItem('cart_session_id');
             }
 
-            // Map backend role name to frontend role type
             const mapRole = (
                 backendRole: string
             ): 'admin' | 'customer' | 'employee' | 'shipper' | 'supplier' => {
@@ -142,7 +140,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
             if (!response.ok) {
                 let errorMessage = data.message || 'Registration failed';
 
-                // Handle ASP.NET Core Validation Errors (ProblemDetails)
                 if (data.errors) {
                     const firstError = Object.values(data.errors).flat()[0];
                     if (firstError) {
@@ -178,7 +175,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
     if (!isOpen) return null;
 
-    // Show success message after registration
     if (registrationSuccess) {
         return (
             <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -262,7 +258,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
                     >
                         {mode === 'register' ? (
                             <>
-                                {/* First Name */}
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">
                                         First Name
@@ -283,7 +278,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Last Name */}
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">
                                         Last Name
@@ -304,7 +298,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Email */}
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">
                                         Email
@@ -325,7 +318,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Password */}
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">
                                         Password
@@ -346,7 +338,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Phone */}
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">
                                         Phone (optional)

@@ -30,12 +30,10 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     );
     const [paymentMethod, setPaymentMethod] = useState<string>('card');
 
-    // Order success state
     const [orderSuccess, setOrderSuccess] = useState(false);
     const [orderId, setOrderId] = useState<number | null>(null);
     const [orderPaid, setOrderPaid] = useState(false);
 
-    // Card fields state
     const [checkoutCardNumber, setCheckoutCardNumber] = useState('');
     const [checkoutExpiry, setCheckoutExpiry] = useState('');
     const [checkoutCvc, setCheckoutCvc] = useState('');
@@ -84,10 +82,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         mode: 'onBlur',
     });
 
-    // Watch specific fields for conditional rendering and summary display
     const formData = watch();
 
-    // Delivery date state — default 14 days from now
     const getDefaultDeliveryDate = () => {
         const date = new Date();
         date.setDate(date.getDate() + 14);
@@ -109,7 +105,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         setStep('delivery');
     });
 
-    // ─── Card Validation ───
     const validateCardNumber = (val: string): string => {
         const raw = val.replace(/\s/g, '');
         if (!raw) return '';
@@ -169,7 +164,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     const discount = 0;
     const grandTotal = subtotal - discount;
 
-    // ─── Stepper ───
     const Stepper = () => (
         <div className="flex flex-col items-center w-full mb-12">
             <div className="flex items-center justify-between w-full max-w-md relative">
@@ -186,7 +180,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     }}
                 />
 
-                {/* Shipping dot */}
                 <div className="relative z-10 flex flex-col items-center gap-2">
                     <div
                         className={`w-3 h-3 rounded-full border-2 ${step === 'shipping' ||
@@ -214,7 +207,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     </span>
                 </div>
 
-                {/* Delivery dot */}
                 <div className="relative z-10 flex flex-col items-center gap-2">
                     <div
                         className={`w-3 h-3 rounded-full border-2 ${step === 'delivery' || step === 'payment'
@@ -240,7 +232,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     </span>
                 </div>
 
-                {/* Payment dot */}
                 <div className="relative z-10 flex flex-col items-center gap-2">
                     <div
                         className={`w-3 h-3 rounded-full border-2 ${step === 'payment'
@@ -269,7 +260,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         </div>
     );
 
-    // ─── Payment Method Button ───
     const PaymentMethodButton = ({
         id,
         label,
@@ -303,11 +293,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     return (
         <div className="max-w-[1400px] mx-auto px-6 py-8">
             <div className="flex flex-col lg:flex-row gap-20">
-                {/* ═══════ Left Form Section ═══════ */}
                 <div className="flex-[1.5]">
                     <Stepper />
 
-                    {/* ─── Section 1: Shipping Address ─── */}
                     <section className="mb-8">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-bold">Shipping Address</h3>
@@ -323,7 +311,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
                         {step === 'shipping' ? (
                             <div className="space-y-6">
-                                {/* Contact */}
                                 <div>
                                     <h4 className="text-sm font-bold mb-4">Contact</h4>
                                     <div className="space-y-4">
@@ -362,7 +349,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Address fields */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <input
@@ -486,7 +472,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                 </button>
                             </div>
                         ) : (
-                            /* Shipping summary (collapsed) */
                             <div className="border border-gray-100 rounded-sm p-6 space-y-3 bg-gray-50/30">
                                 <div className="flex items-center gap-3 text-sm text-gray-600">
                                     <Box size={16} className="text-gray-400" />
@@ -520,7 +505,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                         )}
                     </section>
 
-                    {/* ─── Section 2: Delivery Option ─── */}
                     <section className="mb-8 border-t border-gray-100 pt-8">
                         <h3 className="text-lg font-bold mb-4">Delivery Option</h3>
                         {step === 'delivery' ? (
@@ -541,7 +525,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                         </span>
                                     </div>
 
-                                    {/* Expected Delivery Date Picker */}
                                     <div className="border-t border-gray-100 pt-4 mt-4">
                                         <label className="block text-xs font-bold text-gray-700 mb-2">
                                             Expected Delivery Date
@@ -593,18 +576,15 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                         ) : null}
                     </section>
 
-                    {/* ─── Section 3: Payment Method ─── */}
                     <section className="mb-10 border-t border-gray-100 pt-8">
                         <h3 className="text-lg font-bold mb-6">Payment Method</h3>
                         {step === 'payment' && (
                             <div className="space-y-8">
-                                {/* Payment Grid — matches DB: 1=Card, 2=Transfer, 3=Apple Pay, 4=PayPal */}
                                 <div className="grid grid-cols-3 gap-4">
                                     <PaymentMethodButton
                                         id="card"
                                         label="Credit/Debit Card"
                                     />
-                                    {/* ✅ CHANGED: was BLIK → Apple Pay (DB PaymentType ID=3) */}
                                     <PaymentMethodButton
                                         id="apple-pay"
                                         label="Apple Pay"
@@ -637,7 +617,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                     />
                                 </div>
 
-                                {/* Credit Card Detail Form */}
                                 <div className="border border-gray-100 rounded-sm p-8 bg-white shadow-sm">
                                     <div className="flex justify-between items-center mb-6">
                                         <h4 className="text-sm font-bold">
@@ -725,13 +704,11 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                                 )}
                                             </div>
                                         </div>
-                                        {/* Hint: empty = pay later */}
                                         <p className="text-[10px] text-gray-400 italic">
                                             Leave card fields empty to pay later from My Purchases → To Pay
                                         </p>
                                     </div>
 
-                                    {/* Bank Transfer Info */}
                                     {paymentMethod === 'transfer' && (
                                         <div className="mt-4 p-4 bg-green-50 rounded-sm space-y-3">
                                             <label className="block text-[10px] font-black uppercase tracking-widest text-green-600 mb-3">
@@ -751,7 +728,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                         </div>
                                     )}
 
-                                    {/* Apple Pay */}
                                     {paymentMethod === 'apple-pay' && (
                                         <div className="mt-4 p-4 bg-gray-50 rounded-sm text-center">
                                             <label className="block text-[10px] font-black uppercase tracking-widest text-gray-600 mb-3">
@@ -764,7 +740,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                         </div>
                                     )}
 
-                                    {/* PayPal */}
                                     {paymentMethod === 'paypal' && (
                                         <div className="mt-4 p-4 bg-blue-50 rounded-sm space-y-3">
                                             <label className="block text-[10px] font-black uppercase tracking-widest text-blue-600 mb-3">
@@ -786,7 +761,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                         </div>
                                     )}
 
-                                    {/* ✅ Invoice Request */}
                                     <div className="mt-6 border border-gray-100 rounded-sm p-4 bg-gray-50/30">
                                         <label className="flex items-center gap-3 cursor-pointer">
                                             <input
@@ -804,7 +778,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                             </div>
                                         </label>
 
-                                        {/* Billing Info — shown when invoice requested */}
                                         {formData.requestInvoice && (
                                             <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
                                                 <input
@@ -836,21 +809,17 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                         )}
                                     </div>
 
-                                    {/* Place Order button */}
                                     <button
                                         onClick={async () => {
-                                            // Auth gate: require login before placing order
                                             if (!currentUser) {
                                                 if (onLoginClick) onLoginClick();
                                                 return;
                                             }
                                             try {
-                                                // Validate invoice fields
                                                 if (formData.requestInvoice && !formData.taxId?.trim()) {
                                                     alert('Tax ID (NIP) is required when requesting an invoice.');
                                                     return;
                                                 }
-                                                // Validate card if partially filled
                                                 if (paymentMethod === 'card' && isCardPartiallyFilled()) {
                                                     if (!validateAllCardFields()) {
                                                         alert('Please complete or clear the card details. Red highlighted fields need attention.');
@@ -881,7 +850,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                                     orderRes
                                                 );
 
-                                                // Handle Invoice Request
                                                 if (formData.requestInvoice) {
                                                     try {
                                                         await requestInvoice(orderRes.orderId, {
@@ -895,14 +863,11 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                                         });
                                                     } catch (invErr) {
                                                         console.error('Failed to request invoice:', invErr);
-                                                        // Don't block the flow, just log it. Maybe show a toast?
-                                                        // For now, silent failure or console log is safer than crashing the flow.
                                                     }
                                                 }
 
                                                 setOrderId(orderRes.orderId);
 
-                                                // Determine paymentTypeId from selected method
                                                 const paymentTypeMap: Record<string, number> = {
                                                     'card': 1,
                                                     'transfer': 2,
@@ -911,12 +876,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                                 };
                                                 const paymentTypeId = paymentTypeMap[paymentMethod] || 1;
 
-                                                // Check if payment details are filled
                                                 const cardRaw = checkoutCardNumber.replace(/\s/g, '');
                                                 const hasCardDetails = cardRaw.length >= 13 && /^\d{2}\/\d{2}$/.test(checkoutExpiry) && /^\d{3,4}$/.test(checkoutCvc);
 
-                                                // For non-card methods, ALWAYS pay now.
-                                                // For card, only pay when all card fields are valid.
                                                 const shouldPayNow = paymentMethod !== 'card' || hasCardDetails;
 
                                                 if (shouldPayNow) {
@@ -940,11 +902,9 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                                 if (onOrderSuccess) onOrderSuccess();
                                             } catch (err: any) {
                                                 console.error(err);
-                                                // Extract user-friendly message from backend error
                                                 let msg = 'Something went wrong. Please try again.';
                                                 if (err instanceof Error) {
                                                     try {
-                                                        // Backend errors often come as: "Payment failed: {"message":"..."}"
                                                         const jsonMatch = err.message.match(/\{.*\}/);
                                                         if (jsonMatch) {
                                                             const parsed = JSON.parse(jsonMatch[0]);
@@ -973,7 +933,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                     </section>
                 </div>
 
-                {/* ═══════ Right Order Summary ═══════ */}
                 <div className="flex-1">
                     <div className="sticky top-8 border-l border-gray-100 pl-10">
                         <h2 className="text-xl font-bold mb-8">Order Summary</h2>
@@ -1058,7 +1017,6 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 </div>
             </div>
 
-            {/* ═══════ Order Success Modal ═══════ */}
             {orderSuccess && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
                     <div className="bg-white rounded-sm shadow-2xl w-full max-w-md p-10 text-center animate-in fade-in zoom-in duration-300">

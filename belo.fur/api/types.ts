@@ -1,7 +1,3 @@
-// ============================================================
-// types.ts — All shared TypeScript interfaces (English)
-// ============================================================
-
 export interface Review {
   id: string;
   userId: string;
@@ -33,7 +29,6 @@ export interface Product {
   shortDescription?: string;
   longDescription?: string;
 
-  // Category-specific attributes
   type?: 'furniture' | 'electronics' | 'clothing';
   material?: string;
   gender?: 'men' | 'women' | 'unisex';
@@ -45,7 +40,6 @@ export interface Product {
   };
   specs?: Record<string, string>;
 
-  // Reviews and dynamic attributes
   reviews?: Review[];
   attributes?: ProductAttributeValue[];
 }
@@ -63,10 +57,6 @@ export interface UserProfile {
   role: 'admin' | 'customer' | 'employee' | 'shipper' | 'supplier';
 }
 
-// Category type removed — categories are now dynamic from the backend API.
-// Use CategoryData for backend category objects, or string for category names.
-
-// Backend category interface
 export interface CategoryData {
   id: number;
   parentId: number | null;
@@ -81,8 +71,6 @@ export interface OrderItem {
   unitPrice: number;
   totalValue: number;
 }
-
-// === EAV Attributes ===
 
 export interface Attribute {
   id: number;
@@ -115,11 +103,6 @@ export interface SetProductAttributeDTO {
   attributeId: number;
   value: string;
 }
-
-// Order type removed — use the full Order interface from orderApi.ts instead.
-// It includes statusId, shipment, shippingAddress, and other fields.
-
-// === Admin Dashboard Types ===
 
 export type RequestStatus =
   | 'submitted'

@@ -9,7 +9,7 @@ interface HeaderProps {
   onGoToAdmin: () => void;
   onGoToShop: () => void;
   onMenuClick: () => void;
-  currentView: 'home' | 'shop' | 'cart' | 'checkout' | 'admin' | 'supplier' | 'product-detail';
+  currentView: 'home' | 'shop' | 'cart' | 'checkout' | 'admin' | 'staff' | 'supplier' | 'product-detail' | 'reset-password';
   cartCount: number;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -37,7 +37,6 @@ const Header: React.FC<HeaderProps> = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Filter products based on search query
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return [];
     return products.filter(product =>
@@ -83,7 +82,6 @@ const Header: React.FC<HeaderProps> = ({
 
       <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 relative h-[80px] md:h-[100px] border-b border-gray-100">
 
-        {/* Left Side: Burger Menu + Logo */}
         <div className={`flex items-center gap-2 md:gap-4 transition-opacity duration-300 ${isSearchOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <button
             onClick={onMenuClick}
@@ -101,7 +99,6 @@ const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Search Overlay */}
         <div className={`absolute inset-x-6 top-1/2 -translate-y-1/2 flex flex-col transition-all duration-500 ease-out z-[60] ${isSearchOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
           <div className="w-full relative flex items-center gap-4">
             <div className="flex-1 relative">
@@ -119,7 +116,6 @@ const Header: React.FC<HeaderProps> = ({
             <button onClick={() => { setIsSearchOpen(false); setShowDropdown(false); }} className="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-black">Close</button>
           </div>
 
-          {/* Search Dropdown */}
           {showDropdown && filteredProducts.length > 0 && (
             <div className="absolute top-full left-0 right-16 mt-2 bg-white border border-gray-100 rounded-xl shadow-xl max-h-[400px] overflow-y-auto z-[70]">
               {filteredProducts.map((product) => (
@@ -156,10 +152,8 @@ const Header: React.FC<HeaderProps> = ({
           )}
         </div>
 
-        {/* Right Side: Actions (Rounded borders) */}
         <div className={`flex items-center gap-2 md:gap-3 transition-opacity duration-300 ${isSearchOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
 
-          {/* Role-based management button */}
           {(currentUser?.role === 'admin' || currentUser?.role === 'employee' || currentUser?.role === 'supplier') && (
             <button
               onClick={onGoToAdmin}

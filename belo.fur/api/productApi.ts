@@ -1,7 +1,3 @@
-// ============================================================
-// productApi.ts — Product CRUD operations (English)
-// ============================================================
-
 import { API_URL, getHeaders } from './authApi';
 import { Product, ProductAttributeValue } from './types';
 
@@ -39,7 +35,7 @@ const mapProduct = (apiProd: ProductFromApi): Product => {
     return {
         id: apiProd.id.toString(),
         name: apiProd.name,
-        price: Number(apiProd.price), // Force number type
+        price: Number(apiProd.price),
         originalPrice: apiProd.originalPrice,
         image: apiProd.imageUrl || 'https://placehold.co/800',
         category: apiProd.category || 'Uncategorized',
@@ -94,8 +90,6 @@ export const fetchProductById = async (
     }
 };
 
-// === STAFF CRUD OPERATIONS ===
-
 export interface CreateProductRequest {
     name: string;
     price: number;
@@ -111,9 +105,6 @@ export interface CreateProductRequest {
 
 export interface UpdateProductRequest extends Partial<CreateProductRequest> { }
 
-/**
- * Helper to parse error response from server
- */
 const parseErrorResponse = async (res: Response): Promise<string> => {
     try {
         const text = await res.text();
@@ -121,7 +112,6 @@ const parseErrorResponse = async (res: Response): Promise<string> => {
 
         try {
             const json = JSON.parse(text);
-            // ASP.NET Core ValidationProblemDetails
             if (json.errors) {
                 return Object.entries(json.errors)
                     .map(
@@ -141,9 +131,6 @@ const parseErrorResponse = async (res: Response): Promise<string> => {
     }
 };
 
-/**
- * Create a product — throws on failure
- */
 export const createProduct = async (
     data: CreateProductRequest
 ): Promise<ProductFromApi> => {
@@ -161,9 +148,6 @@ export const createProduct = async (
     return await res.json();
 };
 
-/**
- * Update a product — throws on failure
- */
 export const updateProduct = async (
     id: string,
     data: UpdateProductRequest
@@ -186,9 +170,6 @@ export const updateProduct = async (
     return { id: parseInt(id), ...data } as unknown as ProductFromApi;
 };
 
-/**
- * Delete a product — throws on failure
- */
 export const deleteProduct = async (id: string): Promise<void> => {
     const res = await fetch(`${API_URL}/product/${id}`, {
         method: 'DELETE',

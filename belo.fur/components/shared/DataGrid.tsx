@@ -11,7 +11,6 @@ import {
 } from '@tanstack/react-table';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
-// ─── Generic DataGrid Component (TanStack Table) ───
 
 interface DataGridProps<T> {
     data: T[];
@@ -52,7 +51,6 @@ export function DataGrid<T>({
 
     return (
         <div>
-            {/* Search / Filter Bar */}
             <div className="px-6 py-3 border-b border-gray-50">
                 <input
                     type="text"
@@ -63,7 +61,6 @@ export function DataGrid<T>({
                 />
             </div>
 
-            {/* Table */}
             <table className="w-full text-left">
                 <thead className="bg-white border-b border-gray-50 text-[9px] font-black uppercase text-gray-400">
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -114,7 +111,6 @@ export function DataGrid<T>({
                 </tbody>
             </table>
 
-            {/* Pagination footer */}
             {!loading && (
                 <div className="px-6 py-3 border-t border-gray-50 flex items-center justify-between">
                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">

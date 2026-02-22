@@ -1,10 +1,3 @@
-// ============================================================
-// constants.tsx — Shared constants (English)
-// ============================================================
-
-// Categories are now loaded from backend API via categoryApi.ts
-// See App.tsx for category loading logic
-
 export const COLOR_MAP = [
   { hex: '#F5E6D3', name: 'Beige' },
   { hex: '#1A1A1A', name: 'Black' },

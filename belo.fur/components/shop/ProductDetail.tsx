@@ -40,7 +40,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
     const [activeImage, setActiveImage] = useState(product.image);
     const [openAccordion, setOpenAccordion] = useState<string | null>('specs');
 
-    // Review form state
     const [newRating, setNewRating] = useState(5);
     const [newComment, setNewComment] = useState('');
     const [hasPurchased, setHasPurchased] = useState(false);
@@ -48,7 +47,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
 
     const images = product.images || [product.image];
 
-    // Re-fetch product on mount to get latest reviews
     React.useEffect(() => {
         (async () => {
             try {
@@ -56,12 +54,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                 const refreshed = await fetchProductById(initialProduct.id);
                 if (refreshed) setProduct(refreshed);
             } catch {
-                // Keep initialProduct if re-fetch fails
             }
         })();
     }, [initialProduct.id]);
 
-    // Check if user has purchased this product
     React.useEffect(() => {
         if (!currentUser) {
             setPurchaseCheckDone(true);
@@ -115,7 +111,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
             const { submitReview } = await import('../../api/reviewApi');
             await submitReview(product.id, newRating, newComment);
 
-            // Re-fetch product to get all reviews from the backend
             try {
                 const { fetchProductById } = await import('../../api/productApi');
                 const refreshed = await fetchProductById(product.id);
@@ -123,7 +118,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                     setProduct(refreshed);
                 }
             } catch {
-                // Fallback: if re-fetch fails, just add locally
                 setProduct(prev => ({
                     ...prev,
                     reviews: [{
@@ -138,7 +132,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
             }
             setNewComment('');
             setNewRating(5);
-            // Refresh global products list so reviews appear elsewhere
             window.dispatchEvent(new Event('product-data-changed'));
         } catch (error) {
             console.error('Failed to submit review:', error);
@@ -152,7 +145,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                 <span className="text-lg">←</span> Back to Collection
             </button>
 
-            {/* Main Product Info Section */}
             <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 mb-32">
                 <div className="flex-1 space-y-6">
                     <div className="aspect-[4/5] bg-gray-50 rounded-sm overflow-hidden border border-gray-100 p-8">
@@ -231,7 +223,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                             </div>
                         </div>
 
-                        {/* Stock indicator */}
                         {outOfStock && (
                             <div className="flex items-center gap-2 px-4 py-3 bg-gray-100 rounded-sm">
                                 <div className="w-2 h-2 rounded-full bg-red-500" />
@@ -272,7 +263,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                             onToggle={setOpenAccordion}
                         >
                             <div className="space-y-4 pt-2">
-                                {/* Dynamic EAV Attributes */}
                                 {product.attributes && product.attributes.length > 0 && (
                                     <div className="grid grid-cols-2 gap-y-5">
                                         {product.attributes.map((attr) => (
@@ -288,7 +278,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                                     </div>
                                 )}
 
-                                {/* Fallback for Legacy/Hardcoded Data (if any) */}
                                 {(!product.attributes || product.attributes.length === 0) && product.type === 'furniture' && product.dimensions && (
                                     <div className="grid grid-cols-2 gap-y-4">
                                         <div className="flex flex-col gap-1">
@@ -305,7 +294,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                                         </div>
                                     </div>
                                 )}
-                                {(!product.atrybuty || product.atrybuty.length === 0) && product.type === 'electronics' && product.specs && (
+                                {(!product.attributes || product.attributes.length === 0) && product.type === 'electronics' && product.specs && (
                                     <div className="grid grid-cols-2 gap-y-5">
                                         {Object.entries(product.specs).map(([key, value]) => (
                                             <div key={key} className="flex flex-col gap-1">
@@ -343,11 +332,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                 </div>
             </div>
 
-            {/* Full Width Reviews Section at the Bottom */}
             <section className="border-t border-gray-100 pt-24 animate-in fade-in slide-in-from-bottom-8 duration-1000">
                 <div className="flex flex-col lg:flex-row gap-20">
 
-                    {/* Left Column: Analytical Stats */}
                     <div className="w-full lg:w-80 flex flex-col gap-10">
                         <div>
                             <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-8">Customer Feedback</h2>
@@ -364,7 +351,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                             </div>
                         </div>
 
-                        {/* Rating distribution bar chart */}
                         <div className="space-y-4">
                             {[5, 4, 3, 2, 1].map((stars, idx) => (
                                 <div key={stars} className="flex items-center gap-4 group cursor-default">
@@ -380,7 +366,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                             ))}
                         </div>
 
-                        {/* Review Highlights chips */}
                         <div className="pt-6 border-t border-gray-50">
                             <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-900 mb-4">Performance Metrics</h4>
                             <div className="flex flex-wrap gap-2">
@@ -400,7 +385,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                         </div>
                     </div>
 
-                    {/* Right Column: Review Form & List */}
                     <div className="flex-1 max-w-3xl">
                         <div className="bg-gray-50/50 p-10 rounded-sm border border-gray-100 mb-16 shadow-sm">
                             {!currentUser ? (

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { UserProfile } from '../api/types';
 
-// Helper for generating UUIDs (fallback for HTTP/non-secure contexts)
 const generateUUID = () => {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
         return crypto.randomUUID();
@@ -12,7 +11,6 @@ const generateUUID = () => {
     });
 };
 
-// Map backend role name to frontend role type
 const mapRole = (backendRole: string): 'admin' | 'customer' | 'employee' | 'shipper' | 'supplier' => {
     switch (backendRole?.toLowerCase()) {
         case 'admin': return 'admin';
@@ -24,7 +22,6 @@ const mapRole = (backendRole: string): 'admin' | 'customer' | 'employee' | 'ship
 };
 
 export function useAuth() {
-    // Instantly restore user from sessionStorage cache (no API wait)
     const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
         try {
             const cached = sessionStorage.getItem('currentUser');
@@ -34,7 +31,6 @@ export function useAuth() {
         }
     });
 
-    // Sync currentUser to sessionStorage whenever it changes
     useEffect(() => {
         if (currentUser) {
             sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -43,7 +39,6 @@ export function useAuth() {
         }
     }, [currentUser]);
 
-    // On mount: if token exists but no cached user, restore from API (fallback)
     useEffect(() => {
         const token = sessionStorage.getItem('token');
         const cached = sessionStorage.getItem('currentUser');
@@ -79,7 +74,6 @@ export function useAuth() {
         }
     }, []);
 
-    // Generate or retrieve session ID for anonymous cart
     useEffect(() => {
         let sessionId = sessionStorage.getItem('cart_session_id');
         if (!sessionId) {

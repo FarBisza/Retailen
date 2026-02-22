@@ -61,7 +61,6 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
             });
     }, []);
 
-    // Robust category matching
     const isFurniture = (p: Product) =>
         ['furniture', 'sofa', 'table', 'chair', 'ottoman', 'dresser', 'sideboard', 'cabinet', 'bookcase', 'bistro']
             .some(k => p.category?.toLowerCase().includes(k));
@@ -81,7 +80,6 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
     return (
         <div className="animate-in fade-in duration-700">
 
-            {/* Hero Slider */}
             <section className="relative h-[85vh] w-full overflow-hidden bg-[#0c121e]">
                 {slides.map((slide, index) => (
                     <div
@@ -118,7 +116,6 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                     </div>
                 ))}
 
-                {/* Slider Controls */}
                 <div className="absolute bottom-10 right-10 flex items-center gap-4 z-20">
                     <button
                         onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
@@ -143,10 +140,8 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                 </div>
             </section>
 
-            {/* Categories Grid */}
             <section className="max-w-[1400px] mx-auto px-6 py-32">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {/* Furniture */}
                     <div className="group relative aspect-[4/5] overflow-hidden bg-gray-100 rounded-sm cursor-pointer" onClick={onShopNow}>
                         <img src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110" alt="Furniture" />
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-black/40 transition-all duration-500" />
@@ -157,7 +152,6 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                         </div>
                     </div>
 
-                    {/* Tech */}
                     <div className="group relative aspect-[4/5] overflow-hidden bg-gray-100 rounded-sm cursor-pointer" onClick={onShopNow}>
                         <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110" alt="Tech" />
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-black/40 transition-all duration-500" />
@@ -168,7 +162,6 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                         </div>
                     </div>
 
-                    {/* Clothing */}
                     <div className="group relative aspect-[4/5] overflow-hidden bg-gray-100 rounded-sm cursor-pointer" onClick={onShopNow}>
                         <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110" alt="Fashion" />
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-black/40 transition-all duration-500" />
@@ -181,7 +174,6 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                 </div>
             </section>
 
-            {/* Curated Mix Section */}
             <section className="bg-gray-50/50 py-32 border-y border-gray-100">
                 <div className="max-w-[1400px] mx-auto px-6">
                     <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
@@ -202,7 +194,6 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                 </div>
             </section>
 
-            {/* Philosophy Section */}
             <section className="max-w-[1400px] mx-auto px-6 py-40">
                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 mb-12 leading-[0.9]">

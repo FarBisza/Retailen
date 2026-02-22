@@ -69,7 +69,6 @@ const UserSidebar: React.FC<UserSidebarProps> = ({
             <div
                 className={`fixed top-0 right-0 h-full w-full max-w-[400px] bg-white z-[120] shadow-2xl transition-transform duration-500 transform flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
             >
-                {/* Header */}
                 <div className="px-8 pt-12 pb-8 border-b border-gray-50">
                     <div className="flex items-center justify-between mb-10">
                         <h2 className="text-2xl font-black tracking-tighter">Account Center</h2>
@@ -112,7 +111,6 @@ const UserSidebar: React.FC<UserSidebarProps> = ({
                     )}
                 </div>
 
-                {/* Dynamic Content */}
                 <div className="flex-1 overflow-y-auto pt-8 pb-10 custom-scrollbar">
                     {currentUser ? (
                         <>

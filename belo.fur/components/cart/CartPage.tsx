@@ -19,10 +19,8 @@ const CartPage: React.FC<CartPageProps> = ({ items, onContinueShopping, onChecko
             <h1 className="text-2xl font-bold mb-8 text-slate-900">Your Cart ({items.length} items)</h1>
 
             <div className="flex flex-col lg:flex-row gap-12">
-                {/* Cart Items Table */}
                 <div className="flex-[2]">
                     <div className="w-full">
-                        {/* Table Header */}
                         <div className="grid grid-cols-12 border-b border-gray-200 pb-4 text-[13px] font-semibold text-slate-800 uppercase tracking-wider">
                             <div className="col-span-6">Product</div>
                             <div className="col-span-2 text-center">Unit Price</div>
@@ -30,7 +28,6 @@ const CartPage: React.FC<CartPageProps> = ({ items, onContinueShopping, onChecko
                             <div className="col-span-2 text-right">Subtotal</div>
                         </div>
 
-                        {/* Items */}
                         <div className="divide-y divide-gray-100">
                             {items.map((item) => (
                                 <div key={item.id} className="grid grid-cols-12 py-6 items-center">
@@ -76,7 +73,6 @@ const CartPage: React.FC<CartPageProps> = ({ items, onContinueShopping, onChecko
                     </div>
                 </div>
 
-                {/* Cart Summary */}
                 <div className="flex-1">
                     <div className="bg-white lg:border-l lg:border-gray-100 lg:pl-10">
                         <h2 className="text-xl font-bold mb-8 text-slate-900">Cart Summary</h2>

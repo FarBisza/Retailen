@@ -19,7 +19,6 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ onNavigateToLogin
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
-        // Parse query params from URL
         const params = new URLSearchParams(window.location.search);
         const tokenParam = params.get('token');
         const emailParam = params.get('email');
@@ -50,7 +49,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ onNavigateToLogin
                 token,
                 email,
                 newPassword,
-                confirmPassword // API expects this
+                confirmPassword
             });
             setSuccess(true);
         } catch (err: any) {
@@ -128,7 +127,6 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ onNavigateToLogin
                     )}
 
                     <form className="space-y-6" onSubmit={handleSubmit}>
-                        {/* New Password */}
                         <div className="space-y-1.5">
                             <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">
                                 New Password
@@ -157,7 +155,6 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ onNavigateToLogin
                             </div>
                         </div>
 
-                        {/* Confirm Password */}
                         <div className="space-y-1.5">
                             <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-1">
                                 Confirm Password

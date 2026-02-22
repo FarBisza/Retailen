@@ -9,7 +9,6 @@ export function useProducts() {
     const [categoriesLoading, setCategoriesLoading] = useState(true);
     const [availableColors, setAvailableColors] = useState<string[]>([]);
 
-    // Load products, categories, and colors from backend with retry
     useEffect(() => {
         let isMounted = true;
         let retryTimeout: NodeJS.Timeout;
@@ -65,7 +64,6 @@ export function useProducts() {
         };
     }, []);
 
-    // Re-fetch products when admin panel makes CRUD changes
     useEffect(() => {
         const handleProductChange = async () => {
             try {

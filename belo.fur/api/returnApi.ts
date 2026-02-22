@@ -1,7 +1,3 @@
-// ============================================================
-// returnApi.ts — Returns operations (English)
-// ============================================================
-
 import { API_URL, getHeaders } from './authApi';
 import type { PagedResponse } from './adminApi';
 
@@ -39,7 +35,6 @@ export interface UpdateReturnStatusRequest {
     adminNote?: string;
 }
 
-// Status enum for UI
 export const RETURN_STATUS = {
     1: { name: 'Pending', color: 'yellow' },
     2: { name: 'Approved', color: 'green' },
@@ -48,9 +43,6 @@ export const RETURN_STATUS = {
     5: { name: 'Cancelled', color: 'gray' },
 } as const;
 
-/**
- * Get all returns (Staff/Admin only)
- */
 export const getAllReturns = async (): Promise<ReturnDTO[]> => {
     try {
         const res = await fetch(`${API_URL}/return`, {
@@ -72,9 +64,6 @@ export const getAllReturnsPaged = async (skip: number, take: number): Promise<Pa
     return res.json();
 };
 
-/**
- * Get returns by status
- */
 export const getReturnsByStatus = async (
     statusId: number
 ): Promise<ReturnDTO[]> => {
@@ -90,9 +79,6 @@ export const getReturnsByStatus = async (
     }
 };
 
-/**
- * Get my returns (authenticated user)
- */
 export const getMyReturns = async (): Promise<ReturnDTO[]> => {
     try {
         const res = await fetch(`${API_URL}/return/my`, {
@@ -106,9 +92,6 @@ export const getMyReturns = async (): Promise<ReturnDTO[]> => {
     }
 };
 
-/**
- * Create a return request
- */
 export const createReturn = async (
     data: CreateReturnRequest
 ): Promise<ReturnDTO | null> => {
@@ -129,9 +112,6 @@ export const createReturn = async (
     }
 };
 
-/**
- * Update return status (Staff/Admin)
- */
 export const updateReturnStatus = async (
     id: number,
     data: UpdateReturnStatusRequest
@@ -153,9 +133,6 @@ export const updateReturnStatus = async (
     }
 };
 
-/**
- * Cancel my return request
- */
 export const cancelReturn = async (id: number): Promise<boolean> => {
     try {
         const res = await fetch(`${API_URL}/return/${id}/cancel`, {

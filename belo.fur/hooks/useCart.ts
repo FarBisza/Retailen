@@ -4,7 +4,6 @@ import { CartItem, Product, UserProfile } from '../api/types';
 export function useCart(currentUser: UserProfile | null) {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-    // Fetch Cart from Backend on load and when user changes (login/logout)
     useEffect(() => {
         const loadCart = async () => {
             try {
@@ -54,7 +53,7 @@ export function useCart(currentUser: UserProfile | null) {
                 }];
             });
 
-            return true; // signal success so caller can open drawer
+            return true;
         } catch (error) {
             console.error('Failed to add to cart:', error);
             alert('Failed to add item to cart. Please try again.');
@@ -69,7 +68,6 @@ export function useCart(currentUser: UserProfile | null) {
     const updateQuantity = async (id: string, quantity: number) => {
         if (quantity < 1) return;
 
-        // Optimistic Update
         setCartItems(prev => prev.map(item =>
             item.id === id ? { ...item, quantity } : item
         ));

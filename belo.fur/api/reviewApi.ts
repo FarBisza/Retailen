@@ -1,7 +1,3 @@
-// ============================================================
-// reviewApi.ts — Product review operations (English)
-// ============================================================
-
 import { Review } from './types';
 
 export const submitReview = async (

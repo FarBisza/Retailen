@@ -1,7 +1,3 @@
-// ============================================================
-// attributeApi.ts — EAV Attribute operations (English)
-// ============================================================
-
 import { API_URL, getHeaders } from './authApi';
 import {
     Attribute,
@@ -12,7 +8,6 @@ import {
     DictionaryItem
 } from './types';
 
-// Get all attributes
 export const getAllAttributes = async (): Promise<Attribute[]> => {
     const res = await fetch(`${API_URL}/attribute`, {
         headers: getHeaders(),
@@ -20,10 +15,6 @@ export const getAllAttributes = async (): Promise<Attribute[]> => {
     if (!res.ok) throw new Error('Failed to fetch attributes');
     return res.json();
 };
-
-// ============================================================
-// Dictionary Tables
-// ============================================================
 
 export const getColors = async (): Promise<DictionaryItem[]> => {
     const res = await fetch(`${API_URL}/attribute/colors`, {
@@ -49,7 +40,6 @@ export const getSizes = async (): Promise<DictionaryItem[]> => {
     return res.json();
 };
 
-// Get attribute by ID
 export const getAttributeById = async (id: number): Promise<Attribute> => {
     const res = await fetch(`${API_URL}/attribute/${id}`, {
         headers: getHeaders(),
@@ -58,7 +48,6 @@ export const getAttributeById = async (id: number): Promise<Attribute> => {
     return res.json();
 };
 
-// Create new attribute
 export const createAttribute = async (
     data: CreateAttributeDTO
 ): Promise<Attribute> => {
@@ -71,7 +60,6 @@ export const createAttribute = async (
     return res.json();
 };
 
-// Get attributes for a category
 export const getAttributesByCategory = async (
     categoryId: number
 ): Promise<CategoryAttribute[]> => {
@@ -82,7 +70,6 @@ export const getAttributesByCategory = async (
     return res.json();
 };
 
-// Get attributes for a product
 export const getProductAttributes = async (
     productId: number
 ): Promise<ProductAttributeValue[]> => {
@@ -93,7 +80,6 @@ export const getProductAttributes = async (
     return res.json();
 };
 
-// Set attribute for a product
 export const setProductAttribute = async (
     productId: number,
     data: SetProductAttributeDTO
@@ -106,7 +92,6 @@ export const setProductAttribute = async (
     if (!res.ok) throw new Error('Failed to set product attribute');
 };
 
-// Remove attribute from product
 export const removeProductAttribute = async (
     productId: number,
     attributeId: number

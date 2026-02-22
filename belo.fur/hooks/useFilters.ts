@@ -13,14 +13,12 @@ export function useFilters(products: Product[]) {
     const [inStockOnly, setInStockOnly] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Reset page to 1 when filters change
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery, selectedCategory, priceRange, selectedColors, selectedStyles, inStockOnly]);
 
     const filteredProducts = useMemo(() => {
         return products.filter(product => {
-            // When searching, only filter by name — skip all sidebar filters
             if (searchQuery) {
                 return product.name.toLowerCase().includes(searchQuery.toLowerCase());
             }

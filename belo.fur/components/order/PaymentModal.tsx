@@ -13,7 +13,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(1);
     const [paymentLoading, setPaymentLoading] = useState(false);
 
-    // Payment Form Fields
     const [cardNumber, setCardNumber] = useState('');
     const [cardExpiry, setCardExpiry] = useState('');
     const [cardCvc, setCardCvc] = useState('');
@@ -27,7 +26,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
         return d.length >= 3 ? d.slice(0, 2) + '/' + d.slice(2) : d;
     };
 
-    // Clear individual field errors on change
     const clearError = (field: string) => {
         setPaymentErrors(prev => {
             const next = { ...prev };
@@ -118,7 +116,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
                     </p>
                 </div>
 
-                {/* Order Summary */}
                 <div className="bg-gray-50 rounded-xl p-4 mb-6">
                     <div className="flex justify-between items-center mb-3">
                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
@@ -133,7 +130,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
                     </div>
                 </div>
 
-                {/* Saved Address */}
                 {order.shippingAddress && (
                     <div className="border border-gray-100 rounded-xl p-4 mb-6">
                         <div className="flex items-center gap-2 mb-2">
@@ -156,7 +152,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
                     </div>
                 )}
 
-                {/* Payment Method Selection */}
                 <div className="mb-6">
                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
                         Select Payment Method
@@ -178,7 +173,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
                     </div>
                 </div>
 
-                {/* Credit Card Input Fields */}
                 {selectedPaymentMethod === 1 && (
                     <div className="mb-6 p-4 bg-gray-50 rounded-xl space-y-3">
                         <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
@@ -222,7 +216,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
                     </div>
                 )}
 
-                {/* Apple Pay */}
                 {selectedPaymentMethod === 3 && (
                     <div className="mb-6 p-4 bg-gray-50 rounded-xl text-center">
                         <label className="block text-[10px] font-black uppercase tracking-widest text-gray-600 mb-3">
@@ -235,7 +228,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
                     </div>
                 )}
 
-                {/* Bank Transfer Info */}
                 {selectedPaymentMethod === 2 && (
                     <div className="mb-6 p-4 bg-green-50 rounded-xl space-y-3">
                         <label className="block text-[10px] font-black uppercase tracking-widest text-green-600 mb-3">
@@ -259,7 +251,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
                     </div>
                 )}
 
-                {/* PayPal Login */}
                 {selectedPaymentMethod === 4 && (
                     <div className="mb-6 p-4 bg-blue-50 rounded-xl space-y-3">
                         <label className="block text-[10px] font-black uppercase tracking-widest text-blue-600 mb-3">
@@ -291,7 +282,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ order, onClose, onPaymentSu
                     </div>
                 )}
 
-                {/* Submit Button */}
                 <button
                     onClick={handlePaymentSubmit}
                     disabled={paymentLoading}

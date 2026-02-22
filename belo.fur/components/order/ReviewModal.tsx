@@ -63,7 +63,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ order, onClose, onReviewSucce
                     </p>
                 </div>
 
-                {/* Product Selector (multi-item orders) */}
                 {order.items.length > 1 && (
                     <div className="mb-6">
                         <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
@@ -88,7 +87,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ order, onClose, onReviewSucce
                     </div>
                 )}
 
-                {/* Selected Product Display */}
                 {selectedItemForReview && (
                     <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl mb-6">
                         <div className="w-16 h-16 bg-white rounded-lg border border-gray-100 p-2 flex-shrink-0">
@@ -105,7 +103,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ order, onClose, onReviewSucce
                     </div>
                 )}
 
-                {/* Star Rating */}
                 <div className="mb-6">
                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
                         Your Rating
@@ -137,7 +134,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ order, onClose, onReviewSucce
                     </p>
                 </div>
 
-                {/* Comment */}
                 <div className="mb-6">
                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
                         Your Review (Optional)
@@ -151,7 +147,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ order, onClose, onReviewSucce
                     />
                 </div>
 
-                {/* Submit Button */}
                 <button
                     onClick={handleReviewSubmit}
                     disabled={reviewLoading}

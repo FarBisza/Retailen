@@ -44,13 +44,11 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
     const [activeLogisticsTab, setActiveLogisticsTab] = useState<'po' | 'gr'>('po');
     const [totalPoCount, setTotalPoCount] = useState(0);
 
-    // Data loaded internally
     const [purchaseOrders, setPurchaseOrders] = useState<logisticsApi.SupplyOrder[]>([]);
     const [poLoading, setPoLoading] = useState(false);
     const [suppliers, setSuppliers] = useState<logisticsApi.Supplier[]>([]);
     const [warehouses, setWarehouses] = useState<logisticsApi.Warehouse[]>([]);
 
-    // GR State
     const [selectedPo, setSelectedPo] = useState<logisticsApi.SupplyOrder | null>(null);
     const [grItems, setGrItems] = useState<
         { productId: number; quantityReceived: number; quantityDamaged: number }[]
@@ -60,7 +58,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
     const [grComment, setGrComment] = useState('');
     const [grLoading, setGrLoading] = useState(false);
 
-    // Create PO Modal State
     const [showCreatePoModal, setShowCreatePoModal] = useState(false);
     const [createPoData, setCreatePoData] = useState<{
         supplierId: number;
@@ -77,7 +74,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
     });
     const [createPoLoading, setCreatePoLoading] = useState(false);
 
-    // Load POs and suppliers on mount
     useEffect(() => {
         const loadData = async () => {
             setPoLoading(true);
@@ -105,7 +101,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
         loadData();
     }, []);
 
-    // Auto-open Create PO modal when coming from Inventory tab
     useEffect(() => {
         if (initialPoProduct && suppliers.length > 0) {
             setCreatePoData(prev => ({
@@ -118,7 +113,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
         }
     }, [initialPoProduct, suppliers]);
 
-    // Open GR form for specific PO
     const openGrForPo = (po: logisticsApi.SupplyOrder) => {
         setSelectedPo(po);
         setGrItems(
@@ -134,7 +128,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
         setActiveLogisticsTab('gr');
     };
 
-    // Submit Goods Receipt
     const handleGrSubmit = async () => {
         if (!selectedPo) return;
 
@@ -142,7 +135,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
             alert('Quantities cannot be negative');
             return;
         }
-        // Validate: Received ≤ Ordered
         for (let i = 0; i < grItems.length; i++) {
             const ordered = selectedPo.items[i]?.quantityOrdered ?? 0;
             if (grItems[i].quantityReceived > ordered) {
@@ -150,7 +142,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                 return;
             }
         }
-        // Validate: Damaged ≤ Received
         if (grItems.some((i) => i.quantityDamaged > i.quantityReceived)) {
             alert('Damaged quantity cannot exceed Received quantity');
             return;
@@ -184,7 +175,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
             const data = await logisticsApi.getSupplyOrders();
             setPurchaseOrders(data);
 
-            // Refresh product data so stock levels update across the app
             window.dispatchEvent(new Event('product-data-changed'));
 
         } catch (err) {
@@ -195,7 +185,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
         }
     };
 
-    // Handle Create PO submission
     const handleCreatePo = async () => {
         if (!createPoData.supplierId || createPoData.items.length === 0) {
             alert('Please select a supplier and add at least one product.');
@@ -230,7 +219,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
         }
     };
 
-    // Force Confirm (Staff Override)
     const handleForceConfirm = async (po: logisticsApi.SupplyOrder) => {
         if (!confirm('Confirm and Ship this order on behalf of the supplier?')) return;
         try {
@@ -244,7 +232,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
         }
     };
 
-    // Add product to Create PO form
     const addProductToPo = (productId: number) => {
         const prod = products.find((p) => parseInt(p.id) === productId);
         if (!prod) return;
@@ -262,7 +249,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
         }));
     };
 
-    // Remove product from Create PO form
     const removeProductFromPo = (productId: number) => {
         setCreatePoData((prev) => ({
             ...prev,
@@ -294,7 +280,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                     </button>
                 </div>
 
-                {/* PO Sub-Tab */}
                 {activeLogisticsTab === 'po' && (
                     <div className="space-y-8 animate-in slide-in-from-bottom-2">
                         <div className="flex justify-between items-center">
@@ -417,7 +402,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                 </tbody>
                             </table>
                         </div>
-                        {/* Show More / Counter */}
                         {purchaseOrders.length > 0 && (
                             <div className="flex items-center justify-between mt-4 px-2">
                                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -444,7 +428,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                     </div>
                 )}
 
-                {/* GR Sub-Tab */}
                 {activeLogisticsTab === 'gr' && (
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom-2">
                         <div className="lg:col-span-2">
@@ -537,7 +520,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                                                     Math.max(0, parseInt(e.target.value) || 0)
                                                                 );
                                                                 const newItems = [...grItems];
-                                                                // Clamp damaged to new received if needed
                                                                 const clampedDamaged = Math.min(newItems[idx]?.quantityDamaged || 0, val);
                                                                 newItems[idx] = { ...newItems[idx], quantityReceived: val, quantityDamaged: clampedDamaged };
                                                                 setGrItems(newItems);
@@ -684,7 +666,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                 )}
             </div>
 
-            {/* CREATE PO MODAL */}
             {showCreatePoModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                     <div className="bg-white rounded-sm shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -700,7 +681,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                             </button>
                         </div>
                         <div className="p-6 space-y-6">
-                            {/* Supplier Selection */}
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
                                     Supplier
@@ -723,7 +703,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                 </select>
                             </div>
 
-                            {/* Warehouse (Destination) Selection */}
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
                                     Destination Warehouse
@@ -746,7 +725,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                 </select>
                             </div>
 
-                            {/* Expected Date */}
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
                                     Expected Delivery Date
@@ -765,7 +743,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                 />
                             </div>
 
-                            {/* Comment */}
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
                                     Comment (Optional)
@@ -784,7 +761,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                 />
                             </div>
 
-                            {/* Product Selection */}
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
                                     Add Products
@@ -805,7 +781,6 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                 </select>
                             </div>
 
-                            {/* Selected Products */}
                             <div>
                                 <label className="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">
                                     Order Items ({createPoData.items.length})

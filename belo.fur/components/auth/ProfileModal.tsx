@@ -14,7 +14,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
 
-    // Editable fields
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phone, setPhone] = useState('');
@@ -86,7 +85,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                     className="bg-white w-full max-w-md mx-4 shadow-2xl pointer-events-auto animate-in zoom-in-95 duration-300"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    {/* Header */}
                     <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between">
                         <h2 className="text-sm font-black text-slate-900 uppercase tracking-widest">
                             My Profile
@@ -108,7 +106,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                         </div>
                     ) : profile ? (
                         <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
-                            {/* Avatar + Name */}
                             <div className="px-8 py-6 flex items-center gap-5 bg-gray-50/50">
                                 <div className="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center text-white shadow-lg flex-shrink-0">
                                     <span className="text-xl font-black">{initials}</span>
@@ -129,9 +126,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                 </div>
                             </div>
 
-                            {/* Fields */}
                             <div className="px-8 py-6 space-y-5">
-                                {/* Email — read-only */}
                                 <div>
                                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5 mb-2">
                                         <Mail size={10} /> Email
@@ -143,7 +138,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                     />
                                 </div>
 
-                                {/* Name fields */}
                                 <div className="flex gap-3">
                                     <div className="flex-1">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5 mb-2">
@@ -175,7 +169,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                     </div>
                                 </div>
 
-                                {/* Phone */}
                                 <div>
                                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5 mb-2">
                                         <Phone size={10} /> Phone
@@ -192,7 +185,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                     />
                                 </div>
 
-                                {/* Address */}
                                 <div>
                                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5 mb-2">
                                         <MapPin size={10} /> Street Address
@@ -209,7 +201,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                     />
                                 </div>
 
-                                {/* City + Zip */}
                                 <div className="flex gap-3">
                                     <div className="flex-[2]">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block">
@@ -243,7 +234,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                     </div>
                                 </div>
 
-                                {/* Country */}
                                 <div>
                                     <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block">
                                         Country
@@ -267,7 +257,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                         </div>
                     )}
 
-                    {/* Action Bar */}
                     {profile && !loading && (
                         <div className="px-8 py-5 border-t border-gray-100 flex gap-3">
                             {editing ? (
@@ -275,7 +264,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                                     <button
                                         onClick={() => {
                                             setEditing(false);
-                                            // Reset to original values
                                             setFirstName(profile.firstName || '');
                                             setLastName(profile.lastName || '');
                                             setPhone(profile.phone || '');

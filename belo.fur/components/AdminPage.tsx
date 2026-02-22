@@ -1,4 +1,3 @@
-// Zmienione EN
 import React, { useState, useEffect } from 'react';
 import {
     Package, Layers, Users, Plus, Search,
@@ -26,21 +25,17 @@ import { AdminFulfillmentTab } from './management/tabs/FulfillmentTab';
 const AdminPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>('products');
 
-    // Products from API (shared: ProductsTab, Inventory tab, LogisticsTab)
     const [products, setProducts] = useState<Product[]>([]);
     const [productsLoading, setProductsLoading] = useState(false);
 
-    // Users State (for AdminUsersTab + User Edit Modal)
     const [users, setUsers] = useState<User[]>([]);
     const [usersLoading, setUsersLoading] = useState(false);
 
-    // User Edit Modal State
     const [showUserModal, setShowUserModal] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [userSaving, setUserSaving] = useState(false);
     const originalUserRef = React.useRef<User | null>(null);
 
-    // Create Attribute Modal State
     const [showCreateAttributeModal, setShowCreateAttributeModal] = useState(false);
     const [createAttributeData, setCreateAttributeData] = useState({
         name: '',
@@ -49,7 +44,6 @@ const AdminPage: React.FC = () => {
     });
     const [createAttributeLoading, setCreateAttributeLoading] = useState(false);
 
-    // Categories State (inline tab)
     const [categoriesList, setCategoriesList] = useState<CategoryFromApi[]>([]);
     const [categoriesLoading, setCategoriesLoading] = useState(false);
     const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
@@ -57,7 +51,6 @@ const AdminPage: React.FC = () => {
     const [newCategoryParentId, setNewCategoryParentId] = useState<number | null>(null);
     const [createCategoryLoading, setCreateCategoryLoading] = useState(false);
 
-    // Time Simulation State
     const [simEnabled, setSimEnabled] = useState(false);
     const [simDays, setSimDays] = useState(0);
     const simIntervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
@@ -78,7 +71,6 @@ const AdminPage: React.FC = () => {
         };
     }, [simEnabled]);
 
-    // Load products on mount
     const loadProducts = async () => {
         setProductsLoading(true);
         try {
@@ -95,7 +87,6 @@ const AdminPage: React.FC = () => {
         loadProducts();
     }, []);
 
-    // Load users when customers/employees tab is active
     useEffect(() => {
         if (activeTab === 'customers' || activeTab === 'employees') {
             const loadUsers = async () => {
@@ -129,11 +120,7 @@ const AdminPage: React.FC = () => {
         }
     }, [activeTab]);
 
-    // ================================================================
-    // HANDLERS
-    // ================================================================
 
-    // Handle Create Attribute
     const handleCreateAttribute = async () => {
         if (!createAttributeData.name) return;
         setCreateAttributeLoading(true);
@@ -149,7 +136,6 @@ const AdminPage: React.FC = () => {
         }
     };
 
-    // Handle User Save
     const handleSaveUser = async (updatedUser: User) => {
         const original = originalUserRef.current;
         if (!original) return;
@@ -157,13 +143,11 @@ const AdminPage: React.FC = () => {
         try {
             const { updateUser, setUserRole, setUserActive, getAllUsers } = await import('../api/adminApi');
 
-            // Always update name fields
             await updateUser(updatedUser.id, {
                 firstName: updatedUser.firstName,
                 lastName: updatedUser.lastName,
             });
 
-            // Compare against the ORIGINAL user (before edits), not current state
             if (updatedUser.role !== original.role) {
                 const roleIdMap: Record<string, number> = { 'Admin': 1, 'Customer': 2, 'Employee': 3, 'Supplier': 4 };
                 const newRoleId = roleIdMap[updatedUser.role];
@@ -191,7 +175,6 @@ const AdminPage: React.FC = () => {
         }
     };
 
-    // Open Create PO with pre-selected product (from Inventory tab)
     const openCreatePoWithProduct = (productId: number, requiredQty: number) => {
         setInitialPoProduct({ productId, quantity: requiredQty });
         setActiveTab('logistics');
@@ -199,7 +182,6 @@ const AdminPage: React.FC = () => {
 
     return (
         <div className="max-w-[1400px] mx-auto px-6 py-10">
-            {/* HEADER */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-gray-100 pb-10">
                 <div>
                     <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">
@@ -234,7 +216,6 @@ const AdminPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* NAVIGATION TABS */}
             <div className="flex flex-wrap gap-1 border-b border-gray-100 mb-10">
                 {[
                     { id: 'products', label: 'Products', icon: Package },
@@ -263,12 +244,6 @@ const AdminPage: React.FC = () => {
             </div>
 
             <div className="animate-in fade-in duration-500">
-                {/* ============================================ */}
-                {/* PRODUCTS TAB */}
-                {/* ============================================ */}
-                {/* ============================================ */}
-                {/* PRODUCTS TAB */}
-                {/* ============================================ */}
                 {activeTab === 'products' && (
                     <AdminProductsTab
                         products={products}
@@ -277,9 +252,6 @@ const AdminPage: React.FC = () => {
                     />
                 )}
 
-                {/* ============================================ */}
-                {/* CATEGORIES TAB */}
-                {/* ============================================ */}
                 {activeTab === 'categories' && (
                     <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
@@ -333,9 +305,6 @@ const AdminPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* ============================================ */}
-                {/* CUSTOMERS + EMPLOYEES TABS */}
-                {/* ============================================ */}
                 {(activeTab === 'customers' || activeTab === 'employees') && (
                     <AdminUsersTab
                         users={users}
@@ -344,16 +313,13 @@ const AdminPage: React.FC = () => {
                         activeTab={activeTab as 'customers' | 'employees'}
                         onRefresh={(data) => setUsers(data)}
                         onEditUser={(u) => {
-                            originalUserRef.current = { ...u }; // Save original before editing
+                            originalUserRef.current = { ...u };
                             setEditingUser({ ...u });
                             setShowUserModal(true);
                         }}
                     />
                 )}
 
-                {/* ============================================ */}
-                {/* ASSET STOCK TAB */}
-                {/* ============================================ */}
                 {activeTab === 'inventory' && (
                     <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
                         <div className="p-6 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
@@ -471,9 +437,6 @@ const AdminPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* ============================================ */}
-                {/* LOGISTICS HUB (PO / GR) */}
-                {/* ============================================ */}
                 {activeTab === 'logistics' && (
                     <AdminLogisticsTab
                         products={products}
@@ -484,37 +447,22 @@ const AdminPage: React.FC = () => {
                     />
                 )}
 
-                {/* ============================================ */}
-                {/* RETURNS TAB */}
-                {/* ============================================ */}
                 {activeTab === 'returns' && <AdminReturnsTab />}
 
-                {/* ============================================ */}
-                {/* BI ANALYTICS */}
-                {/* ============================================ */}
                 {activeTab === 'analytics' && (
                     <AdminAnalyticsTab />
                 )}
 
-                {/* ============================================ */}
-                {/* ORDER FULFILLMENT TAB */}
-                {/* ============================================ */}
                 {activeTab === 'fulfillment' && (
                     <AdminFulfillmentTab simEnabled={simEnabled} simDays={simDays} />
                 )}
 
-                {/* ============================================ */}
-                {/* ATTRIBUTES TAB */}
-                {/* ============================================ */}
                 {activeTab === 'attributes' && (
                     <AdminAttributesTab onCreateAttribute={() => setShowCreateAttributeModal(true)} />
                 )}
 
             </div>
 
-            {/* ============================================ */}
-            {/* USER EDIT MODAL */}
-            {/* ============================================ */}
             {showUserModal && editingUser && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm">
                     <div className="bg-white p-8 w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
@@ -610,9 +558,6 @@ const AdminPage: React.FC = () => {
                 </div>
             )}
 
-            {/* ============================================ */}
-            {/* CREATE ATTRIBUTE MODAL */}
-            {/* ============================================ */}
             {showCreateAttributeModal && (
                 <div className="fixed inset-0 z-[200] bg-black/30 flex items-center justify-center">
                     <div className="bg-white w-full max-w-md p-8 shadow-xl">
@@ -670,9 +615,6 @@ const AdminPage: React.FC = () => {
                 </div>
             )}
 
-            {/* ============================================ */}
-            {/* CREATE CATEGORY MODAL */}
-            {/* ============================================ */}
             {showCreateCategoryModal && (
                 <div className="fixed inset-0 z-[200] bg-black/30 flex items-center justify-center">
                     <div className="bg-white w-full max-w-md p-8 shadow-xl">

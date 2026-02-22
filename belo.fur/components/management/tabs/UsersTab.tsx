@@ -67,7 +67,6 @@ export const AdminUsersTab: React.FC<AdminUsersTabProps> = ({
     const customers = users.filter(u => u.role === 'Customer');
     const staff = users.filter(u => u.role !== 'Customer');
 
-    // ─── CUSTOMERS VIEW ────────────────────────────────────────
     if (activeTab === 'customers') {
         return (
             <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
@@ -162,7 +161,6 @@ export const AdminUsersTab: React.FC<AdminUsersTabProps> = ({
                         )}
                     </tbody>
                 </table>
-                {/* Show More / Counter */}
                 {customers.length > 0 && (
                     <div className="flex items-center justify-between px-8 py-3 border-t border-gray-50">
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -182,7 +180,6 @@ export const AdminUsersTab: React.FC<AdminUsersTabProps> = ({
         );
     }
 
-    // ─── EMPLOYEES VIEW ────────────────────────────────────────
     return (
         <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">

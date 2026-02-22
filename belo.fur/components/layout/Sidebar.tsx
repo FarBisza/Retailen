@@ -56,12 +56,10 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  // Use availableColors from API if present, otherwise default to all in COLOR_MAP
   const activeColorNames = availableColors.length > 0
     ? availableColors
     : COLOR_MAP.map(c => c.name);
 
-  // Filter COLOR_MAP to only include available colors matching the Curated Display List
   const colors = COLOR_MAP.filter(c =>
     activeColorNames.includes(c.name) && DISPLAY_COLORS.includes(c.name)
   );
@@ -75,7 +73,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     setInStockOnly(false);
   };
 
-  // Grouping categories dynamically based on category names
   const furnitureCats = categories.filter(c =>
     c.includes('Furniture') || c.includes('Sofa') || c.includes('Table') ||
     c.includes('Ottoman') || c.includes('Dresser') || c.includes('Sideboard') ||
@@ -131,7 +128,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Active Tags Section */}
       {hasFilters && (
         <div className="mb-10 animate-in fade-in slide-in-from-top-2 duration-300">
           <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Active Filters</h3>
@@ -165,7 +161,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
-      {/* Categories Grouped */}
       <div className="mb-12">
         <h3 className="text-sm font-black mb-6 border-b border-gray-50 pb-2">Collections</h3>
         <CategoryGroup title="Furniture" icon={Sofa} items={furnitureCats} colorClass="text-amber-600" />
@@ -173,7 +168,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         <CategoryGroup title="Fashion" icon={Shirt} items={apparelCats} colorClass="text-slate-500" />
       </div>
 
-      {/* Price Range */}
       <div className="mb-12">
         <h3 className="text-sm font-black mb-6">Price Range</h3>
         <div className="space-y-5">
@@ -205,7 +199,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Colors */}
       <div className="mb-12">
         <h3 className="text-sm font-black mb-5">Palette</h3>
         <div className="flex flex-wrap gap-2.5">
@@ -227,7 +220,6 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      {/* Styles */}
       <div className="mb-12">
         <h3 className="text-sm font-black mb-5">Vibe & Style</h3>
         <div className="grid grid-cols-2 gap-2">
@@ -250,7 +242,6 @@ const Sidebar: React.FC<SidebarProps> = ({
 
 
 
-      {/* Availability Toggle */}
       <div
         onClick={() => setInStockOnly(!inStockOnly)}
         className="flex items-center justify-between p-4 bg-gray-50 rounded-sm cursor-pointer hover:bg-gray-100 transition-colors group"

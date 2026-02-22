@@ -1,7 +1,3 @@
-// ============================================================
-// categoryApi.ts — Category operations (English)
-// ============================================================
-
 import { API_URL, getHeaders } from './authApi';
 
 export interface CategoryFromApi {
@@ -10,9 +6,6 @@ export interface CategoryFromApi {
     name: string;
 }
 
-/**
- * Fetches all categories from the backend API
- */
 export const fetchCategories = async (): Promise<CategoryFromApi[]> => {
     const res = await fetch(`${API_URL}/category`, {
         headers: getHeaders(),
@@ -24,9 +17,6 @@ export const fetchCategories = async (): Promise<CategoryFromApi[]> => {
     return res.json();
 };
 
-/**
- * Fetches a single category by ID
- */
 export const fetchCategoryById = async (
     id: number
 ): Promise<CategoryFromApi | null> => {
@@ -40,9 +30,6 @@ export const fetchCategoryById = async (
     return res.json();
 };
 
-/**
- * Creates a new category
- */
 export const createCategory = async (name: string, parentId?: number | null): Promise<CategoryFromApi> => {
     const res = await fetch(`${API_URL}/category`, {
         method: 'POST',

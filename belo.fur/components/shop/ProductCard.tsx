@@ -30,21 +30,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProdu
           className={`w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 mix-blend-multiply opacity-90 ${outOfStock ? 'grayscale' : ''}`}
         />
 
-        {/* Out of Stock Badge */}
         {outOfStock && (
           <div className="absolute top-4 left-4 bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm z-10">
             Out of Stock
           </div>
         )}
 
-        {/* Low Stock Badge */}
         {lowStock && (
           <div className="absolute top-4 left-4 bg-amber-500 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm z-10">
             Only {product.stockLevel} left!
           </div>
         )}
 
-        {/* Wishlist Button */}
         <button
           className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 transition-colors z-10"
           onClick={(e) => e.stopPropagation()}
@@ -52,7 +49,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProdu
           <Heart size={16} strokeWidth={1.5} className="text-gray-700" />
         </button>
 
-        {/* Add to Cart Overlay */}
         {!outOfStock && (
           <button
             onClick={(e) => {
@@ -65,7 +61,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProdu
           </button>
         )}
 
-        {/* Out of stock footer */}
         {outOfStock && (
           <div className="absolute bottom-0 left-0 right-0 bg-gray-400 py-3 text-center">
             <span className="text-white text-xs font-semibold tracking-wide uppercase">Unavailable</span>

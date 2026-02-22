@@ -1,7 +1,3 @@
-// ============================================================
-// cartApi.ts — Cart operations (English)
-// ============================================================
-
 import { API_URL, getHeaders } from './authApi';
 
 export const fetchCart = async () => {

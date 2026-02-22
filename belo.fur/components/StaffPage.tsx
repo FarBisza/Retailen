@@ -1,4 +1,3 @@
-// StaffPage — same tabs as AdminPage, but Customers/Employees are read-only (isAdmin=false, no user-edit modal)
 import React, { useState, useEffect } from 'react';
 import {
     Package, Layers, Users, Plus, Search,
@@ -24,15 +23,12 @@ import { AdminFulfillmentTab } from './management/tabs/FulfillmentTab';
 const StaffPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>('products');
 
-    // Products from API (shared: ProductsTab, Inventory tab, LogisticsTab)
     const [products, setProducts] = useState<Product[]>([]);
     const [productsLoading, setProductsLoading] = useState(false);
 
-    // Users State (read-only for staff)
     const [users, setUsers] = useState<User[]>([]);
     const [usersLoading, setUsersLoading] = useState(false);
 
-    // Create Attribute Modal State
     const [showCreateAttributeModal, setShowCreateAttributeModal] = useState(false);
     const [createAttributeData, setCreateAttributeData] = useState({
         name: '',
@@ -41,7 +37,6 @@ const StaffPage: React.FC = () => {
     });
     const [createAttributeLoading, setCreateAttributeLoading] = useState(false);
 
-    // Categories State (inline tab)
     const [categoriesList, setCategoriesList] = useState<CategoryFromApi[]>([]);
     const [categoriesLoading, setCategoriesLoading] = useState(false);
     const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
@@ -49,7 +44,6 @@ const StaffPage: React.FC = () => {
     const [newCategoryParentId, setNewCategoryParentId] = useState<number | null>(null);
     const [createCategoryLoading, setCreateCategoryLoading] = useState(false);
 
-    // Time Simulation State
     const [simEnabled, setSimEnabled] = useState(false);
     const [simDays, setSimDays] = useState(0);
     const simIntervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
@@ -70,7 +64,6 @@ const StaffPage: React.FC = () => {
         };
     }, [simEnabled]);
 
-    // Load products on mount
     const loadProducts = async () => {
         setProductsLoading(true);
         try {
@@ -87,7 +80,6 @@ const StaffPage: React.FC = () => {
         loadProducts();
     }, []);
 
-    // Load users when customers/employees tab is active
     useEffect(() => {
         if (activeTab === 'customers' || activeTab === 'employees') {
             const loadUsers = async () => {
@@ -121,7 +113,6 @@ const StaffPage: React.FC = () => {
         }
     }, [activeTab]);
 
-    // Handle Create Attribute
     const handleCreateAttribute = async () => {
         if (!createAttributeData.name) return;
         setCreateAttributeLoading(true);
@@ -137,7 +128,6 @@ const StaffPage: React.FC = () => {
         }
     };
 
-    // Open Create PO with pre-selected product (from Inventory tab)
     const openCreatePoWithProduct = (productId: number, requiredQty: number) => {
         setInitialPoProduct({ productId, quantity: requiredQty });
         setActiveTab('logistics');
@@ -145,7 +135,6 @@ const StaffPage: React.FC = () => {
 
     return (
         <div className="max-w-[1400px] mx-auto px-6 py-10">
-            {/* HEADER */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-gray-100 pb-10">
                 <div>
                     <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">
@@ -180,7 +169,6 @@ const StaffPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* NAVIGATION TABS */}
             <div className="flex flex-wrap gap-1 border-b border-gray-100 mb-10">
                 {[
                     { id: 'products', label: 'Products', icon: Package },
@@ -209,7 +197,6 @@ const StaffPage: React.FC = () => {
             </div>
 
             <div className="animate-in fade-in duration-500">
-                {/* PRODUCTS TAB */}
                 {activeTab === 'products' && (
                     <AdminProductsTab
                         products={products}
@@ -218,7 +205,6 @@ const StaffPage: React.FC = () => {
                     />
                 )}
 
-                {/* CATEGORIES TAB */}
                 {activeTab === 'categories' && (
                     <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
@@ -272,7 +258,6 @@ const StaffPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* CUSTOMERS + EMPLOYEES TABS (read-only: isAdmin=false, no onEditUser) */}
                 {(activeTab === 'customers' || activeTab === 'employees') && (
                     <AdminUsersTab
                         users={users}
@@ -284,7 +269,6 @@ const StaffPage: React.FC = () => {
                     />
                 )}
 
-                {/* ASSET STOCK TAB */}
                 {activeTab === 'inventory' && (
                     <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
                         <div className="p-6 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
@@ -402,7 +386,6 @@ const StaffPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* LOGISTICS HUB */}
                 {activeTab === 'logistics' && (
                     <AdminLogisticsTab
                         products={products}
@@ -413,27 +396,22 @@ const StaffPage: React.FC = () => {
                     />
                 )}
 
-                {/* RETURNS TAB */}
                 {activeTab === 'returns' && <AdminReturnsTab />}
 
-                {/* BI ANALYTICS */}
                 {activeTab === 'analytics' && (
                     <AdminAnalyticsTab />
                 )}
 
-                {/* ORDER FULFILLMENT TAB */}
                 {activeTab === 'fulfillment' && (
                     <AdminFulfillmentTab simEnabled={simEnabled} simDays={simDays} />
                 )}
 
-                {/* ATTRIBUTES TAB */}
                 {activeTab === 'attributes' && (
                     <AdminAttributesTab onCreateAttribute={() => setShowCreateAttributeModal(true)} />
                 )}
 
             </div>
 
-            {/* CREATE ATTRIBUTE MODAL */}
             {showCreateAttributeModal && (
                 <div className="fixed inset-0 z-[200] bg-black/30 flex items-center justify-center">
                     <div className="bg-white w-full max-w-md p-8 shadow-xl">
@@ -491,7 +469,6 @@ const StaffPage: React.FC = () => {
                 </div>
             )}
 
-            {/* CREATE CATEGORY MODAL */}
             {showCreateCategoryModal && (
                 <div className="fixed inset-0 z-[200] bg-black/30 flex items-center justify-center">
                     <div className="bg-white w-full max-w-md p-8 shadow-xl">

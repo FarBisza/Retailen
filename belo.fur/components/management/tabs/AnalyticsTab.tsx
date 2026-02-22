@@ -23,7 +23,7 @@ export const AdminAnalyticsTab: React.FC = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [purchaseOrders, setPurchaseOrders] = useState<logisticsApi.SupplyOrder[]>([]);
     const [users, setUsers] = useState<User[]>([]);
-    const [showPowerBI, setShowPowerBI] = useState(true); // Default to Power BI, can toggle back
+    const [showPowerBI, setShowPowerBI] = useState(true);
 
     useEffect(() => {
         const loadData = async () => {
@@ -43,20 +43,17 @@ export const AdminAnalyticsTab: React.FC = () => {
         loadData();
     }, []);
 
-    // Compute real analytics from loaded data
     const inventoryValue = products.reduce((s, p) => s + (p.price || 0) * (p.stockLevel || 0), 0);
-    const activeProducts = products.filter(p => p.isActive).length;
+    const activeProducts = products.filter(p => p.inStock).length;
     const lowStockCount = products.filter(p => (p.stockLevel || 0) <= (p.stockThreshold || 5)).length;
     const totalPOs = purchaseOrders.length;
 
-    // PO status breakdown
     const poStatusCounts: Record<string, number> = {};
     purchaseOrders.forEach(po => {
         const label = po.statusName || 'Unknown';
         poStatusCounts[label] = (poStatusCounts[label] || 0) + 1;
     });
 
-    // User role breakdown
     const userRoleCounts: Record<string, number> = {};
     users.forEach(u => {
         userRoleCounts[u.role] = (userRoleCounts[u.role] || 0) + 1;
@@ -85,7 +82,6 @@ export const AdminAnalyticsTab: React.FC = () => {
                 />
             ) : (
                 <div className="space-y-8">
-                    {/* OLD ANALYTICS CODE PRESERVED BELOW */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                         {[
                             {
@@ -143,7 +139,6 @@ export const AdminAnalyticsTab: React.FC = () => {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {/* PO Status Breakdown */}
                         <div className="bg-white border border-gray-100 p-8 rounded-sm shadow-sm">
                             <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-6">
                                 Purchase Order Status Breakdown
@@ -174,7 +169,6 @@ export const AdminAnalyticsTab: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* User Role Breakdown */}
                         <div className="bg-[#0c121e] text-white p-8 rounded-sm relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-8 opacity-5">
                                 <BarChart3 size={150} />

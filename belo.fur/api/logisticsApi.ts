@@ -3,8 +3,6 @@ import type { PagedResponse } from './adminApi';
 
 const BASE = `${API_URL}/logistics`;
 
-// ===== Types =====
-
 export interface Supplier {
     supplierId: number;
     name: string;
@@ -84,8 +82,6 @@ export interface ShipmentLineDTO {
     quantity: number;
 }
 
-// ===== Request Types =====
-
 export interface CreateSupplierRequest {
     name: string;
     email?: string;
@@ -126,8 +122,6 @@ export interface CreateShipmentRequest {
     }[];
 }
 
-// ===== Suppliers =====
-
 export async function getSuppliers(): Promise<Supplier[]> {
     const res = await fetch(`${BASE}/suppliers`, {
         headers: getHeaders(),
@@ -150,8 +144,6 @@ export async function createSupplier(
     return res.json();
 }
 
-// ===== Warehouses =====
-
 export async function getWarehouses(): Promise<Warehouse[]> {
     const res = await fetch(`${BASE}/warehouses`, {
         headers: getHeaders(),
@@ -160,8 +152,6 @@ export async function getWarehouses(): Promise<Warehouse[]> {
     if (!res.ok) throw new Error('Failed to fetch warehouses');
     return res.json();
 }
-
-// ===== Purchase Orders (Supply Orders) =====
 
 export async function getSupplyOrders(): Promise<SupplyOrder[]> {
     const res = await fetch(`${BASE}/supply-orders`, {
@@ -211,9 +201,7 @@ export async function cancelSupplyOrder(id: number): Promise<void> {
     });
     if (!res.ok) throw new Error('Failed to cancel PO');
 }
-// ===== Supplier Portal =====
 
-// Supplier-specific read endpoints (RequireSupplier policy — validated via JWT role)
 export async function getSupplierSupplyOrders(): Promise<SupplyOrder[]> {
     const res = await fetch(`${BASE}/supplier/supply-orders`, {
         headers: getHeaders(),
@@ -284,8 +272,6 @@ export async function rejectSupplierOrder(
     if (!res.ok) throw new Error('Failed to reject order');
 }
 
-// ===== Goods Receipt (PZ) =====
-
 export async function getGoodsReceipts(): Promise<GoodsReceiptDTO[]> {
     const res = await fetch(`${BASE}/goods-receipts`, {
         headers: getHeaders(),
@@ -308,8 +294,6 @@ export async function createGoodsReceipt(
     if (!res.ok) throw new Error('Failed to create goods receipt');
     return res.json();
 }
-
-// ===== Shipments (WZ / Outbound) =====
 
 export async function getShipments(): Promise<ShipmentDTO[]> {
     const res = await fetch(`${BASE}/shipments`, {
@@ -376,7 +360,6 @@ export async function markDelivered(
     if (!res.ok) throw new Error('Failed to mark delivered');
 }
 
-// ===== Legacy exports for backward compatibility =====
 export const logisticsApi = {
     getSuppliers,
     createSupplier,

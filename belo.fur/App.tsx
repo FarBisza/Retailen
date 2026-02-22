@@ -24,7 +24,6 @@ import ActiveFilters from './components/shop/ActiveFilters';
 import { Product } from './api/types';
 import { X } from 'lucide-react';
 
-// Custom Hooks
 import { useAuth } from './hooks/useAuth';
 import { useCart } from './hooks/useCart';
 import { useProducts } from './hooks/useProducts';
@@ -33,7 +32,6 @@ import { useFilters } from './hooks/useFilters';
 const App: React.FC = () => {
   console.log("App component mounting...");
 
-  // ─── View / UI State ───
   const [currentView, setCurrentView] = useState<'home' | 'shop' | 'cart' | 'checkout' | 'admin' | 'staff' | 'supplier' | 'product-detail' | 'reset-password'>('home');
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
@@ -46,13 +44,11 @@ const App: React.FC = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // ─── Custom Hooks ───
   const { currentUser, setCurrentUser, handleLogin: authLogin, handleLogout: authLogout } = useAuth();
   const { products, productsLoading, categories, categoriesLoading, availableColors } = useProducts();
   const { cartItems, setCartItems, addToCart, removeFromCart, updateQuantity } = useCart(currentUser);
   const filters = useFilters(products);
 
-  // Check for reset password route on mount
   React.useEffect(() => {
     const path = window.location.pathname.replace(/\/+$/, '');
     if (path === '/reset-password') {
@@ -60,7 +56,6 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // ─── Auth Handlers (wrapping hook + UI state) ───
   const handleLogin = (user: any) => {
     authLogin(user);
     setIsAuthOpen(false);
@@ -75,7 +70,6 @@ const App: React.FC = () => {
     if (currentView === 'admin' || currentView === 'staff') setCurrentView('home');
   };
 
-  // ─── Navigation Handlers ───
   const openProductDetail = (product: Product) => {
     setSelectedProduct(product);
     setCurrentView('product-detail');
@@ -94,7 +88,6 @@ const App: React.FC = () => {
     setIsOrderModalOpen(true);
   };
 
-  // ─── Cart Handlers (wrapping hook + UI state) ───
   const handleAddToCart = async (product: Product, quantity: number = 1) => {
     const success = await addToCart(product, quantity);
     if (success) setIsCartDrawerOpen(true);
@@ -157,7 +150,8 @@ const App: React.FC = () => {
         {currentView === 'home' && (
           <HomePage
             onShopNow={() => { setCurrentView('shop'); window.scrollTo(0, 0); }}
-            featuredProducts={products.slice(0, 4)}
+            onAddToCart={handleAddToCart}
+            onProductClick={openProductDetail}
           />
         )}
 

@@ -1,4 +1,3 @@
-// Zmienione EN
 import React, { useState, useEffect } from 'react';
 import {
     Inbox, Truck, Box, CheckCircle2, Clock, History,
@@ -11,14 +10,12 @@ import * as logisticsApi from '../api/logisticsApi';
 const SupplierPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'incoming' | 'fulfillment'>('incoming');
 
-    // API State
     const [orders, setOrders] = useState<logisticsApi.SupplyOrder[]>([]);
     const [shipments, setShipments] = useState<logisticsApi.ShipmentDTO[]>([]);
     const [loading, setLoading] = useState(false);
     const [visibleOrderCount, setVisibleOrderCount] = useState(20);
     const [visibleShipCount, setVisibleShipCount] = useState(20);
 
-    // Time Simulation State
     const [simEnabled, setSimEnabled] = useState(false);
     const [simDays, setSimDays] = useState(0);
     const simIntervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
@@ -38,18 +35,15 @@ const SupplierPage: React.FC = () => {
         };
     }, [simEnabled]);
 
-    // Load all supply orders and shipments
-    // RoleID=4 (Supplier role) can view all POs and manage confirmations.
-    // Supplier table = external companies, not user accounts.
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
             try {
                 const poData = await logisticsApi.getSupplierSupplyOrders();
-                setOrders(poData.sort((a, b) => b.id - a.id));
+                setOrders(poData.sort((a, b) => b.purchaseOrderId - a.purchaseOrderId));
 
                 const shipData = await logisticsApi.getSupplierShipments();
-                setShipments(shipData.sort((a, b) => b.id - a.id));
+                setShipments(shipData.sort((a, b) => b.shipmentId - a.shipmentId));
             } catch (err) {
                 console.error('Failed to load supplier data:', err);
             } finally {
@@ -60,9 +54,9 @@ const SupplierPage: React.FC = () => {
         const silentRefresh = async () => {
             try {
                 const poData = await logisticsApi.getSupplierSupplyOrders();
-                setOrders(poData.sort((a, b) => b.id - a.id));
+                setOrders(poData.sort((a, b) => b.purchaseOrderId - a.purchaseOrderId));
                 const shipData = await logisticsApi.getSupplierShipments();
-                setShipments(shipData.sort((a, b) => b.id - a.id));
+                setShipments(shipData.sort((a, b) => b.shipmentId - a.shipmentId));
             } catch (err) {
                 console.error('Silent refresh failed:', err);
             }
@@ -74,7 +68,6 @@ const SupplierPage: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
-    // Confirm order handler
     const handleConfirmOrder = async (orderId: number, supplierId: number) => {
         try {
             await logisticsApi.confirmSupplierOrder(supplierId, orderId);
@@ -87,7 +80,6 @@ const SupplierPage: React.FC = () => {
         }
     };
 
-    // Reject order handler
     const handleRejectOrder = async (orderId: number, supplierId: number) => {
         const reason = prompt('Please enter rejection reason:');
         if (reason === null) return;
@@ -103,7 +95,6 @@ const SupplierPage: React.FC = () => {
         }
     };
 
-    // Dispatch shipment handler
     const handleDispatch = async (shipmentId: number) => {
         const trackingNumber = `TRK-${Date.now().toString(36).toUpperCase()}`;
         try {
@@ -117,7 +108,6 @@ const SupplierPage: React.FC = () => {
         }
     };
 
-    // Calculate total for order display
     const calculateTotal = (order: logisticsApi.SupplyOrder) => {
         return order.items.reduce(
             (acc, item) => acc + (item.purchasePrice || 0) * item.quantityOrdered,
@@ -125,14 +115,12 @@ const SupplierPage: React.FC = () => {
         );
     };
 
-    // Generate manifest (placeholder)
     const generateManifest = () => {
         alert('Custom manifest generation coming soon!');
     };
 
     return (
         <div className="max-w-[1400px] mx-auto px-6 py-10">
-            {/* HEADER SECTION */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-gray-100 pb-10">
                 <div>
                     <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">
@@ -150,7 +138,6 @@ const SupplierPage: React.FC = () => {
                 </div>
 
                 <div className="flex gap-4 items-center">
-                    {/* Demo Sim Toggle */}
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => setSimEnabled(!simEnabled)}
@@ -184,7 +171,6 @@ const SupplierPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* TAB NAVIGATION */}
             <div className="flex gap-4 border-b border-gray-100 mb-10 overflow-x-auto scrollbar-hide">
                 <button
                     onClick={() => setActiveTab('incoming')}
@@ -207,9 +193,6 @@ const SupplierPage: React.FC = () => {
             </div>
 
             <div className="animate-in fade-in duration-500">
-                {/* ============================================ */}
-                {/* TAB 1: INCOMING POS */}
-                {/* ============================================ */}
                 {activeTab === 'incoming' && (
                     <div className="space-y-8">
                         <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
@@ -388,7 +371,6 @@ const SupplierPage: React.FC = () => {
                                 </tbody>
                             </table>
                         </div>
-                        {/* Show More / Counter */}
                         {orders.length > 0 && (
                             <div className="flex items-center justify-between mt-4 px-2">
                                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -407,15 +389,12 @@ const SupplierPage: React.FC = () => {
                     </div>
                 )}
 
-                {/* ============================================ */}
-                {/* TAB 2: LOGISTICS FULFILLMENT */}
-                {/* ============================================ */}
                 {activeTab === 'fulfillment' && (
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {shipments.slice(0, visibleShipCount).map((ship) => {
-                                const isDispatched = ship.shipmentStatusId === 4; // Delivered
-                                const isShipped = ship.shipmentStatusId === 2 || ship.shipmentStatusId === 3; // Dispatched or InTransit
+                                const isDispatched = ship.shipmentStatusId === 4;
+                                const isShipped = ship.shipmentStatusId === 2 || ship.shipmentStatusId === 3;
                                 const statusLabel =
                                     ship.shipmentStatusId === 1
                                         ? 'Ready to Ship'
@@ -434,7 +413,7 @@ const SupplierPage: React.FC = () => {
 
                                 return (
                                     <div
-                                        key={ship.id}
+                                        key={ship.shipmentId}
                                         className={`bg-white border rounded-sm p-8 shadow-sm flex flex-col transition-all group ${isDispatched || isShipped
                                             ? 'border-green-100 opacity-90'
                                             : 'border-gray-100 hover:border-indigo-500'
@@ -460,7 +439,7 @@ const SupplierPage: React.FC = () => {
                                         </div>
 
                                         <h4 className="text-xs font-black text-slate-900 mb-1 uppercase tracking-tight">
-                                            SHP-{ship.id}
+                                            SHP-{ship.shipmentId}
                                         </h4>
                                         <div className="flex items-center gap-2 mb-8">
                                             <MapPin size={12} className="text-gray-300" />
@@ -496,11 +475,11 @@ const SupplierPage: React.FC = () => {
                                             {isDispatched || isShipped ? (
                                                 <div className="flex items-center justify-center gap-2 py-4 bg-green-50 text-green-700 text-[10px] font-black uppercase tracking-widest rounded-sm border border-green-100">
                                                     <CheckCircle2 size={14} /> Tracking:{' '}
-                                                    {ship.trackingNumber || `BLF-${ship.id}-99`}
+                                                    {ship.trackingNumber || `BLF-${ship.shipmentId}-99`}
                                                 </div>
                                             ) : (
                                                 <button
-                                                    onClick={() => handleDispatch(ship.id)}
+                                                    onClick={() => handleDispatch(ship.shipmentId)}
                                                     className="w-full bg-indigo-600 text-white py-4 text-[9px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all flex items-center justify-center gap-3 shadow-lg shadow-indigo-100"
                                                 >
                                                     <Send size={14} /> Dispatch Inventory Now
@@ -518,7 +497,6 @@ const SupplierPage: React.FC = () => {
                                 );
                             })}
 
-                            {/* GENERATE CUSTOM MANIFEST BUTTON */}
                             <div
                                 onClick={generateManifest}
                                 className="border-2 border-dashed border-gray-100 rounded-sm flex flex-col items-center justify-center p-8 hover:bg-gray-50 transition-all cursor-pointer text-gray-300 hover:text-slate-900 group min-h-[400px]"
@@ -535,7 +513,6 @@ const SupplierPage: React.FC = () => {
                                 </p>
                             </div>
                         </div>
-                        {/* Show More / Counter for shipments */}
                         {shipments.length > 0 && (
                             <div className="flex items-center justify-between mt-4 px-2">
                                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -555,7 +532,6 @@ const SupplierPage: React.FC = () => {
                 )}
             </div>
 
-            {/* FOOTER INFO */}
             <div className="mt-20 pt-10 border-t border-gray-100 flex justify-between items-center">
                 <div className="flex gap-8">
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-300">

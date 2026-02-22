@@ -1,7 +1,3 @@
-// ============================================================
-// adminApi.ts — Admin operations (English)
-// ============================================================
-
 import { API_URL, getHeaders } from './authApi';
 
 export interface PagedResponse<T> {

@@ -1,7 +1,3 @@
-// ============================================================
-// orderApi.ts — Customer order operations (English)
-// ============================================================
-
 import { API_URL, getHeaders } from './authApi';
 
 export interface CheckoutResponse {
@@ -54,7 +50,6 @@ export interface Order {
     hasInvoice?: boolean;
 }
 
-// ... existing code ...
 export interface CheckoutAddress {
     email?: string;
     fullName: string;
@@ -105,7 +100,6 @@ export const requestInvoice = async (orderId: number, req: BillingInfoRequest): 
 };
 
 export const payOrder = async (orderId: number, req: PayRequest) => {
-    // ... existing code ...
     const res = await fetch(`${API_URL}/order/${orderId}/pay`, {
         method: 'POST',
         headers: getHeaders(),
@@ -150,7 +144,6 @@ export interface InvoiceData {
     amount: number | null;
     statusId?: number | null;
     statusName?: string;
-    // Billing data
     buyerName?: string | null;
     taxId?: string | null;
     billingAddress?: string | null;

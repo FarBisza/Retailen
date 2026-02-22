@@ -1,7 +1,3 @@
-// ============================================================
-// profileApi.ts — Customer profile operations
-// ============================================================
-
 import { API_URL, getHeaders } from './authApi';
 
 export interface CustomerProfile {

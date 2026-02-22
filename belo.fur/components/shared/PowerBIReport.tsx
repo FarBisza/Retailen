@@ -26,7 +26,7 @@ const PowerBIReport: React.FC<PowerBIReportProps> = ({
 
             <PowerBIEmbed
                 embedConfig={{
-                    type: 'report',   // Supported types: report, dashboard, tile, visual, qna, paginated report and create
+                    type: 'report',
                     id: reportId,
                     embedUrl: embedUrl,
                     accessToken: accessToken,
@@ -55,8 +55,6 @@ const PowerBIReport: React.FC<PowerBIReportProps> = ({
                 cssClassName={"h-full w-full"}
 
                 getEmbeddedComponent={(embeddedReport) => {
-                    // Access the embedded report instance if needed
-                    // (window as any).report = embeddedReport;
                 }}
             />
         </div>

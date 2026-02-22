@@ -17,8 +17,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    // State is initialized by property initializer above, but constructor assignment overrides/confirms it.
-    // Keeping both is safe.
     this.state = { hasError: false, error: null };
   }
 

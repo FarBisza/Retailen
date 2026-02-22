@@ -36,7 +36,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onClose })
                 </div>
 
                 <div className="p-6 space-y-6">
-                    {/* Status Timeline */}
                     <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-4">
                         <div className="flex items-center justify-between mb-4">
                             <span
@@ -54,7 +53,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onClose })
                             )}
                         </div>
 
-                        {/* Progress bar */}
                         <div className="flex items-center gap-2 mb-2">
                             <div
                                 className={`w-8 h-8 rounded-full flex items-center justify-center ${order.statusId >= STATUS.PAID
@@ -100,7 +98,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onClose })
                         </div>
                     </div>
 
-                    {/* Tracking Info (if shipped) */}
                     {isShipped && order.shipment && (
                         <div className="border border-blue-100 bg-blue-50 rounded-xl p-4">
                             <div className="flex items-center gap-2 mb-3">
@@ -136,7 +133,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onClose })
                         </div>
                     )}
 
-                    {/* Delivery Address */}
                     {order.shippingAddress && (
                         <div className="border border-gray-100 rounded-xl p-4">
                             <div className="flex items-center gap-2 mb-3">
@@ -154,7 +150,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onClose })
                         </div>
                     )}
 
-                    {/* Order Items */}
                     <div>
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">
                             Items in Order
@@ -179,7 +174,6 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, onClose })
                         </div>
                     </div>
 
-                    {/* Order Total */}
                     <div className="border-t border-gray-100 pt-4">
                         <div className="flex justify-between items-center">
                             <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
