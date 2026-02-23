@@ -53,8 +53,6 @@ namespace Retailen.Tests.Unit
 
         public void Dispose() { }
 
-        // ───────────────── Registration Tests ─────────────────
-
         [Fact]
         public async Task Register_ValidData_CreatesCustomer()
         {
@@ -97,8 +95,6 @@ namespace Retailen.Tests.Unit
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => _service.RegisterAsync(request));
         }
-
-        // ───────────────── Authentication Tests ─────────────────
 
         [Fact]
         public async Task Authenticate_InvalidCredentials_ThrowsUnauthorized()
@@ -143,8 +139,6 @@ namespace Retailen.Tests.Unit
             await Assert.ThrowsAsync<UnauthorizedAccessException>(
                 () => _service.AuthenticateAsync(request, "127.0.0.1"));
         }
-
-        // ───────────────── Password Reset Tests ─────────────────
 
         [Fact]
         public async Task ForgotPassword_ExistingUser_SetsResetToken()
@@ -224,8 +218,6 @@ namespace Retailen.Tests.Unit
 
             Assert.False(result);
         }
-
-        // ───────────────── Email Confirmation Tests ─────────────────
 
         [Fact]
         public async Task ConfirmEmail_ValidToken_SetsEmailConfirmed()

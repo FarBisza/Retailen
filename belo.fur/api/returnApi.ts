@@ -57,8 +57,11 @@ export const getAllReturns = async (): Promise<ReturnDTO[]> => {
 };
 
 export const getAllReturnsPaged = async (skip: number, take: number): Promise<PagedResponse<ReturnDTO>> => {
-    const res = await fetch(`${API_URL}/return?skip=${skip}&take=${take}`, {
+    const page = Math.floor(skip / take) + 1;
+    const pageSize = take;
+    const res = await fetch(`${API_URL}/return?page=${page}&pageSize=${pageSize}`, {
         headers: getHeaders(),
+        credentials: 'include',
     });
     if (!res.ok) throw new Error('Failed to fetch returns');
     return res.json();

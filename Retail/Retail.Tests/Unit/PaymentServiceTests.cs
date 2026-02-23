@@ -40,8 +40,6 @@ namespace Retailen.Tests.Unit
                 _whHistoryRepoMock.Object, _productMock.Object);
         }
 
-        // ───────────────── GenerateInvoice Tests ─────────────────
-
         [Fact]
         public async Task GenerateInvoice_OrderNotFound_ThrowsArgument()
         {
@@ -89,8 +87,6 @@ namespace Retailen.Tests.Unit
             _invoiceRepoMock.Verify(r => r.AddAsync(It.IsAny<Invoice>()), Times.Once);
             _invoiceRepoMock.Verify(r => r.SaveChangesAsync(), Times.Once);
         }
-
-        // ───────────────── RegisterPayment Tests ─────────────────
 
         [Fact]
         public async Task RegisterPayment_InvoiceNotFound_ThrowsArgument()

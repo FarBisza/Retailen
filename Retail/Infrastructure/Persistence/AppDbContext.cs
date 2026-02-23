@@ -41,8 +41,8 @@ namespace Retailen.Infrastructure.Persistence
         public DbSet<CategoryAttribute> CategoryAttributes { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
 
-        // ── Inventory ──
         public DbSet<Inventory> Inventory { get; set; }
+        public DbSet<InventoryThreshold> InventoryThresholds { get; set; }
 
         // ── Orders ──
         public DbSet<Order> Orders { get; set; }

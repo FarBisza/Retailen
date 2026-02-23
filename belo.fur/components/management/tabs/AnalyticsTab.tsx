@@ -45,7 +45,7 @@ export const AdminAnalyticsTab: React.FC = () => {
 
     const inventoryValue = products.reduce((s, p) => s + (p.price || 0) * (p.stockLevel || 0), 0);
     const activeProducts = products.filter(p => p.inStock).length;
-    const lowStockCount = products.filter(p => (p.stockLevel || 0) <= (p.stockThreshold || 5)).length;
+    const lowStockCount = products.filter(p => (p.stockThreshold ?? 0) > 0 && (p.stockLevel || 0) <= (p.stockThreshold ?? 0)).length;
     const totalPOs = purchaseOrders.length;
 
     const poStatusCounts: Record<string, number> = {};

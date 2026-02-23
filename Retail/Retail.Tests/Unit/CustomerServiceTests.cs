@@ -7,10 +7,6 @@ using Retailen.Domain.Interfaces;
 
 namespace Retailen.Tests.Unit
 {
-    /// <summary>
-    /// Unit tests for CustomerService — covers CRUD operations
-    /// and admin management (active/role).
-    /// </summary>
     public class CustomerServiceTests
     {
         private readonly Mock<ICustomerRepository> _customerRepoMock;
@@ -39,8 +35,6 @@ namespace Retailen.Tests.Unit
 
             _service = new CustomerService(_customerRepoMock.Object, _mapperMock.Object);
         }
-
-        // ───────────────── Tests ─────────────────
 
         [Fact]
         public async Task GetById_ExistingCustomer_ReturnsDTO()
@@ -101,7 +95,7 @@ namespace Retailen.Tests.Unit
             _customerRepoMock.Setup(r => r.UpdateAsync(It.IsAny<Customer>())).Returns(Task.CompletedTask);
             _customerRepoMock.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-            await _service.SetRoleAsync(11, 3); // → Employee
+            await _service.SetRoleAsync(11, 3);
 
             Assert.Equal(3, customer.RoleId);
             _customerRepoMock.Verify(r => r.UpdateAsync(customer), Times.Once);

@@ -3,10 +3,6 @@ using Retailen.Infrastructure.Persistence;
 
 namespace Retailen.Tests.Helpers
 {
-    /// <summary>
-    /// Factory for creating InMemory AppDbContext instances for unit tests.
-    /// Each test gets a unique database name to ensure isolation.
-    /// </summary>
     public static class TestDbContextFactory
     {
         public static AppDbContext Create(string? dbName = null)

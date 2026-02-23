@@ -12,10 +12,6 @@ using Retailen.Domain.Interfaces;
 
 namespace Retailen.Tests.Unit
 {
-    /// <summary>
-    /// Unit tests for ReturnService — covers return creation,
-    /// status updates, inventory restoration, and cancellation.
-    /// </summary>
     public class ReturnServiceTests
     {
         private readonly Mock<IReturnRepository> _returnRepoMock;
@@ -32,11 +28,9 @@ namespace Retailen.Tests.Unit
             _inventoryServiceMock = new Mock<IInventoryService>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
 
-            // Real AutoMapper with ReturnMappingProfile
             var config = new MapperConfiguration(cfg => cfg.AddProfile<ReturnMappingProfile>());
             _mapper = config.CreateMapper();
 
-            // Make ExecuteInTransactionAsync execute the action directly
             _unitOfWorkMock.Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
                 .Returns<Func<Task>>(action => action());
 
@@ -48,8 +42,6 @@ namespace Retailen.Tests.Unit
                 _mapper);
         }
 
-        // ───────────────── Tests ─────────────────
-
         [Fact]
         public async Task CreateReturn_OrderNotBelongToCustomer_ThrowsEntityNotFoundException()
         {
@@ -57,7 +49,6 @@ namespace Retailen.Tests.Unit
             _orderRepoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(order);
 
             var request = new CreateReturnRequestDTO { OrderId = 1, Reason = "Defective" };
-            // Customer 1 tries to return order belonging to customer 999
             await Assert.ThrowsAsync<EntityNotFoundException>(() => _service.CreateAsync(1, request));
         }
 
@@ -90,7 +81,6 @@ namespace Retailen.Tests.Unit
 
             var result = await _service.CreateAsync(1, request);
 
-            // Refund = unitPrice * quantity = 75 * 2 = 150
             Assert.Equal(150m, result.RefundAmount);
             Assert.Equal("Pending", result.StatusName);
         }
@@ -149,7 +139,6 @@ namespace Retailen.Tests.Unit
             var updateDto = new UpdateReturnStatusDTO { ReturnStatusId = (int)ReturnStatus.Approved };
             var result = await _service.UpdateStatusAsync(1, updateDto);
 
-            // Verify IInventoryService.RestoreStockAsync was called with correct params
             _inventoryServiceMock.Verify(s => s.RestoreStockAsync(10, 3, 1), Times.Once);
             Assert.NotNull(result.ApprovalDate);
         }

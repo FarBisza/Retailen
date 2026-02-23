@@ -10,8 +10,8 @@ export const AdminReturnsTab: React.FC = () => {
         setLoading(true);
         try {
             const result = await returnApi.getAllReturnsPaged(0, 20);
-            setReturns(result.items);
-            setTotalCount(result.totalCount);
+            setReturns(result.items || []);
+            setTotalCount(result.totalCount || 0);
         } catch (err) {
             console.error('Failed to load returns:', err);
         } finally {
@@ -191,8 +191,8 @@ export const AdminReturnsTab: React.FC = () => {
                             onClick={async () => {
                                 try {
                                     const result = await returnApi.getAllReturnsPaged(returns.length, 20);
-                                    setReturns(prev => [...prev, ...result.items]);
-                                    setTotalCount(result.totalCount);
+                                    setReturns(prev => [...prev, ...(result.items || [])]);
+                                    setTotalCount(result.totalCount || 0);
                                 } catch (err) {
                                     console.error('Failed to load more returns:', err);
                                 }

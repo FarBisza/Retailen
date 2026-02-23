@@ -24,14 +24,12 @@ namespace Retailen.Tests.Integration
         [Fact]
         public async Task CreateReturn_ValidData_ReturnsOk()
         {
-            // Seed
             int userId = 1;
             int orderId = 1;
             using (var scope = _factory.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 
-                // Ensure user and order exist
                  if (!db.Orders.Any())
                 {
                     db.Products.Add(new Product("Item", 100m));
@@ -56,10 +54,8 @@ namespace Retailen.Tests.Integration
                 Quantity = 1
             };
 
-            // Again, simpler check for now without auth token
             var response = await _client.PostAsJsonAsync("/api/return", request);
             
-            // Expect 401 if secured, or 200/201 if handled
             Assert.True(response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created);
         }
     }

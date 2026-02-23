@@ -15,9 +15,6 @@ namespace Retailen.Presentation.Controllers
             _cartService = cartService;
         }
 
-        /// <summary>
-        /// Get cart (for logged-in user or session).
-        /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(CartDTO), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCart()
@@ -29,9 +26,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(cart);
         }
 
-        /// <summary>
-        /// Add product to cart.
-        /// </summary>
         [HttpPost("add")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartRequestDTO request)
@@ -49,9 +43,6 @@ namespace Retailen.Presentation.Controllers
             }
         }
 
-        /// <summary>
-        /// Merge anonymous cart with user cart after login.
-        /// </summary>
         [HttpPost("merge")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -62,9 +53,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(new { message = "Carts merged successfully" });
         }
 
-        /// <summary>
-        /// Update item quantity in cart.
-        /// </summary>
         [HttpPut("update")]
         public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQuantityRequestDTO request)
         {
@@ -74,9 +62,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(new { message = "Quantity updated" });
         }
 
-        /// <summary>
-        /// Remove item from cart.
-        /// </summary>
         [HttpDelete("{cartId}/item/{cartItemId}")]
         public async Task<IActionResult> RemoveFromCart(int cartId, int cartItemId)
         {
@@ -86,9 +71,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(new { message = "Item removed from cart" });
         }
 
-        /// <summary>
-        /// Clear entire cart.
-        /// </summary>
         [HttpDelete("{cartId}")]
         public async Task<IActionResult> ClearCart(int cartId)
         {

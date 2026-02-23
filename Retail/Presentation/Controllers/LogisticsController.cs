@@ -18,10 +18,6 @@ public class LogisticsController : BaseApiController
         _service = service;
     }
 
-    // =========================
-    // SUPPLIERS
-    // =========================
-
     [HttpGet("suppliers")]
     [Authorize(Policy = "RequireStaff")]
     public async Task<IActionResult> GetSuppliers()
@@ -38,10 +34,6 @@ public class LogisticsController : BaseApiController
         return Ok(supplier);
     }
 
-    // =========================
-    // WAREHOUSES
-    // =========================
-
     [HttpGet("warehouses")]
     [Authorize(Policy = "RequireStaff")]
     public async Task<IActionResult> GetWarehouses()
@@ -50,10 +42,14 @@ public class LogisticsController : BaseApiController
         return Ok(list);
     }
 
-    // =========================
-    // SUPPLY ORDERS (PURCHASE ORDERS)
-    // Staff creates and manages POs; Suppliers use their own portal endpoints below
-    // =========================
+    [HttpPost("thresholds")]
+    [Authorize(Policy = "RequireStaff")]
+    public async Task<IActionResult> SetInventoryThreshold([FromBody] UpdateInventoryThresholdDTO req)
+    {
+        var success = await _service.SetInventoryThresholdAsync(req);
+        if (!success) return BadRequest(new { message = "Failed to update threshold" });
+        return Ok(new { message = "Threshold updated successfully" });
+    }
 
     [HttpGet("supply-orders")]
     [Authorize(Policy = "RequireStaff")]
@@ -73,6 +69,67 @@ public class LogisticsController : BaseApiController
         return Ok(list);
     }
 
+    [HttpGet("low-stock")]
+    [Authorize(Policy = "RequireStaff")]
+    public async Task<IActionResult> GetLowStockProducts(
+        [FromQuery] int? warehouseId,
+        [FromServices] Retailen.Domain.Interfaces.IRepository<Retailen.Domain.Entities.Product.Product> productRepository,
+        [FromServices] Retailen.Domain.Interfaces.IRepository<Retailen.Domain.Entities.Inventory> inventoryRepository,
+        [FromServices] Retailen.Domain.Interfaces.IRepository<Retailen.Domain.Entities.InventoryThreshold> thresholdRepository,
+        [FromServices] Retailen.Domain.Interfaces.IRepository<Retailen.Domain.Entities.Logistics.Warehouse> warehouseRepository)
+    {
+        var products = await productRepository.GetAllAsync();
+        var inventory = await inventoryRepository.GetAllAsync();
+        var thresholds = await thresholdRepository.GetAllAsync();
+        var warehouses = await warehouseRepository.GetAllAsync();
+
+        // We must query from thresholds (or products), left joining inventory.
+        // If we start from inventory, products with 0 stock (no inventory record) are completely ignored!
+        var query = from t in thresholds
+                    join p in products on t.ProductId equals p.Id
+                    join w in warehouses on t.WarehouseId equals w.Id
+                    join i in inventory on new { t.ProductId, t.WarehouseId } equals new { i.ProductId, i.WarehouseId } into invJoin
+                    from i in invJoin.DefaultIfEmpty()
+                    let currentStock = i != null ? i.Quantity : 0
+                    where t.LowStockThreshold > 0 && currentStock <= t.LowStockThreshold
+                    where !warehouseId.HasValue || t.WarehouseId == warehouseId.Value
+                    select new ProductLowStockDTO
+                    {
+                        ProductId = p.Id,
+                        ProductName = p.Name,
+                        WarehouseId = w.Id,
+                        WarehouseName = w.Name,
+                        CurrentStock = currentStock,
+                        Threshold = t.LowStockThreshold,
+                        SuggestedOrderQuantity = (t.LowStockThreshold * 2) - currentStock > 0 ? (t.LowStockThreshold * 2) - currentStock : 10
+                    };
+
+        return Ok(query.ToList());
+    }
+
+    [HttpGet("product-inventory/{productId}")]
+    [Authorize(Policy = "RequireStaff")]
+    public async Task<IActionResult> GetProductInventory(
+        int productId,
+        [FromServices] Retailen.Domain.Interfaces.IRepository<Retailen.Domain.Entities.Inventory> inventoryRepository,
+        [FromServices] Retailen.Domain.Interfaces.IRepository<Retailen.Domain.Entities.InventoryThreshold> thresholdRepository,
+        [FromServices] Retailen.Domain.Interfaces.IRepository<Retailen.Domain.Entities.Logistics.Warehouse> warehouseRepository)
+    {
+        var inventory = await inventoryRepository.FindAsync(i => i.ProductId == productId);
+        var thresholds = await thresholdRepository.FindAsync(t => t.ProductId == productId);
+        var warehouses = await warehouseRepository.GetAllAsync();
+
+        var result = warehouses.Select(w => new
+        {
+            WarehouseId = w.Id,
+            WarehouseName = w.Name,
+            Stock = inventory.FirstOrDefault(i => i.WarehouseId == w.Id)?.Quantity ?? 0,
+            Threshold = thresholds.FirstOrDefault(t => t.WarehouseId == w.Id)?.LowStockThreshold ?? 0
+        }).ToList();
+
+        return Ok(result);
+    }
+
     [HttpPost("supply-orders")]
     [Authorize(Policy = "RequireStaff")]
     public async Task<IActionResult> CreateSupplyOrder([FromBody] CreateSupplyOrderRequestDTO req)
@@ -89,10 +146,6 @@ public class LogisticsController : BaseApiController
         if (!success) return BadRequest(new { message = "Failed to cancel supply order" });
         return Ok(new { message = "Supply order cancelled" });
     }
-
-    // =========================
-    // GOODS RECEIPT (PZ)
-    // =========================
 
     [HttpGet("goods-receipts")]
     [Authorize(Policy = "RequireStaff")]
@@ -116,11 +169,6 @@ public class LogisticsController : BaseApiController
             return BadRequest(new { message = ex.Message });
         }
     }
-
-    // =========================
-    // SHIPMENTS (OUTBOUND TO CUSTOMERS)
-    // Staff manages all shipment operations
-    // =========================
 
     [HttpGet("shipments")]
     [Authorize(Policy = "RequireStaff")]
@@ -181,13 +229,6 @@ public class LogisticsController : BaseApiController
         return Ok(new { message = "Shipment delivered" });
     }
 
-    // =========================
-    // SUPPLIER PORTAL
-    // Endpoints for users with RoleID=4 (Supplier role in JWT).
-    // RequireSupplier policy validates the role from JWT automatically.
-    // =========================
-
-    /// <summary>Supply orders — supplier portal view (read-only)</summary>
     [HttpGet("supplier/supply-orders")]
     [Authorize(Policy = "RequireSupplier")]
     public async Task<IActionResult> GetSupplyOrdersForSupplier()
@@ -196,7 +237,6 @@ public class LogisticsController : BaseApiController
         return Ok(list);
     }
 
-    /// <summary>Shipments — supplier portal view (read-only)</summary>
     [HttpGet("supplier/shipments")]
     [Authorize(Policy = "RequireSupplier")]
     public async Task<IActionResult> GetShipmentsForSupplier()

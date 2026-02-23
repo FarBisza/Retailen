@@ -11,6 +11,29 @@ export interface Supplier {
     isActive: boolean;
 }
 
+export interface LowStockProduct {
+    productId: number;
+    productName: string;
+    warehouseId: number;
+    warehouseName: string;
+    currentStock: number;
+    threshold: number;
+    suggestedOrderQuantity: number;
+}
+
+export interface SetThresholdRequest {
+    productId: number;
+    warehouseId: number;
+    lowStockThreshold: number;
+}
+
+export interface ProductInventory {
+    warehouseId: number;
+    warehouseName: string;
+    stock: number;
+    threshold: number;
+}
+
 export interface Warehouse {
     warehouseId: number;
     name: string;
@@ -163,7 +186,9 @@ export async function getSupplyOrders(): Promise<SupplyOrder[]> {
 }
 
 export async function getSupplyOrdersPaged(skip: number, take: number): Promise<PagedResponse<SupplyOrder>> {
-    const res = await fetch(`${BASE}/supply-orders?skip=${skip}&take=${take}`, {
+    const page = Math.floor(skip / take) + 1;
+    const pageSize = take;
+    const res = await fetch(`${BASE}/supply-orders?page=${page}&pageSize=${pageSize}`, {
         headers: getHeaders(),
         credentials: 'include',
     });
@@ -360,12 +385,44 @@ export async function markDelivered(
     if (!res.ok) throw new Error('Failed to mark delivered');
 }
 
+export async function getLowStockProducts(): Promise<LowStockProduct[]> {
+    const res = await fetch(`${BASE}/low-stock`, {
+        headers: getHeaders(),
+        credentials: 'include',
+    });
+    if (!res.ok) throw new Error('Failed to fetch low stock products');
+    return res.json();
+}
+
+export async function setProductThreshold(
+    data: SetThresholdRequest
+): Promise<{ message: string }> {
+    const res = await fetch(`${BASE}/thresholds`, {
+        method: 'POST',
+        headers: getHeaders(),
+        credentials: 'include',
+        body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error('Failed to update inventory threshold');
+    return res.json();
+}
+
+export async function getProductInventory(productId: number): Promise<ProductInventory[]> {
+    const res = await fetch(`${BASE}/product-inventory/${productId}`, {
+        headers: getHeaders(),
+        credentials: 'include',
+    });
+    if (!res.ok) throw new Error('Failed to fetch product inventory');
+    return res.json();
+}
+
 export const logisticsApi = {
     getSuppliers,
     createSupplier,
     getWarehouses,
     getSupplyOrders,
     getSupplyOrder,
+    getSupplyOrdersPaged,
     createSupplyOrder,
     cancelSupplyOrder,
     getOrdersForSupplier,
@@ -378,6 +435,9 @@ export const logisticsApi = {
     createShipment,
     markShipped,
     markDelivered,
+    getLowStockProducts,
+    setProductThreshold,
+    getProductInventory,
 };
 
 export default logisticsApi;

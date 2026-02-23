@@ -18,11 +18,6 @@ namespace Retailen.Presentation.Controllers
             _productService = productService;
         }
 
-        /// <summary>
-        /// Get products. Supports optional pagination via query params.
-        /// Without page/pageSize — returns all products.
-        /// With page/pageSize — returns a paged result with metadata.
-        /// </summary>
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -50,9 +45,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(all);
         }
 
-        /// <summary>
-        /// Get products by category.
-        /// </summary>
         [HttpGet("category/{category}")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -62,9 +54,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(products);
         }
 
-        /// <summary>
-        /// Get product by ID.
-        /// </summary>
         [HttpGet("{id}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(ProductDTO), StatusCodes.Status200OK)]
@@ -79,9 +68,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(product);
         }
 
-        /// <summary>
-        /// Create a new product (Staff only).
-        /// </summary>
         [HttpPost]
         [Authorize(Policy = "RequireStaff")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -99,9 +85,6 @@ namespace Retailen.Presentation.Controllers
             }
         }
 
-        /// <summary>
-        /// Update a product (Staff only).
-        /// </summary>
         [HttpPut("{id}")]
         [Authorize(Policy = "RequireStaff")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -124,9 +107,6 @@ namespace Retailen.Presentation.Controllers
             }
         }
 
-        /// <summary>
-        /// Delete a product (Staff only).
-        /// </summary>
         [HttpDelete("{id}")]
         [Authorize(Policy = "RequireStaff")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -144,9 +124,6 @@ namespace Retailen.Presentation.Controllers
             }
         }
 
-        /// <summary>
-        /// Add a review for a product.
-        /// </summary>
         [HttpPost("{id}/review")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]

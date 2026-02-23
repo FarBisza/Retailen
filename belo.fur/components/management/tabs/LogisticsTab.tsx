@@ -40,8 +40,13 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
     products,
     initialPoProduct,
     onInitialPoConsumed,
+    simEnabled = false,
+    simDays = 0,
 }) => {
-    const [activeLogisticsTab, setActiveLogisticsTab] = useState<'po' | 'gr'>('po');
+    const [activeLogisticsTab, setActiveLogisticsTab] = useState<'po' | 'gr' | 'lowStock'>('po');
+    const [lowStockItems, setLowStockItems] = useState<logisticsApi.LowStockProduct[]>([]);
+    const [lowStockLoading, setLowStockLoading] = useState(false);
+    const [selectedLowStock, setSelectedLowStock] = useState<string[]>([]);
     const [totalPoCount, setTotalPoCount] = useState(0);
 
     const [purchaseOrders, setPurchaseOrders] = useState<logisticsApi.SupplyOrder[]>([]);
@@ -83,10 +88,10 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                     logisticsApi.getSuppliers(),
                     logisticsApi.getWarehouses(),
                 ]);
-                setPurchaseOrders(posResult.items);
-                setTotalPoCount(posResult.totalCount);
-                setSuppliers(suppData);
-                setWarehouses(whData);
+                setPurchaseOrders(posResult.items ? posResult.items.sort((a, b) => b.purchaseOrderId - a.purchaseOrderId) : []);
+                setTotalPoCount(posResult.totalCount || 0);
+                setSuppliers(suppData || []);
+                setWarehouses(whData || []);
                 setCreatePoData(prev => ({
                     ...prev,
                     supplierId: suppData.length > 0 ? suppData[0].supplierId : 0,
@@ -112,6 +117,23 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
             onInitialPoConsumed?.();
         }
     }, [initialPoProduct, suppliers]);
+
+    useEffect(() => {
+        if (activeLogisticsTab === 'lowStock') {
+            const loadLowStock = async () => {
+                setLowStockLoading(true);
+                try {
+                    const data = await logisticsApi.getLowStockProducts();
+                    setLowStockItems(data);
+                } catch (err) {
+                    console.error('Failed to load low stock:', err);
+                } finally {
+                    setLowStockLoading(false);
+                }
+            };
+            loadLowStock();
+        }
+    }, [activeLogisticsTab]);
 
     const openGrForPo = (po: logisticsApi.SupplyOrder) => {
         setSelectedPo(po);
@@ -173,7 +195,7 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
             setActiveLogisticsTab('po');
 
             const data = await logisticsApi.getSupplyOrders();
-            setPurchaseOrders(data);
+            setPurchaseOrders(data.sort((a, b) => b.purchaseOrderId - a.purchaseOrderId));
 
             window.dispatchEvent(new Event('product-data-changed'));
 
@@ -210,7 +232,7 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                 items: [],
             });
             const data = await logisticsApi.getSupplyOrders();
-            setPurchaseOrders(data);
+            setPurchaseOrders(data.sort((a, b) => b.purchaseOrderId - a.purchaseOrderId));
         } catch (err) {
             console.error('Create PO failed:', err);
             alert('Failed to create PO. Please try again.');
@@ -224,7 +246,7 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
         try {
             await logisticsApi.confirmSupplierOrder(po.supplierId, po.purchaseOrderId);
             const data = await logisticsApi.getSupplyOrders();
-            setPurchaseOrders(data);
+            setPurchaseOrders(data.sort((a, b) => b.purchaseOrderId - a.purchaseOrderId));
             alert('Order confirmed and shipped (Staff Override).');
         } catch (err) {
             console.error('Force confirm failed:', err);
@@ -277,6 +299,15 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                             }`}
                     >
                         <FileCheck size={14} /> Goods Receipt (GR)
+                    </button>
+                    <button
+                        onClick={() => setActiveLogisticsTab('lowStock')}
+                        className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all ${activeLogisticsTab === 'lowStock'
+                            ? 'text-slate-900 border-b-2 border-slate-900'
+                            : 'text-gray-400 hover:text-slate-600'
+                            }`}
+                    >
+                        <ArrowDownToLine size={14} /> Needs Replenishment
                     </button>
                 </div>
 
@@ -368,19 +399,41 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                                             <span className="text-[9px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 border border-blue-100 px-3 py-2 flex items-center gap-2 justify-center">
                                                                 <Clock size={12} /> Awaiting Supplier
                                                             </span>
-                                                        ) : po.statusName === 'Confirmed' ? (
-                                                            <div className="flex items-center gap-2 justify-end">
-                                                                <button
-                                                                    onClick={() => openGrForPo(po)}
-                                                                    className="bg-indigo-600 text-white border border-indigo-600 px-4 py-2 text-[9px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 flex items-center gap-2"
-                                                                >
-                                                                    <PackageCheck size={12} /> Process Goods Receipt
-                                                                </button>
-                                                            </div>
-                                                        ) : po.statusName === 'InDelivery' ? (
-                                                            <span className="text-[9px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-50 border border-indigo-100 px-3 py-2 flex items-center gap-2 justify-center">
-                                                                <Truck size={12} /> In Transit
-                                                            </span>
+                                                        ) : (po.statusName === 'Confirmed' || po.statusName === 'InDelivery') ? (
+                                                            (() => {
+                                                                const isReadyForReceipt = (() => {
+                                                                    if (!po.expectedDate) return true;
+                                                                    const expected = new Date(po.expectedDate).getTime();
+                                                                    let current = Date.now();
+                                                                    if (simEnabled && simDays) {
+                                                                        current += simDays * 24 * 60 * 60 * 1000;
+                                                                    }
+                                                                    return current >= expected;
+                                                                })();
+
+                                                                if (isReadyForReceipt) {
+                                                                    return (
+                                                                        <div className="flex items-center gap-2 justify-end">
+                                                                            <button
+                                                                                onClick={() => openGrForPo(po)}
+                                                                                className="bg-indigo-600 text-white border border-indigo-600 px-4 py-2 text-[9px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100 flex items-center gap-2"
+                                                                            >
+                                                                                <PackageCheck size={12} /> Process Goods Receipt
+                                                                            </button>
+                                                                        </div>
+                                                                    );
+                                                                } else {
+                                                                    const expectedDate = new Date(po.expectedDate!);
+                                                                    const current = new Date(Date.now() + (simEnabled && simDays ? simDays * 24 * 60 * 60 * 1000 : 0));
+                                                                    const daysLeft = Math.ceil((expectedDate.getTime() - current.getTime()) / (1000 * 60 * 60 * 24));
+                                                                    const label = daysLeft > 0 ? `Arriving in ${daysLeft}d` : 'Shipping';
+                                                                    return (
+                                                                        <span className="text-[9px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-50 border border-indigo-100 px-3 py-2 flex items-center gap-2 justify-center">
+                                                                            <Truck size={12} /> {label}
+                                                                        </span>
+                                                                    );
+                                                                }
+                                                            })()
                                                         ) : po.statusName === 'FullyReceived' || po.statusName === 'PartiallyReceived' ? (
                                                             <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 border border-emerald-100 px-3 py-2 flex items-center gap-2 justify-center">
                                                                 <CheckCircle size={12} /> {formatStatus(po.statusName)}
@@ -412,8 +465,8 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                         onClick={async () => {
                                             try {
                                                 const result = await logisticsApi.getSupplyOrdersPaged(purchaseOrders.length, 20);
-                                                setPurchaseOrders(prev => [...prev, ...result.items]);
-                                                setTotalPoCount(result.totalCount);
+                                                setPurchaseOrders(prev => [...prev, ...(result.items || [])]);
+                                                setTotalPoCount(result.totalCount || 0);
                                             } catch (err) {
                                                 console.error('Failed to load more POs:', err);
                                             }
@@ -480,12 +533,21 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
 
                                 {selectedPo ? (
                                     <div className="space-y-4">
+                                        <div className="bg-blue-50/50 border border-blue-100 p-4 mb-6 rounded-sm text-blue-800 text-[10px] font-medium leading-relaxed">
+                                            <strong className="block font-black uppercase tracking-widest mb-2 text-blue-900">How Goods Receipt Works:</strong>
+                                            <ul className="list-disc pl-4 space-y-1">
+                                                <li><strong>Received:</strong> The total physical number of items the courier handed you.</li>
+                                                <li><strong>Damaged:</strong> How many of those <i>Received</i> items are broken. (These won't be sold).</li>
+                                                <li><strong>Shortage:</strong> Auto-calculated. If you ordered 14, but Received 11, Shortage is 3.</li>
+                                            </ul>
+                                        </div>
+
                                         <div className="grid grid-cols-12 text-[9px] font-black uppercase text-gray-400 px-4 mb-2">
                                             <div className="col-span-4">Asset Item</div>
                                             <div className="col-span-2 text-center">Ordered</div>
-                                            <div className="col-span-2 text-center">Received</div>
+                                            <div className="col-span-2 text-center">Received (Total)</div>
                                             <div className="col-span-2 text-center">Damaged</div>
-                                            <div className="col-span-2 text-center">Shortage</div>
+                                            <div className="col-span-2 text-center">Shortage Auto</div>
                                         </div>
                                         {selectedPo.items.map((item, idx) => {
                                             const received = grItems[idx]?.quantityReceived ?? 0;
@@ -515,9 +577,10 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                                             max={item.quantityOrdered}
                                                             value={received}
                                                             onChange={(e) => {
-                                                                const val = Math.min(
+                                                                const parsed = parseInt(e.target.value);
+                                                                const val = isNaN(parsed) ? 0 : Math.min(
                                                                     item.quantityOrdered,
-                                                                    Math.max(0, parseInt(e.target.value) || 0)
+                                                                    Math.max(0, parsed)
                                                                 );
                                                                 const newItems = [...grItems];
                                                                 const clampedDamaged = Math.min(newItems[idx]?.quantityDamaged || 0, val);
@@ -534,9 +597,10 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                                             max={received}
                                                             value={damaged}
                                                             onChange={(e) => {
-                                                                const val = Math.min(
+                                                                const parsed = parseInt(e.target.value);
+                                                                const val = isNaN(parsed) ? 0 : Math.min(
                                                                     received,
-                                                                    Math.max(0, parseInt(e.target.value) || 0)
+                                                                    Math.max(0, parsed)
                                                                 );
                                                                 const newItems = [...grItems];
                                                                 newItems[idx] = { ...newItems[idx], quantityDamaged: val };
@@ -661,6 +725,94 @@ export const AdminLogisticsTab: React.FC<AdminLogisticsTabProps> = ({
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeLogisticsTab === 'lowStock' && (
+                    <div className="space-y-8 animate-in slide-in-from-bottom-2">
+                        <div className="flex justify-between items-center">
+                            <h4 className="text-xs font-black uppercase tracking-widest text-slate-900">
+                                Low Stock Alerts
+                            </h4>
+                            <button
+                                onClick={() => {
+                                    if (selectedLowStock.length === 0) return;
+                                    const firstItem = lowStockItems.find(i => `${i.productId}-${i.warehouseId}` === selectedLowStock[0]);
+                                    setCreatePoData(prev => ({
+                                        ...prev,
+                                        supplierId: suppliers.length > 0 ? suppliers[0].supplierId : 0,
+                                        warehouseId: firstItem ? firstItem.warehouseId : (warehouses.length > 0 ? warehouses[0].warehouseId : 0),
+                                        items: selectedLowStock.map(key => {
+                                            const [pidStr, widStr] = key.split('-');
+                                            const pid = parseInt(pidStr);
+                                            const wid = parseInt(widStr);
+                                            const item = lowStockItems.find(i => i.productId === pid && i.warehouseId === wid);
+                                            return {
+                                                productId: pid,
+                                                quantityOrdered: item ? item.suggestedOrderQuantity : 10,
+                                                purchasePrice: 0
+                                            };
+                                        }),
+                                    }));
+                                    setShowCreatePoModal(true);
+                                }}
+                                disabled={selectedLowStock.length === 0}
+                                className="bg-orange-500 text-white px-6 py-3 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-orange-600 transition-all disabled:opacity-50"
+                            >
+                                <PlusCircle size={14} /> Create PO for Selected
+                            </button>
+                        </div>
+                        <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
+                            <table className="w-full text-left">
+                                <thead className="bg-gray-50 text-[9px] font-black uppercase text-gray-400">
+                                    <tr>
+                                        <th className="px-8 py-4">
+                                            <input
+                                                type="checkbox"
+                                                onChange={(e) => {
+                                                    if (e.target.checked) setSelectedLowStock(lowStockItems.map(i => `${i.productId}-${i.warehouseId}`));
+                                                    else setSelectedLowStock([]);
+                                                }}
+                                                checked={selectedLowStock.length === lowStockItems.length && lowStockItems.length > 0}
+                                            />
+                                        </th>
+                                        <th className="px-8 py-4">Product Name</th>
+                                        <th className="px-8 py-4">Warehouse</th>
+                                        <th className="px-8 py-4 text-center">Current Stock</th>
+                                        <th className="px-8 py-4 text-center">Threshold</th>
+                                        <th className="px-8 py-4 text-center">Suggested Qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-50">
+                                    {lowStockLoading ? (
+                                        <tr><td colSpan={5} className="px-8 py-10 text-center text-gray-400">Loading low stock items...</td></tr>
+                                    ) : lowStockItems.length === 0 ? (
+                                        <tr><td colSpan={5} className="px-8 py-10 text-center text-gray-400">No products are currently low on stock.</td></tr>
+                                    ) : lowStockItems.map(item => {
+                                        const key = `${item.productId}-${item.warehouseId}`;
+                                        return (
+                                            <tr key={key} className="text-xs hover:bg-gray-50/20 transition-colors">
+                                                <td className="px-8 py-5">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedLowStock.includes(key)}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) setSelectedLowStock([...selectedLowStock, key]);
+                                                            else setSelectedLowStock(selectedLowStock.filter(id => id !== key));
+                                                        }}
+                                                    />
+                                                </td>
+                                                <td className="px-8 py-5 font-black text-slate-900">{item.productName}</td>
+                                                <td className="px-8 py-5 font-bold text-slate-500">{item.warehouseName}</td>
+                                                <td className="px-8 py-5 text-center font-bold text-red-500">{item.currentStock}</td>
+                                                <td className="px-8 py-5 text-center font-bold text-gray-400">{item.threshold}</td>
+                                                <td className="px-8 py-5 text-center font-bold text-indigo-500">{item.suggestedOrderQuantity}</td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 )}

@@ -3,7 +3,7 @@ import {
     Inbox, Truck, Box, CheckCircle2, Clock, History,
     MoreVertical, Search, Download, Package, MapPin,
     ChevronRight, ArrowUpRight, Filter, AlertCircle, PlusCircle,
-    FileText, Send, CheckCircle, PackageSearch, Calendar
+    FileText, Send, CheckCircle, PackageSearch, Calendar, X
 } from 'lucide-react';
 import * as logisticsApi from '../api/logisticsApi';
 
@@ -16,15 +16,45 @@ const SupplierPage: React.FC = () => {
     const [visibleOrderCount, setVisibleOrderCount] = useState(20);
     const [visibleShipCount, setVisibleShipCount] = useState(20);
 
-    const [simEnabled, setSimEnabled] = useState(false);
-    const [simDays, setSimDays] = useState(0);
+    const [simEnabled, setSimEnabled] = useState(() => {
+        const stored = localStorage.getItem('belo_sim_enabled');
+        return stored ? JSON.parse(stored) : false;
+    });
+    const [simDays, setSimDays] = useState(() => {
+        const stored = localStorage.getItem('belo_sim_days');
+        return stored ? parseInt(stored, 10) : 0;
+    });
     const simIntervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+
+    const [rejectModal, setRejectModal] = useState<{ isOpen: boolean; orderId: number; supplierId: number } | null>(null);
+    const [rejectReason, setRejectReason] = useState('');
+
+    useEffect(() => {
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'belo_sim_enabled') {
+                setSimEnabled(e.newValue ? JSON.parse(e.newValue) : false);
+            }
+            if (e.key === 'belo_sim_days') {
+                setSimDays(e.newValue ? parseInt(e.newValue, 10) : 0);
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
 
     useEffect(() => {
         if (simEnabled) {
-            setSimDays(0);
+            if (!localStorage.getItem('belo_sim_days')) {
+                setSimDays(0);
+                localStorage.setItem('belo_sim_days', '0');
+            }
+            if (simIntervalRef.current) clearInterval(simIntervalRef.current);
             simIntervalRef.current = setInterval(() => {
-                setSimDays((d) => d + 1);
+                setSimDays((d) => {
+                    const newDays = d + 1;
+                    localStorage.setItem('belo_sim_days', newDays.toString());
+                    return newDays;
+                });
             }, 1000);
         } else {
             if (simIntervalRef.current) clearInterval(simIntervalRef.current);
@@ -34,6 +64,16 @@ const SupplierPage: React.FC = () => {
             if (simIntervalRef.current) clearInterval(simIntervalRef.current);
         };
     }, [simEnabled]);
+
+    const handleSimToggle = () => {
+        const newEnabled = !simEnabled;
+        setSimEnabled(newEnabled);
+        localStorage.setItem('belo_sim_enabled', JSON.stringify(newEnabled));
+        if (!newEnabled) {
+            setSimDays(0);
+            localStorage.setItem('belo_sim_days', '0');
+        }
+    };
 
     useEffect(() => {
         const loadData = async () => {
@@ -72,7 +112,7 @@ const SupplierPage: React.FC = () => {
         try {
             await logisticsApi.confirmSupplierOrder(supplierId, orderId);
             const poData = await logisticsApi.getSupplierSupplyOrders();
-            setOrders(poData);
+            setOrders(poData.sort((a, b) => b.purchaseOrderId - a.purchaseOrderId));
             alert('Order confirmed successfully!');
         } catch (err) {
             console.error('Failed to confirm order:', err);
@@ -80,14 +120,21 @@ const SupplierPage: React.FC = () => {
         }
     };
 
-    const handleRejectOrder = async (orderId: number, supplierId: number) => {
-        const reason = prompt('Please enter rejection reason:');
-        if (reason === null) return;
+    const handleRejectOrder = async () => {
+        if (!rejectModal) return;
+        const { orderId, supplierId } = rejectModal;
+
+        if (!rejectReason.trim()) {
+            alert('Please enter a rejection reason.');
+            return;
+        }
 
         try {
-            await logisticsApi.rejectSupplierOrder(supplierId, orderId, reason);
+            await logisticsApi.rejectSupplierOrder(supplierId, orderId, rejectReason);
             const poData = await logisticsApi.getSupplierSupplyOrders();
-            setOrders(poData);
+            setOrders(poData.sort((a, b) => b.purchaseOrderId - a.purchaseOrderId));
+            setRejectModal(null);
+            setRejectReason('');
             alert('Order rejected.');
         } catch (err) {
             console.error('Failed to reject order:', err);
@@ -100,7 +147,7 @@ const SupplierPage: React.FC = () => {
         try {
             await logisticsApi.markShipped(shipmentId, trackingNumber, new Date().toISOString());
             const shipData = await logisticsApi.getSupplierShipments();
-            setShipments(shipData);
+            setShipments(shipData.sort((a, b) => b.shipmentId - a.shipmentId));
             alert(`Shipment dispatched! Tracking: ${trackingNumber}`);
         } catch (err) {
             console.error('Failed to dispatch:', err);
@@ -140,7 +187,7 @@ const SupplierPage: React.FC = () => {
                 <div className="flex gap-4 items-center">
                     <div className="flex items-center gap-2">
                         <button
-                            onClick={() => setSimEnabled(!simEnabled)}
+                            onClick={handleSimToggle}
                             className={`relative w-10 h-5 rounded-full transition-colors ${simEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
                         >
                             <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${simEnabled ? 'translate-x-5' : ''}`} />
@@ -335,10 +382,11 @@ const SupplierPage: React.FC = () => {
                                                                     </button>
                                                                     <button
                                                                         onClick={() =>
-                                                                            handleRejectOrder(
-                                                                                order.purchaseOrderId,
-                                                                                order.supplierId
-                                                                            )
+                                                                            setRejectModal({
+                                                                                isOpen: true,
+                                                                                orderId: order.purchaseOrderId,
+                                                                                supplierId: order.supplierId
+                                                                            })
                                                                         }
                                                                         className="border border-gray-100 text-gray-400 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest hover:border-red-500 hover:text-red-500 transition-all"
                                                                     >
@@ -545,6 +593,60 @@ const SupplierPage: React.FC = () => {
                     Supplier Ledger Ver. 4.0.1
                 </span>
             </div>
+
+            {rejectModal?.isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-sm shadow-xl w-full max-w-md overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
+                        <div className="flex justify-between items-center p-6 border-b border-gray-100">
+                            <h2 className="text-sm font-black uppercase tracking-widest text-slate-900 flex items-center gap-2">
+                                <AlertCircle size={16} className="text-red-500" />
+                                Reject Order PO-{rejectModal.orderId}
+                            </h2>
+                            <button
+                                onClick={() => {
+                                    setRejectModal(null);
+                                    setRejectReason('');
+                                }}
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                                    Reason for Rejection
+                                </label>
+                                <textarea
+                                    value={rejectReason}
+                                    onChange={(e) => setRejectReason(e.target.value)}
+                                    placeholder="Please provide a clear reason for rejecting this purchase order..."
+                                    className="w-full bg-gray-50 border border-gray-100 p-4 text-xs text-slate-700 outline-none focus:border-red-300 focus:bg-white transition-all min-h-[120px] resize-none"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-sm">
+                            <button
+                                onClick={() => {
+                                    setRejectModal(null);
+                                    setRejectReason('');
+                                }}
+                                className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-gray-200 bg-white border border-gray-100 transition-all"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleRejectOrder}
+                                className="px-6 py-2.5 text-[10px] font-black uppercase tracking-widest bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-100 transition-all"
+                            >
+                                Confirm Rejection
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

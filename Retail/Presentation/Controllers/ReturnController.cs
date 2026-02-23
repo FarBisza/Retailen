@@ -24,9 +24,6 @@ namespace Retailen.Presentation.Controllers
             return claim != null ? int.Parse(claim.Value) : 0;
         }
 
-        /// <summary>
-        /// Get all returns (Admin/Staff only) — supports pagination via ?page=1&pageSize=20
-        /// </summary>
         [HttpGet]
         [Authorize(Policy = "RequireStaff")]
         [ProducesResponseType(typeof(IEnumerable<ReturnDTO>), StatusCodes.Status200OK)]
@@ -46,9 +43,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(returns);
         }
 
-        /// <summary>
-        /// Get returns by status (Admin/Staff only)
-        /// </summary>
         [HttpGet("status/{statusId:int}")]
         [Authorize(Policy = "RequireStaff")]
         [ProducesResponseType(typeof(IEnumerable<ReturnDTO>), StatusCodes.Status200OK)]
@@ -58,9 +52,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(returns);
         }
 
-        /// <summary>
-        /// Get my returns (authenticated customer)
-        /// </summary>
         [HttpGet("my")]
         [Authorize]
         [ProducesResponseType(typeof(IEnumerable<ReturnDTO>), StatusCodes.Status200OK)]
@@ -71,9 +62,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(returns);
         }
 
-        /// <summary>
-        /// Get return by ID
-        /// </summary>
         [HttpGet("{id:int}")]
         [Authorize]
         [ProducesResponseType(typeof(ReturnDTO), StatusCodes.Status200OK)]
@@ -85,9 +73,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(returnItem);
         }
 
-        /// <summary>
-        /// Create return request (authenticated customer)
-        /// </summary>
         [HttpPost]
         [Authorize]
         [ProducesResponseType(typeof(ReturnDTO), StatusCodes.Status201Created)]
@@ -98,10 +83,6 @@ namespace Retailen.Presentation.Controllers
             return CreatedAtAction(nameof(GetById), new { id = returnItem.ReturnId }, returnItem);
         }
 
-        /// <summary>
-        /// Update return status (Admin/Staff only)
-        /// Statuses: 1=Pending, 2=Approved, 3=Rejected, 4=RefundCompleted, 5=Cancelled
-        /// </summary>
         [HttpPut("{id:int}/status")]
         [Authorize(Policy = "RequireStaff")]
         [ProducesResponseType(typeof(ReturnDTO), StatusCodes.Status200OK)]
@@ -111,9 +92,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(returnItem);
         }
 
-        /// <summary>
-        /// Cancel my return request (customer only, pending returns only)
-        /// </summary>
         [HttpPost("{id:int}/cancel")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

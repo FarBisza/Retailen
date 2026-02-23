@@ -24,34 +24,39 @@ namespace Retailen.Application.Services
             var allInventory = await _inventoryRepository.FindAsync(i => i.ProductId == productId);
             var inventoryList = allInventory.ToList();
 
-            var inventory = inventoryList
-                .OrderByDescending(i => i.Quantity)
-                .FirstOrDefault();
-
-            if (inventory == null)
-                throw new InsufficientStockException(productId, 0, quantity);
-
             var totalStock = inventoryList.Sum(i => i.Quantity);
             if (totalStock < quantity)
                 throw new InsufficientStockException(productId, totalStock, quantity);
 
-            var before = inventory.Quantity;
-            inventory.Quantity -= quantity;
-            inventory.UpdatedAt = DateTime.UtcNow;
+            var sortedInventory = inventoryList.OrderByDescending(i => i.Quantity).ToList();
+            var remainingToDeduct = quantity;
 
-            await _inventoryRepository.UpdateAsync(inventory);
-
-            await _historyRepository.AddAsync(new InventoryHistory
+            foreach (var inv in sortedInventory)
             {
-                ProductId = productId,
-                WarehouseId = inventory.WarehouseId,
-                OrderId = orderId,
-                EventType = "ORDER_PAID",
-                QuantityChange = -quantity,
-                QuantityBefore = before,
-                QuantityAfter = inventory.Quantity,
-                CreatedAt = DateTime.UtcNow
-            });
+                if (remainingToDeduct <= 0) break;
+                if (inv.Quantity <= 0) continue;
+
+                var deductAmount = Math.Min(inv.Quantity, remainingToDeduct);
+                var before = inv.Quantity;
+                
+                inv.Quantity -= deductAmount;
+                inv.UpdatedAt = DateTime.UtcNow;
+                remainingToDeduct -= deductAmount;
+
+                await _inventoryRepository.UpdateAsync(inv);
+
+                await _historyRepository.AddAsync(new InventoryHistory
+                {
+                    ProductId = productId,
+                    WarehouseId = inv.WarehouseId,
+                    OrderId = orderId,
+                    EventType = "ORDER_PAID",
+                    QuantityChange = -deductAmount,
+                    QuantityBefore = before,
+                    QuantityAfter = inv.Quantity,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
         }
 
         public async Task RestoreStockAsync(int productId, int quantity, int orderId)

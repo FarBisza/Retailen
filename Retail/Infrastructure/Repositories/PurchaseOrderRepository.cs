@@ -64,6 +64,7 @@ namespace Retailen.Infrastructure.Repositories
                 .Include(po => po.Items)
                     .ThenInclude(i => i.Product)
                 .Where(po => po.SupplierId == supplierId)
+                .OrderByDescending(po => po.Id)
                 .AsSplitQuery()
                 .ToListAsync();
         }

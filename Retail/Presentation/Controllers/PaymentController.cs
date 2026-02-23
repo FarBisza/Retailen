@@ -17,9 +17,6 @@ namespace Retailen.Presentation.Controllers
             _paymentService = paymentService;
         }
 
-        /// <summary>
-        /// Generate an invoice for an order
-        /// </summary>
         [HttpPost("invoice/{orderId}")]
         public async Task<IActionResult> GenerateInvoice(int orderId)
         {
@@ -38,9 +35,6 @@ namespace Retailen.Presentation.Controllers
             }
         }
 
-        /// <summary>
-        /// Pay an invoice
-        /// </summary>
         [HttpPost("pay")]
         public async Task<IActionResult> PayInvoice([FromBody] PayInvoiceRequestDTO request)
         {

@@ -5,6 +5,7 @@ import { Product, Attribute } from '../../../api/types';
 import { createProduct, updateProduct, deleteProduct, CreateProductRequest } from '../../../api/productApi';
 import { fetchCategories, CategoryFromApi } from '../../../api/categoryApi';
 import { getAllAttributes } from '../../../api/attributeApi';
+import { logisticsApi, ProductInventory } from '../../../api/logisticsApi';
 import { DataGrid } from '../../shared/DataGrid';
 
 interface AdminProductsTabProps {
@@ -29,6 +30,12 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
 
     const [categories, setCategories] = useState<CategoryFromApi[]>([]);
     const [allAttributes, setAllAttributes] = useState<Attribute[]>([]);
+
+    const [showThresholdModal, setShowThresholdModal] = useState(false);
+    const [thresholdProduct, setThresholdProduct] = useState<Product | null>(null);
+    const [inventoryThresholds, setInventoryThresholds] = useState<ProductInventory[]>([]);
+    const [thresholdValues, setThresholdValues] = useState<{ [warehouseId: number]: number }>({});
+    const [thresholdSaving, setThresholdSaving] = useState(false);
 
     useEffect(() => {
         if (showProductModal) {
@@ -84,6 +91,12 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
 
     const handleProductSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (productFormData.attributes?.some(attr => !attr.value || attr.value.trim() === '')) {
+            alert('Attribute values cannot be empty. Please fill in all attributes or remove them.');
+            return;
+        }
+
         setProductSaving(true);
         try {
             if (editingProduct) {
@@ -112,6 +125,50 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
         } catch (err: any) {
             console.error('Delete product failed:', err);
             alert(err.message || 'Failed to delete product');
+        }
+    };
+
+    const openThresholdModal = async (product: Product) => {
+        setThresholdProduct(product);
+        setThresholdValues({});
+        setShowThresholdModal(true);
+        try {
+            const productInventories = await logisticsApi.getProductInventory(Number(product.id));
+            setInventoryThresholds(productInventories);
+
+            const initialValues: { [key: number]: number } = {};
+            productInventories.forEach(inv => {
+                initialValues[inv.warehouseId] = inv.threshold;
+            });
+            setThresholdValues(initialValues);
+        } catch (err) {
+            console.error('Failed to load threshold data:', err);
+        }
+    };
+
+    const handleSaveThresholds = async () => {
+        if (!thresholdProduct) return;
+        setThresholdSaving(true);
+        try {
+            // Save each modified threshold sequentially
+            for (const inv of inventoryThresholds) {
+                const newValue = thresholdValues[inv.warehouseId];
+                if (newValue !== undefined) {
+                    await logisticsApi.setProductThreshold({
+                        productId: Number(thresholdProduct.id),
+                        warehouseId: inv.warehouseId,
+                        lowStockThreshold: newValue
+                    });
+                }
+            }
+            setShowThresholdModal(false);
+            onRefresh();
+            alert('Thresholds updated successfully');
+        } catch (err: any) {
+            console.error('Failed to save thresholds:', err);
+            alert(err.message || 'Failed to save thresholds');
+        } finally {
+            setThresholdSaving(false);
         }
     };
 
@@ -172,6 +229,13 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
                 enableSorting: false,
                 cell: ({ row }) => (
                     <div className="flex justify-end gap-2">
+                        <button
+                            onClick={() => openThresholdModal(row.original)}
+                            className="p-2 text-gray-300 hover:text-blue-500 transition-colors"
+                            title="Set Inventory Thresholds"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="m3 15 2 2 4-4" /></svg>
+                        </button>
                         <button
                             onClick={() => openProductModal(row.original)}
                             className="p-2 text-gray-300 hover:text-slate-900 transition-colors"
@@ -414,6 +478,78 @@ export const AdminProductsTab: React.FC<AdminProductsTabProps> = ({ products, lo
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+            {showThresholdModal && thresholdProduct && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="w-full max-w-md bg-white border border-gray-100 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+                            <div>
+                                <h2 className="text-xl font-black text-slate-900 tracking-tight">Set Thresholds</h2>
+                                <p className="text-sm font-medium text-gray-400 mt-1">{thresholdProduct.name}</p>
+                            </div>
+                            <button
+                                onClick={() => setShowThresholdModal(false)}
+                                className="p-2 text-gray-400 hover:text-slate-900 transition-colors rounded-full hover:bg-white"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="p-6 max-h-[60vh] overflow-y-auto">
+                            <p className="text-xs text-gray-500 mb-6 font-medium leading-relaxed">
+                                Define the minimum stock level for each warehouse. When the inventory drops below this number, the product will appear in the Replenishment tab. Set to 0 to disable alerting.
+                            </p>
+
+                            {inventoryThresholds.length === 0 ? (
+                                <div className="text-center py-4 rounded-lg bg-gray-50 border border-dashed border-gray-200 text-sm font-medium text-gray-500">
+                                    Loading warehouses...
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {inventoryThresholds.map(inv => (
+                                        <div key={inv.warehouseId} className="flex items-center justify-between p-3 rounded-xl border border-gray-100 bg-gray-50/50">
+                                            <div>
+                                                <div className="text-sm font-bold text-slate-900">{inv.warehouseName}</div>
+                                                <div className={`text-xs font-medium mt-0.5 ${inv.stock > 0 ? 'text-gray-400' : 'text-red-400'}`}>
+                                                    Current Stock: {inv.stock}
+                                                </div>
+                                            </div>
+                                            <div className="w-24">
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="0"
+                                                    value={thresholdValues[inv.warehouseId] ?? ''}
+                                                    onChange={e => setThresholdValues({
+                                                        ...thresholdValues,
+                                                        [inv.warehouseId]: parseInt(e.target.value) || 0
+                                                    })}
+                                                    className="w-full h-10 px-3 bg-white border border-gray-200 rounded-lg text-sm font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 transition-all text-center"
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                        </div>
+                        <div className="flex justify-end gap-3 p-6 border-t border-gray-100 bg-gray-50/50">
+                            <button
+                                type="button"
+                                onClick={() => setShowThresholdModal(false)}
+                                className="h-11 px-6 text-sm font-bold text-gray-500 hover:text-slate-900 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSaveThresholds}
+                                disabled={thresholdSaving}
+                                className="h-11 px-8 bg-slate-900 hover:bg-slate-800 text-white text-sm font-black tracking-wide flex items-center gap-2 transition-all disabled:opacity-50"
+                            >
+                                {thresholdSaving ? 'SAVING...' : 'SAVE THRESHOLDS'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

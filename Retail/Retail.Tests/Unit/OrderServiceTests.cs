@@ -80,8 +80,6 @@ namespace Retailen.Tests.Unit
                 _emailMock.Object);
         }
 
-        // ───────────────── Helper: Build Cart with Product navigation ─────────────────
-
         private Cart BuildCartWithItems(int customerId, params (string name, decimal price, int qty)[] items)
         {
             var cart = new Cart(customerId, $"sess-{customerId}");
@@ -98,8 +96,6 @@ namespace Retailen.Tests.Unit
 
             return cart;
         }
-
-        // ───────────────── Tests ─────────────────
 
         [Fact]
         public async Task CreateOrder_EmptyCart_ThrowsArgumentException()
@@ -139,7 +135,6 @@ namespace Retailen.Tests.Unit
             var request = new CreateOrderRequestDTO { UserId = 2, CartId = cart.Id };
             var result = await _service.CreateOrderAsync(request);
 
-            // Expected: 100*2 + 25.50*3 = 200 + 76.50 = 276.50
             Assert.Equal(276.50m, result.Total);
         }
 

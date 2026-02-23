@@ -23,6 +23,7 @@ namespace Retailen.Application.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IRepository<Review> _reviewRepository;
         private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<InventoryThreshold> _inventoryThresholdRepository;
 
         public ProductService(
             IProductRepository productRepository,
@@ -31,7 +32,8 @@ namespace Retailen.Application.Services
             IRepository<Inventory> inventoryRepository,
             IOrderRepository orderRepository,
             IRepository<Review> reviewRepository,
-            IRepository<Customer> customerRepository)
+            IRepository<Customer> customerRepository,
+            IRepository<InventoryThreshold> inventoryThresholdRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
@@ -40,6 +42,7 @@ namespace Retailen.Application.Services
             _orderRepository = orderRepository;
             _reviewRepository = reviewRepository;
             _customerRepository = customerRepository;
+            _inventoryThresholdRepository = inventoryThresholdRepository;
         }
 
         /// <inheritdoc/>
@@ -146,12 +149,18 @@ namespace Retailen.Application.Services
 
             if (dto.Attributes != null)
             {
+                var attrIds = dto.Attributes.Select(a => a.AttributeId).Distinct().ToList();
+                var attributeDefs = await _attributeDefinitionRepository.FindAsync(a => attrIds.Contains(a.Id));
+
                 foreach (var attrDto in dto.Attributes)
                 {
+                    var def = attributeDefs.FirstOrDefault(a => a.Id == attrDto.AttributeId);
+                    if (def == null) continue;
+
                     var existingAttr = product.ProductAttributes.FirstOrDefault(pa => pa.AttributeId == attrDto.AttributeId);
                     if (existingAttr != null)
                     {
-                        existingAttr.SetValue("string", attrDto.Value);
+                        existingAttr.SetValue(def.DataType, attrDto.Value);
                     }
                     else
                     {
@@ -160,7 +169,7 @@ namespace Retailen.Application.Services
                             ProductId = id,
                             AttributeId = attrDto.AttributeId
                         };
-                        newAttr.SetValue("string", attrDto.Value); 
+                        newAttr.SetValue(def.DataType, attrDto.Value); 
                         product.ProductAttributes.Add(newAttr);
                     }
                 }
@@ -198,7 +207,8 @@ namespace Retailen.Application.Services
             var (products, totalCount) = await _productRepository.GetProductsPagedAsync(pagination.PageNumber, pagination.PageSize);
 
             var inventory = await _inventoryRepository.GetAllAsync();
-            var dtos = MapProductsToDtos(products, inventory);
+            var thresholds = await _inventoryThresholdRepository.GetAllAsync();
+            var dtos = MapProductsToDtos(products, inventory, thresholds);
 
             return (dtos, totalCount);
         }
@@ -231,7 +241,8 @@ namespace Retailen.Application.Services
                 .Where(p => p.Active == true || p.Active == null)
                 .OrderByDescending(p => p.CreatedAt);
             var inventory = await _inventoryRepository.GetAllAsync();
-            return MapProductsToDtos(products, inventory);
+            var thresholds = await _inventoryThresholdRepository.GetAllAsync();
+            return MapProductsToDtos(products, inventory, thresholds);
         }
 
         /// <inheritdoc/>
@@ -245,6 +256,9 @@ namespace Retailen.Application.Services
 
             var inventoryItems = await _inventoryRepository.FindAsync(i => i.ProductId == id);
             var totalStock = inventoryItems.Sum(i => i.Quantity);
+
+            var thresholdItems = await _inventoryThresholdRepository.FindAsync(t => t.ProductId == id);
+            var totalThreshold = thresholdItems.Any() ? thresholdItems.Sum(t => t.LowStockThreshold) : 0;
 
             var categories = product.ProductCategories.Select(pc => pc.Category).ToList();
             var leafCategory = categories.FirstOrDefault(c => c.ParentId != null);
@@ -269,6 +283,7 @@ namespace Retailen.Application.Services
                 Description = product.Description,
                 InStock = (product.Active ?? false) && totalStock > 0,
                 StockLevel = totalStock,
+                StockThreshold = totalThreshold,
                 ImageUrl = product.ImageUrl,
                 Category = categoryName,
                 Style = attributes.FirstOrDefault(pa => pa.Attribute.Name == "Style")?.GetValue(),
@@ -356,7 +371,7 @@ namespace Retailen.Application.Services
             return review;
         }
 
-        private List<ProductDTO> MapProductsToDtos(IEnumerable<Product> products, IEnumerable<Inventory> inventory)
+        private List<ProductDTO> MapProductsToDtos(IEnumerable<Product> products, IEnumerable<Inventory> inventory, IEnumerable<InventoryThreshold> thresholds)
         {
             var result = new List<ProductDTO>();
 
@@ -364,6 +379,9 @@ namespace Retailen.Application.Services
             {
                 var prodAttributes = p.ProductAttributes.ToList();
                 var totalStock = inventory.Where(i => i.ProductId == p.Id).Sum(i => i.Quantity);
+                
+                var prodThresholds = thresholds.Where(t => t.ProductId == p.Id).ToList();
+                var totalThreshold = prodThresholds.Any() ? prodThresholds.Sum(t => t.LowStockThreshold) : 0;
 
                 var categories = p.ProductCategories.Select(pc => pc.Category).ToList();
                 var leafCategory = categories.FirstOrDefault(c => c.ParentId != null);
@@ -388,6 +406,7 @@ namespace Retailen.Application.Services
                     Description = p.Description,
                     InStock = (p.Active ?? false) && totalStock > 0,
                     StockLevel = totalStock,
+                    StockThreshold = totalThreshold,
                     ImageUrl = p.ImageUrl,
                     Category = categoryName,
                     Style = prodAttributes.FirstOrDefault(pa => pa.Attribute.Name == "Style")?.GetValue(),

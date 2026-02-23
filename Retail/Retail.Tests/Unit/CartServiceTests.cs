@@ -9,10 +9,6 @@ using Retailen.Domain.Interfaces;
 
 namespace Retailen.Tests.Unit
 {
-    /// <summary>
-    /// Unit tests for CartService — covers input validation,
-    /// add/remove/merge cart operations, and cart finalization.
-    /// </summary>
     public class CartServiceTests
     {
         private readonly CartService _service;
@@ -27,8 +23,6 @@ namespace Retailen.Tests.Unit
             _productMock = new Mock<IProductService>();
             _service = new CartService(_cartRepoMock.Object, _mapperMock.Object, _productMock.Object);
         }
-
-        // ───────────────── AddToCart Tests ─────────────────
 
         [Fact]
         public async Task AddToCart_WithZeroQuantity_ThrowsArgumentException()
@@ -49,7 +43,6 @@ namespace Retailen.Tests.Unit
         {
             _productMock.Setup(p => p.CheckAvailabilityAsync(1, 2)).ReturnsAsync(false);
 
-            // Return null for active cart lookups so a new one would be created
             _cartRepoMock.Setup(r => r.GetActiveCartBySessionAsync(It.IsAny<string>()))
                 .ReturnsAsync((Cart?)null);
             _cartRepoMock.Setup(r => r.GetActiveCartByCustomerAsync(It.IsAny<int>()))
@@ -92,10 +85,8 @@ namespace Retailen.Tests.Unit
             await _service.AddToCartAsync(request);
 
             var item = cart.Items.First(i => i.ProductId == 1);
-            Assert.Equal(5, item.Quantity); // 3 + 2
+            Assert.Equal(5, item.Quantity);
         }
-
-        // ───────────────── UpdateQuantity Tests ─────────────────
 
         [Fact]
         public async Task UpdateQuantity_CartNotFound_ThrowsArgumentException()
@@ -106,8 +97,6 @@ namespace Retailen.Tests.Unit
             await Assert.ThrowsAsync<ArgumentException>(
                 () => _service.UpdateQuantityAsync(request, null, "sess"));
         }
-
-        // ───────────────── RemoveFromCart Tests ─────────────────
 
         [Fact]
         public async Task RemoveFromCart_ExistingItem_RemovesIt()
@@ -124,8 +113,6 @@ namespace Retailen.Tests.Unit
             Assert.Empty(cart.Items);
         }
 
-        // ───────────────── ClearCart Tests ─────────────────
-
         [Fact]
         public async Task ClearCart_RemovesAllItems()
         {
@@ -141,13 +128,10 @@ namespace Retailen.Tests.Unit
             Assert.Empty(cart.Items);
         }
 
-        // ───────────────── FinalizeCart Tests ─────────────────
-
         [Fact]
         public async Task FinalizeCart_DeactivatesCart()
         {
             var cart = new Cart(9, "sess-9");
-            // FinalizeCartAsync uses GetByIdAsync, not GetCartWithItemsAsync
             _cartRepoMock.Setup(r => r.GetByIdAsync(cart.Id)).ReturnsAsync(cart);
             _cartRepoMock.Setup(r => r.UpdateAsync(It.IsAny<Cart>())).Returns(Task.CompletedTask);
             _cartRepoMock.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);

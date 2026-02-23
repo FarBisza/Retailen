@@ -68,9 +68,9 @@ namespace Retailen.Infrastructure.Configurations
                 options.AddPolicy("RequireCustomer", policy =>
                     policy.RequireRole("Customer"));
 
-                // Staff / Employee (RoleID=3)
+                // Staff / Employee (RoleID=3) — Admin also has full staff access
                 options.AddPolicy("RequireStaff", policy =>
-                    policy.RequireRole("Employee"));
+                    policy.RequireRole("Admin", "Employee"));
 
                 // Supplier (RoleID=4)
                 options.AddPolicy("RequireSupplier", policy =>

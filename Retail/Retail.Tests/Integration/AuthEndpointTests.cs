@@ -38,7 +38,6 @@ namespace Retailen.Tests.Integration
         [Fact]
         public async Task Login_ValidCredentials_ReturnsToken()
         {
-            // 1. Register first
             var email = $"loginuser_{Guid.NewGuid()}@example.com";
             var password = "Password123!";
             var registerDto = new RegisterRequestDTO
@@ -51,7 +50,6 @@ namespace Retailen.Tests.Integration
             var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", registerDto);
             Assert.Equal(HttpStatusCode.Created, registerResponse.StatusCode);
 
-            // 2. Confirm Email directly in DB
             using (var scope = _factory.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -63,7 +61,6 @@ namespace Retailen.Tests.Integration
                 }
             }
 
-            // 3. Login
             var loginDto = new AuthenticateRequestDTO { Email = email, Password = password };
             var response = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
 

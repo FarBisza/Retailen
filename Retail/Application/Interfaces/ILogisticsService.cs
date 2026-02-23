@@ -16,8 +16,9 @@ namespace Retailen.Application.Interfaces
         Task<bool> UpdateSupplierAsync(int id, CreateSupplierRequestDTO dto);
         Task<bool> DeleteSupplierAsync(int id);
 
-        // ===== Warehouses =====
+        // ===== Warehouses & Inventory =====
         Task<List<WarehouseDTO>> GetWarehousesAsync();
+        Task<bool> SetInventoryThresholdAsync(UpdateInventoryThresholdDTO dto);
 
         // ===== Purchase Orders =====
         Task<List<PurchaseOrderDTO>> GetPurchaseOrdersAsync();

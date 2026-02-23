@@ -15,7 +15,7 @@ namespace Retailen.Application.DTO.Product
         public List<string>? Colors { get; set; }
         public bool InStock { get; set; }
         public int StockLevel { get; set; }
-        public int StockThreshold { get; set; } = 10;
+        public int StockThreshold { get; set; } = 0;
         public List<string> Categories { get; set; } = new();
 
         // Navigation properties

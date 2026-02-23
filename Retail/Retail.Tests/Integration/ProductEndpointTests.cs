@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Net.Http.Headers;
 using Retailen.Application.DTO.Auth;
 using Retailen.Application.DTO.Product;
-using Retailen.Domain.Entities.Product; // Adjust namespace if needed
+using Retailen.Domain.Entities.Product;
 using Xunit;
 
 namespace Retailen.Tests.Integration
@@ -21,8 +21,6 @@ namespace Retailen.Tests.Integration
 
         private async Task<string> AuthenticateAsync(string email, string password)
         {
-             // Helper to login and get token
-             // Assuming user exists or is seeded. For integration tests, we can register a new one.
              await _client.PostAsJsonAsync("/api/auth/register", new RegisterRequestDTO 
              { 
                  Email = email, 

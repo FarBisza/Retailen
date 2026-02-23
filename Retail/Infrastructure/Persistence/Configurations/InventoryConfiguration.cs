@@ -43,4 +43,24 @@ namespace Retailen.Infrastructure.Persistence.Configurations
                   .OnDelete(DeleteBehavior.SetNull);
         }
     }
+
+    public class InventoryThresholdConfiguration : IEntityTypeConfiguration<InventoryThreshold>
+    {
+        public void Configure(EntityTypeBuilder<InventoryThreshold> entity)
+        {
+            entity.ToTable("InventoryThreshold");
+            entity.HasKey(e => new { e.ProductId, e.WarehouseId });
+            entity.Property(e => e.ProductId).HasColumnName("ProductID");
+            entity.Property(e => e.WarehouseId).HasColumnName("WarehouseID");
+            entity.Property(e => e.LowStockThreshold).HasColumnName("LowStockThreshold");
+
+            entity.HasOne(e => e.Product)
+                  .WithMany()
+                  .HasForeignKey(e => e.ProductId);
+
+            entity.HasOne(e => e.Warehouse)
+                  .WithMany()
+                  .HasForeignKey(e => e.WarehouseId);
+        }
+    }
 }

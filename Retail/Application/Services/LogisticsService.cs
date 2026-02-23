@@ -28,6 +28,7 @@ namespace Retailen.Application.Services
         private readonly IInventoryService _inventoryService;
         private readonly IRepository<GoodsReceiptDiscrepancy> _receiptDiscrepancyRepository;
         private readonly IRepository<ShipmentStatusHistory> _shipmentStatusHistoryRepository;
+        private readonly IRepository<InventoryThreshold> _thresholdRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IUnitOfWork _unitOfWork;
 
@@ -40,6 +41,7 @@ namespace Retailen.Application.Services
             IInventoryService inventoryService,
             IRepository<GoodsReceiptDiscrepancy> receiptDiscrepancyRepository,
             IRepository<ShipmentStatusHistory> shipmentStatusHistoryRepository,
+            IRepository<InventoryThreshold> thresholdRepository,
             IOrderRepository orderRepository,
             IUnitOfWork unitOfWork)
         {
@@ -51,6 +53,7 @@ namespace Retailen.Application.Services
             _inventoryService = inventoryService;
             _receiptDiscrepancyRepository = receiptDiscrepancyRepository;
             _shipmentStatusHistoryRepository = shipmentStatusHistoryRepository;
+            _thresholdRepository = thresholdRepository;
             _orderRepository = orderRepository;
             _unitOfWork = unitOfWork;
         }
@@ -139,6 +142,38 @@ namespace Retailen.Application.Services
                     Active = w.Active
                 })
                 .ToList();
+        }
+
+        public async Task<bool> SetInventoryThresholdAsync(UpdateInventoryThresholdDTO dto)
+        {
+            var existing = (await _thresholdRepository.FindAsync(t => t.ProductId == dto.ProductId && t.WarehouseId == dto.WarehouseId)).FirstOrDefault();
+
+            if (existing != null)
+            {
+                if (dto.LowStockThreshold <= 0)
+                {
+                    // If threshold is 0 or less, we delete the rule to stop tracking
+                    await _thresholdRepository.DeleteAsync(existing);
+                }
+                else
+                {
+                    existing.LowStockThreshold = dto.LowStockThreshold;
+                    await _thresholdRepository.UpdateAsync(existing);
+                }
+            }
+            else if (dto.LowStockThreshold > 0)
+            {
+                var newThreshold = new InventoryThreshold
+                {
+                    ProductId = dto.ProductId,
+                    WarehouseId = dto.WarehouseId,
+                    LowStockThreshold = dto.LowStockThreshold
+                };
+                await _thresholdRepository.AddAsync(newThreshold);
+            }
+
+            await _thresholdRepository.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<PurchaseOrderDTO>> GetPurchaseOrdersAsync()
@@ -351,8 +386,8 @@ namespace Retailen.Application.Services
             }
 
             po.StatusId = hasDiscrepancy
-                ? (int)PurchaseOrderStatusEnum.FullyReceived
-                : (int)PurchaseOrderStatusEnum.InDelivery;
+                ? (int)PurchaseOrderStatusEnum.PartiallyReceived
+                : (int)PurchaseOrderStatusEnum.FullyReceived;
             await _purchaseOrderRepository.UpdateAsync(po);
             await _purchaseOrderRepository.SaveChangesAsync();
 
@@ -360,8 +395,8 @@ namespace Retailen.Application.Services
             {
                 GoodsReceiptId = receipt.Id,
                 Message = hasDiscrepancy
-                    ? "Goods receipt created with discrepancies (damaged/shortage recorded)"
-                    : "Goods receipt created, inventory updated"
+                    ? "Goods receipt created with discrepancies (marked as Partially Received)"
+                    : "Goods receipt created successfully (marked as Fully Received)"
             };
         }
 

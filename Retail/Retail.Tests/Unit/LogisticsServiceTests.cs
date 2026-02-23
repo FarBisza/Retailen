@@ -12,10 +12,6 @@ using Retailen.Domain.Interfaces;
 
 namespace Retailen.Tests.Unit
 {
-    /// <summary>
-    /// Unit tests for LogisticsService — covers supplier CRUD,
-    /// purchase order creation, supplier confirmation, and goods receipt.
-    /// </summary>
     public class LogisticsServiceTests
     {
         private readonly Mock<IRepository<Supplier>> _supplierRepoMock;
@@ -43,7 +39,6 @@ namespace Retailen.Tests.Unit
             _orderRepoMock = new Mock<IOrderRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
 
-            // Make ExecuteInTransactionAsync execute the action directly
             _unitOfWorkMock.Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
                 .Returns<Func<Task>>(action => action());
 
@@ -59,8 +54,6 @@ namespace Retailen.Tests.Unit
                 _orderRepoMock.Object,
                 _unitOfWorkMock.Object);
         }
-
-        // ───────────────── Supplier Tests ─────────────────
 
         [Fact]
         public async Task CreateSupplier_Valid_ReturnsSupplierDTO()
@@ -92,8 +85,6 @@ namespace Retailen.Tests.Unit
             Assert.False(result);
         }
 
-        // ───────────────── Purchase Order Tests ─────────────────
-
         [Fact]
         public async Task CreatePurchaseOrder_Valid_ReturnsPO()
         {
@@ -124,15 +115,12 @@ namespace Retailen.Tests.Unit
             )), Times.Once);
         }
 
-        // ───────────────── Supplier Portal Tests ─────────────────
-
         [Fact]
         public async Task ConfirmOrderBySupplier_WrongSupplier_ReturnsFalse()
         {
             var po = new PurchaseOrder { Id = 1, SupplierId = 5, StatusId = (int)PurchaseOrderStatusEnum.Submitted };
             _poRepoMock.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(po);
 
-            // Supplier 999 tries to confirm order belonging to Supplier 5
             var result = await _service.ConfirmOrderBySupplierAsync(1, 999);
 
             Assert.False(result);
@@ -141,7 +129,6 @@ namespace Retailen.Tests.Unit
         [Fact]
         public async Task CreateGoodsReceipt_UpdatesInventory()
         {
-            // Arrange
             var po = new PurchaseOrder
             {
                 Id = 1, SupplierId = 1, WarehouseId = 1,
@@ -173,13 +160,10 @@ namespace Retailen.Tests.Unit
                 }
             };
 
-            // Act
             var result = await _service.CreateGoodsReceiptAsync(1, dto);
 
-            // Assert
             Assert.NotNull(result);
 
-            // IInventoryService.AddStockAsync should be called with sellable qty = 20 - 2 = 18
             _inventoryServiceMock.Verify(s => s.AddStockAsync(10, 18, 1), Times.Once);
         }
     }

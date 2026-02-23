@@ -26,6 +26,14 @@ namespace Retailen.Application.Validators.Product
             RuleFor(x => x.CategoryId)
                 .GreaterThan(0).WithMessage("Category ID must be a positive number")
                 .When(x => x.CategoryId.HasValue);
+
+            RuleForEach(x => x.Attributes).ChildRules(attributes =>
+            {
+                attributes.RuleFor(a => a.Value)
+                    .NotEmpty().WithMessage("Attribute value cannot be empty.");
+                attributes.RuleFor(a => a.AttributeId)
+                    .GreaterThan(0).WithMessage("Attribute ID must be valid.");
+            }).When(x => x.Attributes != null);
         }
     }
 }

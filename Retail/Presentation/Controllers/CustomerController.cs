@@ -17,9 +17,6 @@ namespace Retailen.Presentation.Controllers
             _customerService = customerService;
         }
 
-        /// <summary>
-        /// Get current user's profile
-        /// </summary>
         [HttpGet("me")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetCurrentUser()
@@ -33,9 +30,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(customer);
         }
 
-        /// <summary>
-        /// Update current user's profile
-        /// </summary>
         [HttpPut("me")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateCurrentUser([FromBody] UpdateCustomerRequestDTO request)
@@ -52,9 +46,6 @@ namespace Retailen.Presentation.Controllers
             }
         }
 
-        /// <summary>
-        /// Get customer by ID (Admin/Staff only)
-        /// </summary>
         [HttpGet("{id:int}")]
         [Authorize(Policy = "RequireStaff")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
@@ -68,9 +59,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(customer);
         }
 
-        /// <summary>
-        /// Get all customers (Admin/Staff only) — supports pagination via ?skip=0&take=20
-        /// </summary>
         [HttpGet]
         [Authorize(Policy = "RequireStaff")]
         [ProducesResponseType(typeof(IEnumerable<CustomerDTO>), StatusCodes.Status200OK)]
@@ -90,9 +78,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(customers);
         }
 
-        /// <summary>
-        /// Update customer by ID (Admin only)
-        /// </summary>
         [HttpPut("{id:int}")]
         [Authorize(Policy = "RequireAdmin")]
         [ProducesResponseType(typeof(CustomerDTO), StatusCodes.Status200OK)]
@@ -109,9 +94,6 @@ namespace Retailen.Presentation.Controllers
             }
         }
 
-        /// <summary>
-        /// Delete customer (Admin only)
-        /// </summary>
         [HttpDelete("{id:int}")]
         [Authorize(Policy = "RequireAdmin")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -128,9 +110,6 @@ namespace Retailen.Presentation.Controllers
             }
         }
 
-        /// <summary>
-        /// Activate or deactivate a customer (soft-delete) — Admin/Staff only
-        /// </summary>
         [HttpPost("{id:int}/set-active")]
         [Authorize(Policy = "RequireAdmin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -147,10 +126,6 @@ namespace Retailen.Presentation.Controllers
             }
         }
 
-        /// <summary>
-        /// Assign a role to a customer — Admin only
-        /// Role IDs: 1=Admin, 2=Customer, 3=Employee, 4=Supplier
-        /// </summary>
         [HttpPost("{id:int}/set-role")]
         [Authorize(Policy = "RequireAdmin")]
         [ProducesResponseType(StatusCodes.Status200OK)]

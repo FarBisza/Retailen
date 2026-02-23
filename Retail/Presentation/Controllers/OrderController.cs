@@ -18,9 +18,6 @@ namespace Retailen.Presentation.Controllers
             _orderService = orderService;
         }
 
-        /// <summary>
-        /// Create a new order
-        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequestDTO request)
         {
@@ -31,9 +28,6 @@ namespace Retailen.Presentation.Controllers
             return CreatedAtAction(nameof(GetOrderById), new { id = order.Id }, order);
         }
 
-        /// <summary>
-        /// Get order by ID
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrderById(int id)
         {
@@ -46,9 +40,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(order);
         }
 
-        /// <summary>
-        /// Get current user's orders
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetMyOrders()
         {
@@ -57,9 +48,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(orders);
         }
 
-        /// <summary>
-        /// Create order from active cart (checkout)
-        /// </summary>
         [HttpPost("checkout")]
         public async Task<IActionResult> Checkout([FromBody] AddressDTO address)
         {
@@ -68,9 +56,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(result);
         }
 
-        /// <summary>
-        /// Process payment for an order
-        /// </summary>
         [HttpPost("{id:int}/pay")]
         public async Task<IActionResult> Pay(int id, [FromBody] PayRequestDTO request)
         {
@@ -79,9 +64,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(new { message = "Payment accepted" });
         }
 
-        /// <summary>
-        /// Request invoice for an order
-        /// </summary>
         [HttpPost("{id:int}/request-invoice")]
         public async Task<IActionResult> RequestInvoice(int id, [FromBody] BillingInfoRequestDTO request)
         {
@@ -90,9 +72,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(new { message = "Invoice request accepted" });
         }
 
-        /// <summary>
-        /// Get order counts by status for badges
-        /// </summary>
         [HttpGet("counts")]
         public async Task<IActionResult> GetOrderCounts()
         {
@@ -101,11 +80,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(counts);
         }
 
-        // --- Staff / Admin Endpoints ---
-
-        /// <summary>
-        /// Get all orders (Staff/Admin) — supports pagination via ?skip=0&take=20
-        /// </summary>
         [HttpGet("all")]
         [Authorize(Policy = "RequireStaff")]
         public async Task<IActionResult> GetAllOrders([FromQuery] int? page = null, [FromQuery] int? pageSize = null)
@@ -124,9 +98,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(orders);
         }
 
-        /// <summary>
-        /// Ship an order (Staff/Admin)
-        /// </summary>
         [HttpPost("{id:int}/ship")]
         [Authorize(Policy = "RequireStaff")]
         public async Task<IActionResult> ShipOrder(int id, [FromBody] ShipOrderRequestDTO request)
@@ -135,9 +106,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(new { message = "Order shipped" });
         }
 
-        /// <summary>
-        /// Get invoice for an order
-        /// </summary>
         [HttpGet("{id:int}/invoice")]
         public async Task<IActionResult> GetInvoice(int id)
         {
@@ -147,9 +115,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(invoice);
         }
 
-        /// <summary>
-        /// Mark order as delivered (Staff/Admin)
-        /// </summary>
         [HttpPost("{id:int}/deliver")]
         [Authorize(Policy = "RequireStaff")]
         public async Task<IActionResult> DeliverOrder(int id)
@@ -158,9 +123,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(new { message = "Order delivered" });
         }
 
-        /// <summary>
-        /// Mark order as processing / packing started (Staff/Admin)
-        /// </summary>
         [HttpPost("{id:int}/process")]
         [Authorize(Policy = "RequireStaff")]
         public async Task<IActionResult> StartProcessing(int id)

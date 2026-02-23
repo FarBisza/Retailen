@@ -51,16 +51,43 @@ const AdminPage: React.FC = () => {
     const [newCategoryParentId, setNewCategoryParentId] = useState<number | null>(null);
     const [createCategoryLoading, setCreateCategoryLoading] = useState(false);
 
-    const [simEnabled, setSimEnabled] = useState(false);
-    const [simDays, setSimDays] = useState(0);
+    const [simEnabled, setSimEnabled] = useState(() => {
+        const stored = localStorage.getItem('belo_sim_enabled');
+        return stored ? JSON.parse(stored) : false;
+    });
+    const [simDays, setSimDays] = useState(() => {
+        const stored = localStorage.getItem('belo_sim_days');
+        return stored ? parseInt(stored, 10) : 0;
+    });
     const simIntervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
     const [initialPoProduct, setInitialPoProduct] = useState<{ productId: number; quantity: number } | null>(null);
 
     useEffect(() => {
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'belo_sim_enabled') {
+                setSimEnabled(e.newValue ? JSON.parse(e.newValue) : false);
+            }
+            if (e.key === 'belo_sim_days') {
+                setSimDays(e.newValue ? parseInt(e.newValue, 10) : 0);
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
+    useEffect(() => {
         if (simEnabled) {
-            setSimDays(0);
+            if (!localStorage.getItem('belo_sim_days')) {
+                setSimDays(0);
+                localStorage.setItem('belo_sim_days', '0');
+            }
+            if (simIntervalRef.current) clearInterval(simIntervalRef.current);
             simIntervalRef.current = setInterval(() => {
-                setSimDays((d) => d + 1);
+                setSimDays((d) => {
+                    const newDays = d + 1;
+                    localStorage.setItem('belo_sim_days', newDays.toString());
+                    return newDays;
+                });
             }, 1000);
         } else {
             if (simIntervalRef.current) clearInterval(simIntervalRef.current);
@@ -326,7 +353,7 @@ const AdminPage: React.FC = () => {
                             {(() => {
                                 const criticalCount = products.filter(
                                     (p) =>
-                                        (p.stockLevel || 0) <= (p.stockThreshold || 5)
+                                        (p.stockThreshold ?? 0) > 0 && (p.stockLevel || 0) <= (p.stockThreshold ?? 0)
                                 ).length;
                                 return criticalCount > 0 ? (
                                     <div className="px-3 py-1.5 bg-red-50 border border-red-100 rounded-sm flex items-center gap-2">
@@ -374,8 +401,8 @@ const AdminPage: React.FC = () => {
                                     </tr>
                                 ) : (
                                     products.map((p) => {
-                                        const isLow = (p.stockLevel || 0) <= (p.stockThreshold || 5);
-                                        const needToOrder = Math.max(0, (p.stockThreshold || 5) - (p.stockLevel || 0));
+                                        const isLow = (p.stockThreshold ?? 0) > 0 && (p.stockLevel || 0) <= (p.stockThreshold ?? 0);
+                                        const needToOrder = Math.max(0, (p.stockThreshold ?? 0) * 2 - (p.stockLevel || 0));
                                         return (
                                             <tr key={p.id} className="hover:bg-gray-50/20 text-xs transition-colors">
                                                 <td className="px-8 py-5 flex items-center gap-3">
@@ -389,12 +416,12 @@ const AdminPage: React.FC = () => {
                                                     <span className="text-[9px] text-gray-400 uppercase">Qty</span>
                                                 </td>
                                                 <td className="px-8 py-5 text-center text-gray-400 font-bold">
-                                                    {p.stockThreshold || 10}
+                                                    {p.stockThreshold ?? 0}
                                                 </td>
                                                 <td className="px-8 py-5">
                                                     {(() => {
                                                         const stock = p.stockLevel || 0;
-                                                        const threshold = p.stockThreshold || 5;
+                                                        const threshold = p.stockThreshold ?? 0;
                                                         const maxDisplay = Math.max(threshold * 3, stock, 50);
                                                         const pct = Math.min(Math.round((stock / maxDisplay) * 100), 100);
                                                         const ratio = stock / threshold;

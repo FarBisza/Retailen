@@ -5,9 +5,6 @@ using Retailen.Domain.Interfaces;
 
 namespace Retailen.Tests.Unit
 {
-    /// <summary>
-    /// Unit tests for CategoryService — covers CRUD and hierarchy.
-    /// </summary>
     public class CategoryServiceTests
     {
         private readonly Mock<IRepository<Category>> _categoryRepoMock;
@@ -18,8 +15,6 @@ namespace Retailen.Tests.Unit
             _categoryRepoMock = new Mock<IRepository<Category>>();
             _service = new CategoryService(_categoryRepoMock.Object);
         }
-
-        // ───────────────── Tests ─────────────────
 
         [Fact]
         public async Task GetAll_ReturnsList()

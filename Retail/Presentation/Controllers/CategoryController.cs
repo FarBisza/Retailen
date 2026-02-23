@@ -17,9 +17,6 @@ namespace Retailen.Presentation.Controllers
             _categoryService = categoryService;
         }
 
-        /// <summary>
-        /// Get all categories.
-        /// </summary>
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<CategoryDTO>), StatusCodes.Status200OK)]
@@ -29,9 +26,6 @@ namespace Retailen.Presentation.Controllers
             return Ok(categories);
         }
 
-        /// <summary>
-        /// Get category by ID.
-        /// </summary>
         [HttpGet("{id}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(CategoryDTO), StatusCodes.Status200OK)]
@@ -46,9 +40,7 @@ namespace Retailen.Presentation.Controllers
             return Ok(category);
         }
 
-        /// <summary>
-        /// Create a new category.
-        /// </summary>
+
         [HttpPost]
         [Authorize(Policy = "RequireAdmin")]
         [ProducesResponseType(typeof(CategoryDTO), StatusCodes.Status201Created)]
