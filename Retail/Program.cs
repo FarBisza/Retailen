@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp", policy =>
     {
         policy.AllowAnyOrigin()
-              .AllowAnyMethod()
+              .AllowAnyMethod() // .AllowAnyHeader() .AllowCredentials()
               .AllowAnyHeader();
     });
 });
@@ -43,7 +43,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<Retailen.Infrastructure.Persistence.AppDbContext>();
-    // context.Database.EnsureCreated(); // Optional
+    // Apply any pending migrations automatically on startup
+    await context.Database.MigrateAsync();
     
     try 
     {
