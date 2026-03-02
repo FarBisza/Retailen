@@ -45,7 +45,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<Retailen.Infrastructure.Persistence.AppDbContext>();
     // Apply any pending migrations automatically on startup
-    await context.Database.MigrateAsync();
+    //await context.Database.MigrateAsync();
     
     try 
     {
