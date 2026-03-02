@@ -10,6 +10,7 @@ import {
     CheckCircle,
 } from 'lucide-react';
 import { UserProfile } from '../../api/types';
+import { API_URL } from '../../api/authApi';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -51,7 +52,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
         try {
             const sessionId = sessionStorage.getItem('cart_session_id');
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
         setError(null);
 
         try {
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
