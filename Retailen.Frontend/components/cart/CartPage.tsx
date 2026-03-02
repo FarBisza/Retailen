@@ -15,13 +15,13 @@ const CartPage: React.FC<CartPageProps> = ({ items, onContinueShopping, onChecko
     const grandTotal = subtotal;
 
     return (
-        <div className="max-w-[1400px] mx-auto px-6 py-8">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
             <h1 className="text-2xl font-bold mb-8 text-slate-900">Your Cart ({items.length} items)</h1>
 
             <div className="flex flex-col lg:flex-row gap-12">
                 <div className="flex-[2]">
                     <div className="w-full">
-                        <div className="grid grid-cols-12 border-b border-gray-200 pb-4 text-[13px] font-semibold text-slate-800 uppercase tracking-wider">
+                        <div className="hidden md:grid grid-cols-12 border-b border-gray-200 pb-4 text-[13px] font-semibold text-slate-800 uppercase tracking-wider">
                             <div className="col-span-6">Product</div>
                             <div className="col-span-2 text-center">Unit Price</div>
                             <div className="col-span-2 text-center">Quantity</div>
@@ -30,44 +30,76 @@ const CartPage: React.FC<CartPageProps> = ({ items, onContinueShopping, onChecko
 
                         <div className="divide-y divide-gray-100">
                             {items.map((item) => (
-                                <div key={item.id} className="grid grid-cols-12 py-6 items-center">
-                                    <div className="col-span-6 flex items-center gap-6">
-                                        <div className="w-24 h-24 bg-gray-50 rounded-sm overflow-hidden flex-shrink-0">
+                                <React.Fragment key={item.id}>
+                                    {/* Desktop grid row */}
+                                    <div className="hidden md:grid grid-cols-12 py-6 items-center">
+                                        <div className="col-span-6 flex items-center gap-6">
+                                            <div className="w-24 h-24 bg-gray-50 rounded-sm overflow-hidden flex-shrink-0">
+                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply" />
+                                            </div>
+                                            <span className="text-lg font-medium text-slate-900">{item.name}</span>
+                                        </div>
+                                        <div className="col-span-2 text-center font-medium text-slate-700">
+                                            ${item.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                        </div>
+                                        <div className="col-span-2 flex justify-center items-center">
+                                            <div className="flex items-center border border-gray-200 rounded px-2 py-1 gap-3">
+                                                <button
+                                                    onClick={() => onRemoveItem(item.id)}
+                                                    className="text-gray-400 hover:text-black mr-2"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                                <button
+                                                    onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                                                    className={`text-gray-400 hover:text-black ${item.quantity <= 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                                    disabled={item.quantity <= 1}
+                                                >
+                                                    <Minus size={14} />
+                                                </button>
+                                                <span className="w-6 text-center text-sm font-semibold">{item.quantity}</span>
+                                                <button
+                                                    onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                                                    className="text-gray-400 hover:text-black"
+                                                >
+                                                    <Plus size={14} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="col-span-2 text-right font-bold text-slate-900 text-lg">
+                                            ${(item.price * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                        </div>
+                                    </div>
+                                    {/* Mobile card row */}
+                                    <div className="md:hidden flex gap-4 py-4 items-start">
+                                        <div className="w-20 h-20 bg-gray-50 rounded-sm overflow-hidden flex-shrink-0">
                                             <img src={item.image} alt={item.name} className="w-full h-full object-cover mix-blend-multiply" />
                                         </div>
-                                        <span className="text-lg font-medium text-slate-900">{item.name}</span>
-                                    </div>
-                                    <div className="col-span-2 text-center font-medium text-slate-700">
-                                        ${item.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                                    </div>
-                                    <div className="col-span-2 flex justify-center items-center">
-                                        <div className="flex items-center border border-gray-200 rounded px-2 py-1 gap-3">
-                                            <button
-                                                onClick={() => onRemoveItem(item.id)}
-                                                className="text-gray-400 hover:text-black mr-2"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
-                                            <button
-                                                onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                                                className={`text-gray-400 hover:text-black ${item.quantity <= 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
-                                                disabled={item.quantity <= 1}
-                                            >
-                                                <Minus size={14} />
-                                            </button>
-                                            <span className="w-6 text-center text-sm font-semibold">{item.quantity}</span>
-                                            <button
-                                                onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                                                className="text-gray-400 hover:text-black"
-                                            >
-                                                <Plus size={14} />
-                                            </button>
+                                        <div className="flex-1 min-w-0">
+                                            <span className="text-sm font-medium text-slate-900 line-clamp-2 block">{item.name}</span>
+                                            <span className="text-sm font-bold text-slate-900 mt-1 block">${item.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                            <div className="flex items-center justify-between mt-2">
+                                                <div className="flex items-center border border-gray-200 rounded px-2 py-1 gap-2">
+                                                    <button onClick={() => onRemoveItem(item.id)} className="text-gray-400 hover:text-black">
+                                                        <Trash2 size={12} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                                                        className={`text-gray-400 hover:text-black ${item.quantity <= 1 ? 'opacity-30 cursor-not-allowed' : ''}`}
+                                                        disabled={item.quantity <= 1}
+                                                    >
+                                                        <Minus size={12} />
+                                                    </button>
+                                                    <span className="w-6 text-center text-xs font-semibold">{item.quantity}</span>
+                                                    <button onClick={() => onUpdateQuantity(item.id, item.quantity + 1)} className="text-gray-400 hover:text-black">
+                                                        <Plus size={12} />
+                                                    </button>
+                                                </div>
+                                                <span className="font-bold text-slate-900">${(item.price * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="col-span-2 text-right font-bold text-slate-900 text-lg">
-                                        ${(item.price * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                                    </div>
-                                </div>
+                                </React.Fragment>
                             ))}
                         </div>
                     </div>
@@ -116,7 +148,7 @@ const CartPage: React.FC<CartPageProps> = ({ items, onContinueShopping, onChecko
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

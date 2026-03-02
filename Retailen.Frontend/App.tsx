@@ -22,7 +22,7 @@ import ProductDetail from './components/shop/ProductDetail';
 import Pagination from './components/shop/Pagination';
 import ActiveFilters from './components/shop/ActiveFilters';
 import { Product } from './api/types';
-import { X } from 'lucide-react';
+import { X, SlidersHorizontal } from 'lucide-react';
 
 import { useAuth } from './hooks/useAuth';
 import { useCart } from './hooks/useCart';
@@ -43,6 +43,7 @@ const App: React.FC = () => {
   const [orderModalInitialTab, setOrderModalInitialTab] = useState<OrderTab>('to-pay');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const { currentUser, setCurrentUser, handleLogin: authLogin, handleLogout: authLogout } = useAuth();
   const { products, productsLoading, categories, categoriesLoading, availableColors } = useProducts();
@@ -163,6 +164,25 @@ const App: React.FC = () => {
 
         {currentView === 'shop' && (
           <main className="max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-6 mt-4">
+            <div className="hidden lg:block">
+              <Sidebar
+                selectedCategory={filters.selectedCategory}
+                setSelectedCategory={filters.setSelectedCategory}
+                priceRange={filters.priceRange}
+                setPriceRange={filters.setPriceRange}
+                selectedColors={filters.selectedColors}
+                setSelectedColors={filters.setSelectedColors}
+                selectedStyles={filters.selectedStyles}
+                setSelectedStyles={filters.setSelectedStyles}
+                inStockOnly={filters.inStockOnly}
+                setInStockOnly={filters.setInStockOnly}
+                searchQuery={filters.searchQuery}
+                setSearchQuery={filters.setSearchQuery}
+                categories={categories}
+                currentUser={currentUser}
+                onGoToAdmin={() => setCurrentView('admin')}
+              />
+            </div>
             <Sidebar
               selectedCategory={filters.selectedCategory}
               setSelectedCategory={filters.setSelectedCategory}
@@ -179,8 +199,21 @@ const App: React.FC = () => {
               categories={categories}
               currentUser={currentUser}
               onGoToAdmin={() => setCurrentView('admin')}
+              isMobileOpen={isMobileFilterOpen}
+              onMobileClose={() => setIsMobileFilterOpen(false)}
             />
-            <div className="flex-1 px-6 pb-20">
+            <div className="flex-1 px-4 sm:px-6 pb-20">
+              <div className="flex items-center justify-between mb-4 lg:hidden">
+                <button
+                  onClick={() => setIsMobileFilterOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-full text-xs font-black uppercase tracking-widest text-slate-900 hover:bg-gray-50 transition-all"
+                >
+                  <SlidersHorizontal size={14} /> Filters
+                </button>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  {filters.displayedProducts.length} results
+                </span>
+              </div>
               <ActiveFilters
                 searchQuery={filters.searchQuery}
                 selectedCategory={filters.selectedCategory}
@@ -198,15 +231,15 @@ const App: React.FC = () => {
               />
 
               {filters.displayedProducts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-x-3 sm:gap-x-6 gap-y-2">
                   {filters.displayedProducts.map((product) => (
                     <ProductCard key={product.id} product={product} onAddToCart={(p) => handleAddToCart(p)} onProductClick={openProductDetail} />
                   ))}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-40 border-t border-gray-50">
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">No products found</h3>
-                  <p className="text-xs text-gray-400 font-medium uppercase tracking-widest">Try adjusting your filters or search query.</p>
+                <div className="flex flex-col items-center justify-center py-20 sm:py-40 border-t border-gray-50">
+                  <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-2">No products found</h3>
+                  <p className="text-xs text-gray-400 font-medium uppercase tracking-widest text-center px-4">Try adjusting your filters or search query.</p>
                 </div>
               )}
 

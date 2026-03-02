@@ -140,12 +140,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
     };
 
     return (
-        <div className="max-w-[1400px] mx-auto px-6 py-8 md:py-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <button onClick={onBack} className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-black mb-12 flex items-center gap-2 transition-colors">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-8 md:py-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <button onClick={onBack} className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-black mb-6 sm:mb-12 flex items-center gap-2 transition-colors">
                 <span className="text-lg">←</span> Back to Collection
             </button>
 
-            <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 mb-32">
+            <div className="flex flex-col lg:flex-row gap-8 sm:gap-16 lg:gap-24 mb-16 sm:mb-32">
                 <div className="flex-1 space-y-6">
                     <div className="aspect-[4/5] bg-gray-50 rounded-sm overflow-hidden border border-gray-100 p-8">
                         <img src={activeImage} alt={product.name} className="w-full h-full object-contain mix-blend-multiply transition-all duration-700 hover:scale-105" />
@@ -170,7 +170,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                             <div className="w-1 h-1 rounded-full bg-gray-200" />
                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-600">{product.type || 'FURNITURE'}</span>
                         </div>
-                        <h1 className="text-4xl font-bold tracking-tight text-slate-900 mb-4 leading-tight">{product.name}</h1>
+                        <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-slate-900 mb-4 leading-tight">{product.name}</h1>
 
                         <div className="flex items-center gap-6 mb-8">
                             <div className="flex items-center gap-2">
@@ -332,14 +332,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                 </div>
             </div>
 
-            <section className="border-t border-gray-100 pt-24 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                <div className="flex flex-col lg:flex-row gap-20">
+            <section className="border-t border-gray-100 pt-12 sm:pt-24 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                <div className="flex flex-col lg:flex-row gap-10 sm:gap-20">
 
                     <div className="w-full lg:w-80 flex flex-col gap-10">
                         <div>
-                            <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-8">Customer Feedback</h2>
+                            <h2 className="text-xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-8">Customer Feedback</h2>
                             <div className="flex items-end gap-4 mb-6">
-                                <span className="text-7xl font-black text-slate-900 leading-none">{avgRating}</span>
+                                <span className="text-5xl sm:text-7xl font-black text-slate-900 leading-none">{avgRating}</span>
                                 <div className="flex flex-col gap-1.5 mb-1">
                                     <div className="flex text-amber-400">
                                         {[1, 2, 3, 4, 5].map(star => (

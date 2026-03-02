@@ -20,6 +20,8 @@ interface SidebarProps {
   currentUser: UserProfile | null;
   onGoToAdmin?: () => void;
   availableColors?: string[];
+  isMobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -38,7 +40,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   categories,
   currentUser,
   onGoToAdmin,
-  availableColors = []
+  availableColors = [],
+  isMobileOpen,
+  onMobileClose
 }) => {
   const toggleColor = (color: string) => {
     if (selectedColors.includes(color)) {
@@ -110,6 +114,174 @@ const Sidebar: React.FC<SidebarProps> = ({
   );
 
   const hasFilters = selectedCategory || selectedColors.length > 0 || selectedStyles.length > 0 || inStockOnly || priceRange[1] < 2000;
+
+  const sidebarContent = (
+    <>
+      {hasFilters && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400">Active Filters</h3>
+            <button
+              onClick={handleReset}
+              className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors"
+            >
+              <RotateCcw size={12} /> Reset
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {selectedCategory && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 text-[10px] font-bold rounded-full text-slate-900 uppercase">
+                {selectedCategory} <X size={10} className="cursor-pointer" onClick={() => setSelectedCategory(null)} />
+              </span>
+            )}
+            {selectedColors.map(c => (
+              <span key={c} className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 text-[10px] font-bold rounded-full text-slate-900 uppercase">
+                Color <div className="w-2 h-2 rounded-full border border-gray-200" style={{ backgroundColor: c }} /> <X size={10} className="cursor-pointer" onClick={() => toggleColor(c)} />
+              </span>
+            ))}
+            {selectedStyles.map(s => (
+              <span key={s} className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100 text-[10px] font-bold rounded-full text-slate-900 uppercase">
+                {s} <X size={10} className="cursor-pointer" onClick={() => toggleStyle(s)} />
+              </span>
+            ))}
+            {inStockOnly && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-green-100 text-[10px] font-bold rounded-full text-green-700 uppercase">
+                In Stock <X size={10} className="cursor-pointer" onClick={() => setInStockOnly(false)} />
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="mb-12">
+        <h3 className="text-sm font-black mb-6 border-b border-gray-50 pb-2">Collections</h3>
+        <CategoryGroup title="Furniture" icon={Sofa} items={furnitureCats} colorClass="text-amber-600" />
+        <CategoryGroup title="Technology" icon={Smartphone} items={techCats} colorClass="text-blue-600" />
+        <CategoryGroup title="Fashion" icon={Shirt} items={apparelCats} colorClass="text-slate-500" />
+      </div>
+
+      <div className="mb-12">
+        <h3 className="text-sm font-black mb-6">Price Range</h3>
+        <div className="space-y-5">
+          <div className="relative px-1">
+            <input
+              type="range"
+              min="0"
+              max="2000"
+              step="50"
+              value={priceRange[1]}
+              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+              className="w-full h-1 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-slate-900"
+            />
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex-1 flex flex-col gap-1">
+              <span className="text-[9px] font-black text-gray-400 uppercase">Min</span>
+              <div className="border border-gray-100 px-3 py-2 text-xs font-bold text-slate-900 rounded-sm bg-gray-50/50">
+                ${priceRange[0]}
+              </div>
+            </div>
+            <div className="flex-1 flex flex-col gap-1">
+              <span className="text-[9px] font-black text-gray-400 uppercase">Max</span>
+              <div className="border border-gray-100 px-3 py-2 text-xs font-bold text-slate-900 rounded-sm bg-gray-50/50">
+                ${priceRange[1]}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-12">
+        <h3 className="text-sm font-black mb-5">Palette</h3>
+        <div className="flex flex-wrap gap-2.5">
+          {colors.map((color, idx) => (
+            <button
+              key={idx}
+              onClick={() => toggleColor(color.hex)}
+              className={`w-8 h-8 rounded-full border border-gray-100 shadow-sm flex items-center justify-center transition-all relative
+                ${selectedColors.includes(color.hex) ? 'ring-2 ring-slate-900 ring-offset-2 scale-110' : 'hover:scale-110'}
+              `}
+              style={{ backgroundColor: color.hex }}
+              title={color.name}
+            >
+              {selectedColors.includes(color.hex) && (
+                <Check size={14} className={['#1A1A1A', '#A07855'].includes(color.hex) ? 'text-white' : 'text-black'} />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-12">
+        <h3 className="text-sm font-black mb-5">Vibe & Style</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {['Modern', 'Urban', 'Minimalist', 'Classic', 'Industrial'].map((style) => {
+            const isSelected = selectedStyles.includes(style);
+            return (
+              <button
+                key={style}
+                onClick={() => toggleStyle(style)}
+                className={`px-3 py-2.5 text-[9px] font-black uppercase tracking-widest border transition-all rounded-sm
+                  ${isSelected ? 'bg-slate-900 text-white border-slate-900 shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-300 hover:text-slate-900'}
+                `}
+              >
+                {style}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div
+        onClick={() => setInStockOnly(!inStockOnly)}
+        className="flex items-center justify-between p-4 bg-gray-50 rounded-sm cursor-pointer hover:bg-gray-100 transition-colors group"
+      >
+        <div className="flex items-center gap-3">
+          <div className={`w-5 h-5 border rounded flex items-center justify-center transition-all ${inStockOnly ? 'bg-slate-900 border-slate-900' : 'bg-white border-gray-300 group-hover:border-gray-400'}`}>
+            {inStockOnly && <Check size={12} className="text-white" />}
+          </div>
+          <span className="text-[11px] font-black uppercase tracking-widest text-slate-700">In Stock Only</span>
+        </div>
+        <div className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-green-500 animate-pulse' : 'bg-gray-200'}`} />
+      </div>
+    </>
+  );
+
+  // Mobile drawer mode
+  if (isMobileOpen !== undefined) {
+    return (
+      <>
+        <div
+          className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] transition-opacity duration-300 lg:hidden ${isMobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          onClick={onMobileClose}
+        />
+        <div
+          className={`fixed top-0 right-0 h-full w-full max-w-[380px] bg-white z-[120] shadow-2xl transition-transform duration-500 transform overflow-y-auto lg:hidden ${isMobileOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        >
+          <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+            <div className="flex items-center gap-2">
+              <Filter size={18} className="text-slate-900" />
+              <h2 className="text-lg font-black tracking-tighter uppercase">Filters</h2>
+            </div>
+            <button onClick={onMobileClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <X size={24} />
+            </button>
+          </div>
+          <div className="p-6">
+            {sidebarContent}
+          </div>
+          <div className="sticky bottom-0 p-4 bg-white border-t border-gray-100">
+            <button
+              onClick={onMobileClose}
+              className="w-full py-3 bg-slate-900 text-white text-xs font-black uppercase tracking-widest hover:bg-black transition-all"
+            >
+              Show Results
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <aside className="w-full lg:w-[300px] flex-shrink-0 px-6 lg:border-r border-gray-100 min-h-screen py-8">

@@ -166,10 +166,10 @@ const StaffPage: React.FC = () => {
     };
 
     return (
-        <div className="max-w-[1400px] mx-auto px-6 py-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 sm:py-10">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-gray-100 pb-10">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">
+                    <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-900 uppercase">
                         Operational Center
                     </h1>
                     <div className="flex items-center gap-3 mt-2">
@@ -183,7 +183,7 @@ const StaffPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="hidden sm:flex items-center gap-4">
                     <button className="flex items-center gap-2 px-5 py-2.5 bg-gray-50 border border-gray-100 text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">
                         <Download size={14} /> System Logs
                     </button>
@@ -201,7 +201,7 @@ const StaffPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-1 border-b border-gray-100 mb-10">
+            <div className="flex gap-1 border-b border-gray-100 mb-6 sm:mb-10 overflow-x-auto scrollbar-hide">
                 {[
                     { id: 'products', label: 'Products', icon: Package },
                     { id: 'categories', label: 'Categories', icon: Layers },
@@ -217,7 +217,7 @@ const StaffPage: React.FC = () => {
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${activeTab === tab.id
+                        className={`px-3 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest border-b-2 transition-all flex items-center gap-1.5 sm:gap-2 shrink-0 whitespace-nowrap ${activeTab === tab.id
                             ? 'border-slate-900 text-slate-900'
                             : 'border-transparent text-gray-400 hover:text-slate-600'
                             }`}

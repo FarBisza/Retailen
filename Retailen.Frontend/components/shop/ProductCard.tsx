@@ -55,9 +55,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProdu
               e.stopPropagation();
               onAddToCart(product);
             }}
-            className={`absolute bottom-0 left-0 right-0 bg-[#0c121e] py-3 text-center transition-all duration-300 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}
+            className={`absolute bottom-0 left-0 right-0 bg-[#0c121e] py-3 text-center transition-all duration-300 lg:opacity-0 lg:translate-y-2 ${isHovered ? 'lg:opacity-100 lg:translate-y-0' : ''}`}
           >
-            <span className="text-white text-xs font-semibold tracking-wide uppercase">Add to cart</span>
+            <span className="text-white text-[10px] sm:text-xs font-semibold tracking-wide uppercase">Add to cart</span>
           </button>
         )}
 
@@ -70,13 +70,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onProdu
 
       <div className="flex flex-col gap-1">
         <h4
-          className="text-[15px] font-medium text-slate-800 tracking-tight leading-tight cursor-pointer hover:text-black transition-colors"
+          className="text-[12px] sm:text-[15px] font-medium text-slate-800 tracking-tight leading-tight cursor-pointer hover:text-black transition-colors line-clamp-2"
           onClick={() => onProductClick(product)}
         >
           {product.name}
         </h4>
         <div className="flex items-center gap-3 mt-1">
-          <span className={`text-[15px] font-bold ${product.originalPrice ? 'text-red-500' : 'text-slate-900'}`}>
+          <span className={`text-[13px] sm:text-[15px] font-bold ${product.originalPrice ? 'text-red-500' : 'text-slate-900'}`}>
             ${product.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </span>
           {product.originalPrice && (

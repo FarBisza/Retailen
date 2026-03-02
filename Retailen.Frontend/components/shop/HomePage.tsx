@@ -80,7 +80,7 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
     return (
         <div className="animate-in fade-in duration-700">
 
-            <section className="relative h-[85vh] w-full overflow-hidden bg-[#0c121e]">
+            <section className="relative h-[60vh] sm:h-[75vh] md:h-[85vh] w-full overflow-hidden bg-[#0c121e]">
                 {slides.map((slide, index) => (
                     <div
                         key={index}
@@ -97,7 +97,7 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                             <p className={`text-${slide.accent} text-[10px] md:text-xs font-black uppercase tracking-[0.4em] mb-6 flex items-center gap-3`}>
                                 {slide.icon} {slide.subtitle}
                             </p>
-                            <h1 className="text-white text-5xl md:text-8xl font-black tracking-tighter mb-8 max-w-3xl leading-[0.85] whitespace-pre-line">
+                            <h1 className="text-white text-3xl sm:text-5xl md:text-8xl font-black tracking-tighter mb-4 sm:mb-8 max-w-3xl leading-[0.85] whitespace-pre-line">
                                 {slide.title}
                             </h1>
                             <p className="text-gray-400 text-sm md:text-base font-medium max-w-md mb-12 leading-relaxed">
@@ -106,7 +106,7 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <button
                                     onClick={onShopNow}
-                                    className="group bg-white text-black px-12 py-5 text-xs font-black uppercase tracking-widest flex items-center gap-4 hover:bg-slate-900 hover:text-white transition-all duration-500 shadow-xl"
+                                    className="group bg-white text-black px-8 sm:px-12 py-4 sm:py-5 text-[10px] sm:text-xs font-black uppercase tracking-widest flex items-center gap-4 hover:bg-slate-900 hover:text-white transition-all duration-500 shadow-xl"
                                 >
                                     Explore Collection
                                     <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
@@ -116,10 +116,10 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                     </div>
                 ))}
 
-                <div className="absolute bottom-10 right-10 flex items-center gap-4 z-20">
+                <div className="absolute bottom-6 right-6 sm:bottom-10 sm:right-10 flex items-center gap-3 sm:gap-4 z-20">
                     <button
                         onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
-                        className="w-12 h-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition-all backdrop-blur-sm"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition-all backdrop-blur-sm"
                     >
                         <ChevronLeft size={20} />
                     </button>
@@ -133,14 +133,14 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                     </div>
                     <button
                         onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
-                        className="w-12 h-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition-all backdrop-blur-sm"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-black transition-all backdrop-blur-sm"
                     >
                         <ChevronRight size={20} />
                     </button>
                 </div>
             </section>
 
-            <section className="max-w-[1400px] mx-auto px-6 py-32">
+            <section className="max-w-[1400px] mx-auto px-4 sm:px-6 py-16 sm:py-32">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div className="group relative aspect-[4/5] overflow-hidden bg-gray-100 rounded-sm cursor-pointer" onClick={onShopNow}>
                         <img src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110" alt="Furniture" />
@@ -174,11 +174,11 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                 </div>
             </section>
 
-            <section className="bg-gray-50/50 py-32 border-y border-gray-100">
+            <section className="bg-gray-50/50 py-16 sm:py-32 border-y border-gray-100">
                 <div className="max-w-[1400px] mx-auto px-6">
                     <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
                         <div>
-                            <h2 className="text-4xl font-black tracking-tighter text-slate-900 mb-4">New Arrivals</h2>
+                            <h2 className="text-2xl sm:text-4xl font-black tracking-tighter text-slate-900 mb-4">New Arrivals</h2>
                             <p className="text-sm text-gray-400 font-medium max-w-sm uppercase tracking-widest">A collective of modern essentials</p>
                         </div>
                         <button onClick={onShopNow} className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-slate-900 border-b-2 border-slate-900 pb-1">
@@ -186,7 +186,7 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-12">
                         {[...featuredFurniture, ...featuredTech, ...featuredApparel].slice(0, 6).map(p => (
                             <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} onProductClick={onProductClick} />
                         ))}
@@ -194,9 +194,9 @@ const HomePage: React.FC<HomePageProps> = ({ onShopNow, onAddToCart, onProductCl
                 </div>
             </section>
 
-            <section className="max-w-[1400px] mx-auto px-6 py-40">
+            <section className="max-w-[1400px] mx-auto px-4 sm:px-6 py-20 sm:py-40">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 mb-12 leading-[0.9]">
+                    <h2 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tighter text-slate-900 mb-8 sm:mb-12 leading-[0.9]">
                         The intersection of <br /> life, style & <br /> intelligence.
                     </h2>
                     <p className="text-lg text-gray-500 leading-relaxed font-medium mb-16">

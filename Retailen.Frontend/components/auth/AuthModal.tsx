@@ -183,7 +183,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                     className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
                     onClick={onClose}
                 />
-                <div className="relative w-full max-w-xl bg-white rounded-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+                <div className="relative w-full max-w-xl bg-white rounded-none sm:rounded-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto">
                     <button
                         onClick={onClose}
                         className="absolute top-6 right-6 p-1 text-gray-400 hover:text-black transition-colors z-20"
@@ -221,13 +221,13 @@ const AuthModal: React.FC<AuthModalProps> = ({
     }
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4">
             <div
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
                 onClick={onClose}
             />
 
-            <div className="relative w-full max-w-xl bg-white rounded-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
+            <div className="relative w-full max-w-xl bg-white rounded-none sm:rounded-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 h-full sm:h-auto sm:max-h-[90vh] overflow-y-auto">
                 <button
                     onClick={onClose}
                     className="absolute top-6 right-6 p-1 text-gray-400 hover:text-black transition-colors z-20"
@@ -235,7 +235,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                     <X size={20} />
                 </button>
 
-                <div className="p-8 md:p-12">
+                <div className="p-6 sm:p-8 md:p-12">
                     <div className="mb-8 text-center">
                         <h2 className="text-2xl font-bold tracking-tight text-slate-900 mb-2">
                             {mode === 'login' ? 'Welcome Back' : 'Create Account'}

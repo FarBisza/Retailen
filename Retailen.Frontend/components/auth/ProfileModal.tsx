@@ -82,7 +82,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
             />
             <div className="fixed inset-0 z-[210] flex items-center justify-center pointer-events-none">
                 <div
-                    className="bg-white w-full max-w-md mx-4 shadow-2xl pointer-events-auto animate-in zoom-in-95 duration-300"
+                    className="bg-white w-full h-full sm:h-auto max-w-none sm:max-w-md sm:mx-4 shadow-2xl pointer-events-auto animate-in zoom-in-95 duration-300 flex flex-col sm:block overflow-y-auto"
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between">

@@ -146,24 +146,24 @@ const OrderModal: React.FC<OrderModalProps> = ({
 
     return (
         <>
-            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8">
+            <div className="fixed inset-0 z-[200] flex items-center justify-center sm:p-4 md:p-8">
                 <div
                     className="absolute inset-0 bg-slate-900/40 backdrop-blur-xl animate-in fade-in duration-500"
                     onClick={onClose}
                 />
 
-                <div className="relative w-full max-w-5xl bg-gray-50/80 backdrop-blur-md rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 fade-in duration-300 max-h-[90vh]">
-                    <div className="px-8 py-6 bg-white border-b border-gray-100 flex items-center justify-between">
+                <div className="relative w-full max-w-5xl bg-gray-50/80 backdrop-blur-md sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 fade-in duration-300 h-full sm:h-auto sm:max-h-[90vh]">
+                    <div className="px-4 sm:px-8 py-4 sm:py-6 bg-white border-b border-gray-100 flex items-center justify-between">
                         <button
                             onClick={onBackToAccount}
-                            className="min-w-[160px] flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-black transition-colors"
+                            className="min-w-0 sm:min-w-[160px] flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-black transition-colors"
                         >
-                            <ArrowLeft size={16} /> Back to Account
+                            <ArrowLeft size={16} /> <span className="hidden sm:inline">Back to Account</span>
                         </button>
-                        <h2 className="text-xl font-black tracking-tighter uppercase text-center">
+                        <h2 className="text-base sm:text-xl font-black tracking-tighter uppercase text-center">
                             My Purchases
                         </h2>
-                        <div className="min-w-[160px] flex justify-end">
+                        <div className="min-w-0 sm:min-w-[160px] flex justify-end">
                             <button
                                 onClick={onClose}
                                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -173,12 +173,12 @@ const OrderModal: React.FC<OrderModalProps> = ({
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 px-8 py-4 bg-white/50 border-b border-gray-100 overflow-x-auto scrollbar-hide">
+                    <div className="flex items-center gap-2 px-4 sm:px-8 py-3 sm:py-4 bg-white/50 border-b border-gray-100 overflow-x-auto scrollbar-hide">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as OrderTab)}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab.id
+                                className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab.id
                                     ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
                                     : 'bg-white text-gray-400 hover:text-slate-900 border border-gray-100'
                                     }`}
@@ -199,7 +199,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
                         ))}
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar">
                         {loading ? (
                             <div className="flex items-center justify-center py-20">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900" />
@@ -389,7 +389,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
                         )}
                     </div>
 
-                    <div className="px-8 py-6 bg-white border-t border-gray-100 flex items-center justify-between">
+                    <div className="px-4 sm:px-8 py-4 sm:py-6 bg-white border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                         <div className="flex items-center gap-2 text-[10px] font-black text-gray-300 uppercase tracking-widest">
                             <MapPin size={12} /> Shipping to: {(() => {
                                 const addr = orders.find(o => o.shippingAddress)?.shippingAddress;

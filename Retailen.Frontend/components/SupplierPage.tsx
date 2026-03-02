@@ -167,10 +167,10 @@ const SupplierPage: React.FC = () => {
     };
 
     return (
-        <div className="max-w-[1400px] mx-auto px-6 py-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 sm:py-10">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-gray-100 pb-10">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">
+                    <h1 className="text-xl sm:text-3xl font-black tracking-tight text-slate-900 uppercase">
                         Supplier Command
                     </h1>
                     <div className="flex items-center gap-3 mt-2">
@@ -201,10 +201,10 @@ const SupplierPage: React.FC = () => {
                             </span>
                         )}
                     </div>
-                    <button className="flex items-center gap-2 px-5 py-2.5 bg-gray-50 border border-gray-100 text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">
+                    <button className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-gray-50 border border-gray-100 text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">
                         <Download size={14} /> Catalog Sync
                     </button>
-                    <div className="relative">
+                    <div className="relative hidden sm:block">
                         <Search
                             size={16}
                             className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"
@@ -218,10 +218,10 @@ const SupplierPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex gap-4 border-b border-gray-100 mb-10 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-4 border-b border-gray-100 mb-6 sm:mb-10 overflow-x-auto scrollbar-hide">
                 <button
                     onClick={() => setActiveTab('incoming')}
-                    className={`px-8 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${activeTab === 'incoming'
+                    className={`px-4 sm:px-8 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 whitespace-nowrap ${activeTab === 'incoming'
                         ? 'border-slate-900 text-slate-900'
                         : 'border-transparent text-gray-400 hover:text-slate-600'
                         }`}
@@ -230,7 +230,7 @@ const SupplierPage: React.FC = () => {
                 </button>
                 <button
                     onClick={() => setActiveTab('fulfillment')}
-                    className={`px-8 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${activeTab === 'fulfillment'
+                    className={`px-4 sm:px-8 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 whitespace-nowrap ${activeTab === 'fulfillment'
                         ? 'border-slate-900 text-slate-900'
                         : 'border-transparent text-gray-400 hover:text-slate-600'
                         }`}
@@ -259,165 +259,167 @@ const SupplierPage: React.FC = () => {
                                         })}
                                 </span>
                             </div>
-                            <table className="w-full text-left">
-                                <thead className="bg-white border-b border-gray-50 text-[9px] font-black uppercase text-gray-400">
-                                    <tr>
-                                        <th className="px-8 py-5">Order Reference</th>
-                                        <th className="px-8 py-5">Products</th>
-                                        <th className="px-8 py-5">Expected Date</th>
-                                        <th className="px-8 py-5">Status</th>
-                                        <th className="px-8 py-5 text-center">
-                                            Financial Value
-                                        </th>
-                                        <th className="px-8 py-5 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-50">
-                                    {loading ? (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left min-w-[700px]">
+                                    <thead className="bg-white border-b border-gray-50 text-[9px] font-black uppercase text-gray-400">
                                         <tr>
-                                            <td
-                                                colSpan={6}
-                                                className="px-8 py-10 text-center text-gray-400"
-                                            >
-                                                Loading orders...
-                                            </td>
+                                            <th className="px-8 py-5">Order Reference</th>
+                                            <th className="px-8 py-5">Products</th>
+                                            <th className="px-8 py-5">Expected Date</th>
+                                            <th className="px-8 py-5">Status</th>
+                                            <th className="px-8 py-5 text-center">
+                                                Financial Value
+                                            </th>
+                                            <th className="px-8 py-5 text-right">Actions</th>
                                         </tr>
-                                    ) : orders.length === 0 ? (
-                                        <tr>
-                                            <td
-                                                colSpan={6}
-                                                className="px-8 py-10 text-center text-gray-400"
-                                            >
-                                                No orders awaiting confirmation
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        orders.slice(0, visibleOrderCount).map((order) => {
-                                            const totalUnits = order.items.reduce(
-                                                (acc, p) => acc + p.quantityOrdered,
-                                                0
-                                            );
-                                            return (
-                                                <tr
-                                                    key={order.purchaseOrderId}
-                                                    className="hover:bg-gray-50/30 transition-colors text-xs"
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-50">
+                                        {loading ? (
+                                            <tr>
+                                                <td
+                                                    colSpan={6}
+                                                    className="px-8 py-10 text-center text-gray-400"
                                                 >
-                                                    <td className="px-8 py-5 font-black text-slate-900">
-                                                        PO-{order.purchaseOrderId}
-                                                    </td>
-                                                    <td className="px-8 py-5">
-                                                        <div className="flex flex-col gap-1">
-                                                            {order.items.slice(0, 2).map((p, i) => (
-                                                                <span
-                                                                    key={i}
-                                                                    className="text-[9px] font-bold text-slate-700 bg-gray-100 px-2 py-0.5 rounded-sm w-fit"
-                                                                >
-                                                                    {p.productName} x{p.quantityOrdered}
-                                                                </span>
-                                                            ))}
-                                                            {order.items.length > 2 && (
-                                                                <span className="text-[8px] text-gray-400 font-bold">
-                                                                    +{order.items.length - 2} more
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-8 py-5 text-gray-400 font-bold">
-                                                        <div className="flex flex-col gap-1">
-                                                            <span>
-                                                                {order.expectedDate
-                                                                    ? new Date(
-                                                                        order.expectedDate
-                                                                    ).toLocaleDateString()
-                                                                    : 'ASAP'}
-                                                            </span>
-                                                            {simEnabled && order.createdAt && (
-                                                                <span className="text-[8px] font-black text-indigo-500 bg-indigo-50 px-1.5 py-0.5 rounded-sm w-fit">
-                                                                    +{simDays}d since created
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-8 py-5">
-                                                        {(() => {
-                                                            const colorMap: Record<string, string> = {
-                                                                'Draft': 'bg-gray-100 text-gray-500',
-                                                                'SentToSupplier': 'bg-blue-50 text-blue-600',
-                                                                'Confirmed': 'bg-green-50 text-green-600',
-                                                                'InDelivery': 'bg-indigo-50 text-indigo-600',
-                                                                'FullyReceived': 'bg-emerald-50 text-emerald-600',
-                                                                'PartiallyReceived': 'bg-amber-50 text-amber-600',
-                                                                'Cancelled': 'bg-red-50 text-red-600',
-                                                            };
-                                                            const cls = colorMap[order.statusName] || 'bg-gray-50 text-gray-500';
-                                                            const label = order.statusName.replace(/([A-Z])/g, ' $1').trim();
-                                                            return (
-                                                                <span className={`px-2 py-1 rounded-sm text-[8px] font-black uppercase tracking-widest ${cls}`}>
-                                                                    {label}
-                                                                </span>
-                                                            );
-                                                        })()}
-                                                    </td>
-                                                    <td className="px-8 py-5 text-center font-black text-slate-900 text-sm">
-                                                        $
-                                                        {calculateTotal(order).toLocaleString(
-                                                            undefined,
-                                                            { minimumFractionDigits: 2 }
-                                                        )}
-                                                    </td>
-                                                    <td className="px-8 py-5 text-right">
-                                                        <div className="flex justify-end gap-2">
-                                                            {order.statusName === 'SentToSupplier' ? (
-                                                                <>
-                                                                    <button
-                                                                        onClick={() =>
-                                                                            handleConfirmOrder(
-                                                                                order.purchaseOrderId,
-                                                                                order.supplierId
-                                                                            )
-                                                                        }
-                                                                        className="bg-slate-900 text-white px-5 py-2.5 text-[9px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 shadow-sm"
+                                                    Loading orders...
+                                                </td>
+                                            </tr>
+                                        ) : orders.length === 0 ? (
+                                            <tr>
+                                                <td
+                                                    colSpan={6}
+                                                    className="px-8 py-10 text-center text-gray-400"
+                                                >
+                                                    No orders awaiting confirmation
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            orders.slice(0, visibleOrderCount).map((order) => {
+                                                const totalUnits = order.items.reduce(
+                                                    (acc, p) => acc + p.quantityOrdered,
+                                                    0
+                                                );
+                                                return (
+                                                    <tr
+                                                        key={order.purchaseOrderId}
+                                                        className="hover:bg-gray-50/30 transition-colors text-xs"
+                                                    >
+                                                        <td className="px-8 py-5 font-black text-slate-900">
+                                                            PO-{order.purchaseOrderId}
+                                                        </td>
+                                                        <td className="px-8 py-5">
+                                                            <div className="flex flex-col gap-1">
+                                                                {order.items.slice(0, 2).map((p, i) => (
+                                                                    <span
+                                                                        key={i}
+                                                                        className="text-[9px] font-bold text-slate-700 bg-gray-100 px-2 py-0.5 rounded-sm w-fit"
                                                                     >
-                                                                        <Truck size={12} /> Accept & Ship
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={() =>
-                                                                            setRejectModal({
-                                                                                isOpen: true,
-                                                                                orderId: order.purchaseOrderId,
-                                                                                supplierId: order.supplierId
-                                                                            })
-                                                                        }
-                                                                        className="border border-gray-100 text-gray-400 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest hover:border-red-500 hover:text-red-500 transition-all"
-                                                                    >
-                                                                        Reject
-                                                                    </button>
-                                                                </>
-                                                            ) : order.statusName === 'Confirmed' || order.statusName === 'InDelivery' ? (
-                                                                <span className="text-[9px] font-black uppercase text-green-600 flex items-center gap-2 border border-green-100 px-3 py-1.5 rounded-sm bg-green-50">
-                                                                    <CheckCircle size={12} /> {order.statusName.replace(/([A-Z])/g, ' $1').trim()}
+                                                                        {p.productName} x{p.quantityOrdered}
+                                                                    </span>
+                                                                ))}
+                                                                {order.items.length > 2 && (
+                                                                    <span className="text-[8px] text-gray-400 font-bold">
+                                                                        +{order.items.length - 2} more
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-5 text-gray-400 font-bold">
+                                                            <div className="flex flex-col gap-1">
+                                                                <span>
+                                                                    {order.expectedDate
+                                                                        ? new Date(
+                                                                            order.expectedDate
+                                                                        ).toLocaleDateString()
+                                                                        : 'ASAP'}
                                                                 </span>
-                                                            ) : order.statusName === 'FullyReceived' || order.statusName === 'PartiallyReceived' ? (
-                                                                <span className="text-[9px] font-black uppercase text-emerald-600 flex items-center gap-2 border border-emerald-100 px-3 py-1.5 rounded-sm bg-emerald-50">
-                                                                    <CheckCircle size={12} /> {order.statusName.replace(/([A-Z])/g, ' $1').trim()}
-                                                                </span>
-                                                            ) : order.statusName === 'Cancelled' ? (
-                                                                <span className="text-[9px] font-black uppercase text-red-500 flex items-center gap-2 border border-red-100 px-3 py-1.5 rounded-sm bg-red-50">
-                                                                    Rejected
-                                                                </span>
-                                                            ) : (
-                                                                <span className="text-gray-400 text-[9px] font-black uppercase">
-                                                                    {order.statusName.replace(/([A-Z])/g, ' $1').trim()}
-                                                                </span>
+                                                                {simEnabled && order.createdAt && (
+                                                                    <span className="text-[8px] font-black text-indigo-500 bg-indigo-50 px-1.5 py-0.5 rounded-sm w-fit">
+                                                                        +{simDays}d since created
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-8 py-5">
+                                                            {(() => {
+                                                                const colorMap: Record<string, string> = {
+                                                                    'Draft': 'bg-gray-100 text-gray-500',
+                                                                    'SentToSupplier': 'bg-blue-50 text-blue-600',
+                                                                    'Confirmed': 'bg-green-50 text-green-600',
+                                                                    'InDelivery': 'bg-indigo-50 text-indigo-600',
+                                                                    'FullyReceived': 'bg-emerald-50 text-emerald-600',
+                                                                    'PartiallyReceived': 'bg-amber-50 text-amber-600',
+                                                                    'Cancelled': 'bg-red-50 text-red-600',
+                                                                };
+                                                                const cls = colorMap[order.statusName] || 'bg-gray-50 text-gray-500';
+                                                                const label = order.statusName.replace(/([A-Z])/g, ' $1').trim();
+                                                                return (
+                                                                    <span className={`px-2 py-1 rounded-sm text-[8px] font-black uppercase tracking-widest ${cls}`}>
+                                                                        {label}
+                                                                    </span>
+                                                                );
+                                                            })()}
+                                                        </td>
+                                                        <td className="px-8 py-5 text-center font-black text-slate-900 text-sm">
+                                                            $
+                                                            {calculateTotal(order).toLocaleString(
+                                                                undefined,
+                                                                { minimumFractionDigits: 2 }
                                                             )}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })
-                                    )}
-                                </tbody>
-                            </table>
+                                                        </td>
+                                                        <td className="px-8 py-5 text-right">
+                                                            <div className="flex justify-end gap-2">
+                                                                {order.statusName === 'SentToSupplier' ? (
+                                                                    <>
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleConfirmOrder(
+                                                                                    order.purchaseOrderId,
+                                                                                    order.supplierId
+                                                                                )
+                                                                            }
+                                                                            className="bg-slate-900 text-white px-5 py-2.5 text-[9px] font-black uppercase tracking-widest hover:bg-black transition-all flex items-center gap-2 shadow-sm"
+                                                                        >
+                                                                            <Truck size={12} /> Accept & Ship
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                setRejectModal({
+                                                                                    isOpen: true,
+                                                                                    orderId: order.purchaseOrderId,
+                                                                                    supplierId: order.supplierId
+                                                                                })
+                                                                            }
+                                                                            className="border border-gray-100 text-gray-400 px-5 py-2.5 text-[9px] font-black uppercase tracking-widest hover:border-red-500 hover:text-red-500 transition-all"
+                                                                        >
+                                                                            Reject
+                                                                        </button>
+                                                                    </>
+                                                                ) : order.statusName === 'Confirmed' || order.statusName === 'InDelivery' ? (
+                                                                    <span className="text-[9px] font-black uppercase text-green-600 flex items-center gap-2 border border-green-100 px-3 py-1.5 rounded-sm bg-green-50">
+                                                                        <CheckCircle size={12} /> {order.statusName.replace(/([A-Z])/g, ' $1').trim()}
+                                                                    </span>
+                                                                ) : order.statusName === 'FullyReceived' || order.statusName === 'PartiallyReceived' ? (
+                                                                    <span className="text-[9px] font-black uppercase text-emerald-600 flex items-center gap-2 border border-emerald-100 px-3 py-1.5 rounded-sm bg-emerald-50">
+                                                                        <CheckCircle size={12} /> {order.statusName.replace(/([A-Z])/g, ' $1').trim()}
+                                                                    </span>
+                                                                ) : order.statusName === 'Cancelled' ? (
+                                                                    <span className="text-[9px] font-black uppercase text-red-500 flex items-center gap-2 border border-red-100 px-3 py-1.5 rounded-sm bg-red-50">
+                                                                        Rejected
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="text-gray-400 text-[9px] font-black uppercase">
+                                                                        {order.statusName.replace(/([A-Z])/g, ' $1').trim()}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                         {orders.length > 0 && (
                             <div className="flex items-center justify-between mt-4 px-2">

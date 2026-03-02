@@ -291,8 +291,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     );
 
     return (
-        <div className="max-w-[1400px] mx-auto px-6 py-8">
-            <div className="flex flex-col lg:flex-row gap-20">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-8">
+            <div className="flex flex-col lg:flex-row gap-10 lg:gap-20">
                 <div className="flex-[1.5]">
                     <Stepper />
 
@@ -349,7 +349,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <input
                                             {...register('fullName', { required: 'Full Name is required' })}
@@ -580,7 +580,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                         <h3 className="text-lg font-bold mb-6">Payment Method</h3>
                         {step === 'payment' && (
                             <div className="space-y-8">
-                                <div className="grid grid-cols-3 gap-4">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                     <PaymentMethodButton
                                         id="card"
                                         label="Credit/Debit Card"
