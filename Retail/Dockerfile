@@ -5,11 +5,12 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy csproj and restore
-COPY Retail.csproj .
+COPY Retail/Retail.csproj Retail/
+WORKDIR /src/Retail
 RUN dotnet restore
 
 # Copy everything and publish
-COPY . .
+COPY Retail/ .
 RUN dotnet publish -c Release -o /app/publish --no-restore
 
 # ──────────────────────────────────────────
