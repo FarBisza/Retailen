@@ -49,6 +49,7 @@ namespace Retailen.Infrastructure.Repositories
             var totalCount = await query.CountAsync();
 
             var products = await query
+                .OrderBy(p => p.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .AsSplitQuery()

@@ -11,7 +11,7 @@ namespace Retailen.Application.Helpers.Email
                 <p>We hope you enjoy your purchase.</p>
                 <p>Please log in to your account to leave a review.</p>
                 <br/>
-                <p>Belo Fur Team</p>";
+                <p>RETAILEN Team</p>";
 
             return (subject, body);
         }

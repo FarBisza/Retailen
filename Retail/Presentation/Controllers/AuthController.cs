@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Retailen.Application.DTO;
 using Retailen.Application.DTO.Auth;
 using Retailen.Application.Interfaces;
+using Retailen.Domain.Exceptions;
 
 namespace Retailen.Presentation.Controllers
 {
@@ -31,6 +32,10 @@ namespace Retailen.Presentation.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 return Unauthorized(new { message = ex.Message });
+            }
+            catch (AccessDeniedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             }
         }
 
@@ -85,6 +90,10 @@ namespace Retailen.Presentation.Controllers
             catch (UnauthorizedAccessException ex)
             {
                 return Unauthorized(new { message = ex.Message });
+            }
+            catch (AccessDeniedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             }
         }
 

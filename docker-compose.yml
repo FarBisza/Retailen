@@ -42,7 +42,7 @@ services:
   # ── Frontend (React + Nginx) ──
   frontend:
     build:
-      context: ./belo.fur
+      context: ./Retailen.Frontend
       dockerfile: Dockerfile
     container_name: retailen-frontend
     ports:

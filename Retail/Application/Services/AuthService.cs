@@ -5,6 +5,7 @@ using Retailen.Application.DTO;
 using Retailen.Application.DTO.Auth;
 using Retailen.Application.Interfaces;
 using Retailen.Domain.Entities;
+using Retailen.Domain.Exceptions;
 using Retailen.Domain.Interfaces;
 
 namespace Retailen.Application.Services
@@ -54,6 +55,11 @@ namespace Retailen.Application.Services
                 throw new UnauthorizedAccessException("Email has not been confirmed. Please check your inbox.");
             }
 
+            if (!customer.Active)
+            {
+                throw new AccessDeniedException("Account has been deactivated. Please contact support.");
+            }
+
             if (!string.IsNullOrEmpty(request.SessionId))
             {
                 await _cartService.MergeCartAsync(customer.Id, request.SessionId);
@@ -92,6 +98,9 @@ namespace Retailen.Application.Services
 
             if (!refreshToken.IsActive)
                 throw new UnauthorizedAccessException("Invalid token");
+
+            if (!customer.Active)
+                throw new AccessDeniedException("Account has been deactivated. Please contact support.");
 
             var newRefreshToken = await RotateRefreshTokenAsync(refreshToken, ipAddress);
             customer.RefreshTokens.Add(newRefreshToken);

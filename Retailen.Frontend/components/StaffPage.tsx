@@ -1,0 +1,569 @@
+import React, { useState, useEffect } from 'react';
+import {
+    Package, Layers, Users, Plus, Search,
+    ShieldCheck, Truck,
+    BarChart3, PackageCheck, ClipboardList,
+    ArrowRightLeft,
+    Download,
+    BoxSelect, ShoppingCart
+} from 'lucide-react';
+import { fetchCategories, createCategory, CategoryFromApi } from '../api/categoryApi';
+import { Product } from '../api/types';
+import { User } from '../api/adminApi';
+import { fetchProducts } from '../api/productApi';
+import * as attributeApi from '../api/attributeApi';
+import { AdminProductsTab } from './management/tabs/ProductsTab';
+import { AdminUsersTab } from './management/tabs/UsersTab';
+import { AdminLogisticsTab } from './management/tabs/LogisticsTab';
+import { AdminReturnsTab } from './management/tabs/ReturnsTab';
+import { AdminAttributesTab } from './management/tabs/AttributesTab';
+import { AdminAnalyticsTab } from './management/tabs/AnalyticsTab';
+import { AdminFulfillmentTab } from './management/tabs/FulfillmentTab';
+
+const StaffPage: React.FC = () => {
+    const [activeTab, setActiveTab] = useState<string>('products');
+
+    const [products, setProducts] = useState<Product[]>([]);
+    const [productsLoading, setProductsLoading] = useState(false);
+    const [lowStockCount, setLowStockCount] = useState(0);
+
+    const [users, setUsers] = useState<User[]>([]);
+    const [usersLoading, setUsersLoading] = useState(false);
+
+    const [showCreateAttributeModal, setShowCreateAttributeModal] = useState(false);
+    const [createAttributeData, setCreateAttributeData] = useState({
+        name: '',
+        dataType: 'string',
+        unit: '',
+    });
+    const [createAttributeLoading, setCreateAttributeLoading] = useState(false);
+
+    const [categoriesList, setCategoriesList] = useState<CategoryFromApi[]>([]);
+    const [categoriesLoading, setCategoriesLoading] = useState(false);
+    const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
+    const [newCategoryName, setNewCategoryName] = useState('');
+    const [newCategoryParentId, setNewCategoryParentId] = useState<number | null>(null);
+    const [createCategoryLoading, setCreateCategoryLoading] = useState(false);
+
+    const [simEnabled, setSimEnabled] = useState(() => {
+        const stored = localStorage.getItem('retailen_sim_enabled');
+        return stored ? JSON.parse(stored) : false;
+    });
+    const [simDays, setSimDays] = useState(() => {
+        const stored = localStorage.getItem('retailen_sim_days');
+        return stored ? parseInt(stored, 10) : 0;
+    });
+    const simIntervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null);
+    const [initialPoProduct, setInitialPoProduct] = useState<{ productId: number; quantity: number } | null>(null);
+
+    useEffect(() => {
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'retailen_sim_enabled') {
+                setSimEnabled(e.newValue ? JSON.parse(e.newValue) : false);
+            }
+            if (e.key === 'retailen_sim_days') {
+                setSimDays(e.newValue ? parseInt(e.newValue, 10) : 0);
+            }
+        };
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
+    useEffect(() => {
+        if (simEnabled) {
+            if (!localStorage.getItem('retailen_sim_days')) {
+                setSimDays(0);
+                localStorage.setItem('retailen_sim_days', '0');
+            }
+            if (simIntervalRef.current) clearInterval(simIntervalRef.current);
+            simIntervalRef.current = setInterval(() => {
+                setSimDays((d) => {
+                    const newDays = d + 1;
+                    localStorage.setItem('retailen_sim_days', newDays.toString());
+                    return newDays;
+                });
+            }, 1000);
+        } else {
+            if (simIntervalRef.current) clearInterval(simIntervalRef.current);
+            simIntervalRef.current = null;
+        }
+        return () => {
+            if (simIntervalRef.current) clearInterval(simIntervalRef.current);
+        };
+    }, [simEnabled]);
+
+    const loadProducts = async () => {
+        setProductsLoading(true);
+        try {
+            const data = await fetchProducts();
+            setProducts(data);
+
+            const { logisticsApi } = await import('../api/logisticsApi');
+            const lowStock = await logisticsApi.getLowStockProducts();
+            setLowStockCount(lowStock.length);
+        } catch (err) {
+            console.error('Failed to load products/inventory:', err);
+        } finally {
+            setProductsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadProducts();
+    }, []);
+
+    useEffect(() => {
+        if (activeTab === 'customers' || activeTab === 'employees') {
+            const loadUsers = async () => {
+                setUsersLoading(true);
+                try {
+                    const { getAllUsers } = await import('../api/adminApi');
+                    const data = await getAllUsers();
+                    setUsers(data);
+                } catch (err) {
+                    console.error('Failed to load users:', err);
+                } finally {
+                    setUsersLoading(false);
+                }
+            };
+            loadUsers();
+        }
+
+        if (activeTab === 'categories') {
+            const loadCats = async () => {
+                setCategoriesLoading(true);
+                try {
+                    const data = await fetchCategories();
+                    setCategoriesList(data);
+                } catch (err) {
+                    console.error('Failed to load categories:', err);
+                } finally {
+                    setCategoriesLoading(false);
+                }
+            };
+            loadCats();
+        }
+    }, [activeTab]);
+
+    const handleCreateAttribute = async () => {
+        if (!createAttributeData.name) return;
+        setCreateAttributeLoading(true);
+        try {
+            await attributeApi.createAttribute(createAttributeData);
+            setShowCreateAttributeModal(false);
+            setCreateAttributeData({ name: '', dataType: 'string', unit: '' });
+        } catch (err) {
+            console.error('Create attribute failed:', err);
+            alert('Failed to create attribute');
+        } finally {
+            setCreateAttributeLoading(false);
+        }
+    };
+
+    const openCreatePoWithProduct = (productId: number, requiredQty: number) => {
+        setInitialPoProduct({ productId, quantity: requiredQty });
+        setActiveTab('logistics');
+    };
+
+    return (
+        <div className="max-w-[1400px] mx-auto px-6 py-10">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-gray-100 pb-10">
+                <div>
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">
+                        Operational Center
+                    </h1>
+                    <div className="flex items-center gap-3 mt-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                            Node ID: NYC-RETAILEN-01
+                        </span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-sm" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-green-600">
+                            Secure Protocol Active
+                        </span>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                    <button className="flex items-center gap-2 px-5 py-2.5 bg-gray-50 border border-gray-100 text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all">
+                        <Download size={14} /> System Logs
+                    </button>
+                    <div className="relative">
+                        <Search
+                            size={16}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Query database..."
+                            className="bg-white border border-gray-100 px-11 py-3 text-xs rounded-sm w-64 focus:ring-1 ring-slate-900 outline-none shadow-sm"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-wrap gap-1 border-b border-gray-100 mb-10">
+                {[
+                    { id: 'products', label: 'Products', icon: Package },
+                    { id: 'categories', label: 'Categories', icon: Layers },
+                    { id: 'customers', label: 'Customers', icon: Users },
+                    { id: 'employees', label: 'Employees', icon: ShieldCheck },
+                    { id: 'inventory', label: 'Asset Stock', icon: BoxSelect },
+                    { id: 'logistics', label: 'Logistics Hub', icon: Truck },
+                    { id: 'fulfillment', label: 'Order Fulfillment', icon: PackageCheck },
+                    { id: 'attributes', label: 'Attributes', icon: ClipboardList },
+                    { id: 'returns', label: 'Returns', icon: ArrowRightLeft },
+                    { id: 'analytics', label: 'BI Analytics', icon: BarChart3 },
+                ].map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all flex items-center gap-2 shrink-0 ${activeTab === tab.id
+                            ? 'border-slate-900 text-slate-900'
+                            : 'border-transparent text-gray-400 hover:text-slate-600'
+                            }`}
+                    >
+                        <tab.icon size={14} />
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            <div className="animate-in fade-in duration-500">
+                {activeTab === 'products' && (
+                    <AdminProductsTab
+                        products={products}
+                        loading={productsLoading}
+                        onRefresh={loadProducts}
+                    />
+                )}
+
+                {activeTab === 'categories' && (
+                    <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
+                        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/30">
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-900">
+                                Category Catalog
+                            </h3>
+                            <button
+                                onClick={() => setShowCreateCategoryModal(true)}
+                                className="bg-slate-900 text-white px-6 py-3 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-black transition-all"
+                            >
+                                <Plus size={14} /> New Category
+                            </button>
+                        </div>
+                        <table className="w-full text-left">
+                            <thead className="bg-white border-b border-gray-50 text-[9px] font-black uppercase text-gray-400">
+                                <tr>
+                                    <th className="px-8 py-4">ID</th>
+                                    <th className="px-8 py-4">Name</th>
+                                    <th className="px-8 py-4">Parent</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-50">
+                                {categoriesLoading ? (
+                                    <tr>
+                                        <td colSpan={3} className="px-8 py-10 text-center text-gray-400">
+                                            Loading categories...
+                                        </td>
+                                    </tr>
+                                ) : categoriesList.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={3} className="px-8 py-10 text-center text-gray-400">
+                                            No categories found
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    categoriesList.map((cat) => (
+                                        <tr key={cat.id} className="hover:bg-gray-50/20 transition-colors text-xs">
+                                            <td className="px-8 py-4 font-bold text-gray-400">#{cat.id}</td>
+                                            <td className="px-8 py-4 font-black text-slate-900">{cat.name}</td>
+                                            <td className="px-8 py-4 text-gray-400">
+                                                {cat.parentId
+                                                    ? categoriesList.find((c) => c.id === cat.parentId)?.name || `#${cat.parentId}`
+                                                    : <span className="text-[8px] font-black uppercase tracking-widest text-green-600">Root</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+                {(activeTab === 'customers' || activeTab === 'employees') && (
+                    <AdminUsersTab
+                        users={users}
+                        loading={usersLoading}
+                        isAdmin={false}
+                        activeTab={activeTab as 'customers' | 'employees'}
+                        onRefresh={(data) => setUsers(data)}
+                        onEditUser={() => { }}
+                    />
+                )}
+
+                {activeTab === 'inventory' && (
+                    <div className="bg-white border border-gray-100 rounded-sm shadow-sm overflow-hidden">
+                        <div className="p-6 bg-gray-50/50 border-b border-gray-100 flex justify-between items-center">
+                            {(() => {
+                                const criticalCount = lowStockCount;
+                                return criticalCount > 0 ? (
+                                    <div className="px-3 py-1.5 bg-red-50 border border-red-100 rounded-sm flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-red-600">
+                                            Replenishment Alert: {criticalCount} Warehouse Shortage{criticalCount !== 1 ? 's' : ''}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="px-3 py-1.5 bg-green-50 border border-green-100 rounded-sm flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-green-600">
+                                            All Stock Levels Healthy
+                                        </span>
+                                    </div>
+                                );
+                            })()}
+                            <button className="text-[10px] font-black uppercase tracking-widest text-slate-900 border-b-2 border-slate-900 pb-0.5">
+                                Export Inventory Ledger
+                            </button>
+                        </div>
+                        <table className="w-full text-left">
+                            <thead className="bg-white text-[9px] font-black uppercase text-gray-400 border-b border-gray-50">
+                                <tr>
+                                    <th className="px-8 py-5">Asset Descriptor</th>
+                                    <th className="px-8 py-5 text-center">Current</th>
+                                    <th className="px-8 py-5 text-center">Target Min</th>
+                                    <th className="px-8 py-5">Health Status</th>
+                                    <th className="px-8 py-5 text-right">Supply Action</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-50">
+                                {productsLoading ? (
+                                    <tr>
+                                        <td colSpan={5} className="px-8 py-10 text-center text-gray-400">
+                                            Loading inventory...
+                                        </td>
+                                    </tr>
+                                ) : products.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} className="px-8 py-10 text-center text-gray-400">
+                                            No inventory data
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    products.map((p) => {
+                                        const isLow = (p.stockThreshold ?? 0) > 0 && (p.stockLevel || 0) <= (p.stockThreshold ?? 0);
+                                        const needToOrder = Math.max(0, (p.stockThreshold ?? 0) * 2 - (p.stockLevel || 0));
+                                        return (
+                                            <tr key={p.id} className="hover:bg-gray-50/20 text-xs transition-colors">
+                                                <td className="px-8 py-5 flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-sm bg-gray-50 p-1">
+                                                        <img src={p.image} className="w-full h-full object-contain" />
+                                                    </div>
+                                                    <span className="font-black text-slate-900">{p.name}</span>
+                                                </td>
+                                                <td className="px-8 py-5 text-center font-bold">
+                                                    {p.stockLevel || 0}{' '}
+                                                    <span className="text-[9px] text-gray-400 uppercase">Qty</span>
+                                                </td>
+                                                <td className="px-8 py-5 text-center text-gray-400 font-bold">
+                                                    {p.stockThreshold ?? 0}
+                                                </td>
+                                                <td className="px-8 py-5">
+                                                    {(() => {
+                                                        const stock = p.stockLevel || 0;
+                                                        const threshold = p.stockThreshold ?? 0;
+                                                        const maxDisplay = Math.max(threshold * 3, stock, 50);
+                                                        const pct = Math.min(Math.round((stock / maxDisplay) * 100), 100);
+                                                        const ratio = stock / threshold;
+                                                        let barColor = 'bg-red-500';
+                                                        let label = 'Critical';
+                                                        let textColor = 'text-red-600';
+                                                        if (ratio >= 2) { barColor = 'bg-green-500'; label = 'Optimal'; textColor = 'text-green-600'; }
+                                                        else if (ratio >= 1) { barColor = 'bg-emerald-400'; label = 'Good'; textColor = 'text-emerald-600'; }
+                                                        else if (ratio >= 0.5) { barColor = 'bg-yellow-400'; label = 'Low'; textColor = 'text-yellow-600'; }
+                                                        return (
+                                                            <div className="flex flex-col gap-2">
+                                                                <div className="w-24 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                                                    <div className={`h-full ${barColor} transition-all`} style={{ width: `${pct}%` }} />
+                                                                </div>
+                                                                <span className={`text-[8px] font-black uppercase tracking-tighter ${textColor}`}>
+                                                                    {label}
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    })()}
+                                                </td>
+                                                <td className="px-8 py-5 text-right">
+                                                    {needToOrder > 0 ? (
+                                                        <button
+                                                            onClick={() => openCreatePoWithProduct(parseInt(p.id), needToOrder)}
+                                                            className="text-[9px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-900 transition-all underline flex items-center gap-2 justify-end"
+                                                        >
+                                                            <ShoppingCart size={12} /> Create PO ({needToOrder} Units)
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-[9px] font-black uppercase text-gray-300">Monitored</span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+                {activeTab === 'logistics' && (
+                    <AdminLogisticsTab
+                        products={products}
+                        simEnabled={simEnabled}
+                        simDays={simDays}
+                        initialPoProduct={initialPoProduct}
+                        onInitialPoConsumed={() => setInitialPoProduct(null)}
+                    />
+                )}
+
+                {activeTab === 'returns' && <AdminReturnsTab />}
+
+                {activeTab === 'analytics' && (
+                    <AdminAnalyticsTab />
+                )}
+
+                {activeTab === 'fulfillment' && (
+                    <AdminFulfillmentTab simEnabled={simEnabled} simDays={simDays} />
+                )}
+
+                {activeTab === 'attributes' && (
+                    <AdminAttributesTab onCreateAttribute={() => setShowCreateAttributeModal(true)} />
+                )}
+
+            </div>
+
+            {showCreateAttributeModal && (
+                <div className="fixed inset-0 z-[200] bg-black/30 flex items-center justify-center">
+                    <div className="bg-white w-full max-w-md p-8 shadow-xl">
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-900 mb-6">
+                            New Attribute
+                        </h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-[8px] font-black uppercase text-gray-400 block mb-1">Name *</label>
+                                <input
+                                    value={createAttributeData.name}
+                                    onChange={(e) => setCreateAttributeData({ ...createAttributeData, name: e.target.value })}
+                                    placeholder="e.g. Weight, Material"
+                                    className="w-full border border-gray-200 px-3 py-2 text-xs outline-none focus:border-slate-900"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[8px] font-black uppercase text-gray-400 block mb-1">Data Type</label>
+                                <select
+                                    value={createAttributeData.dataType}
+                                    onChange={(e) => setCreateAttributeData({ ...createAttributeData, dataType: e.target.value })}
+                                    className="w-full border border-gray-200 px-3 py-2 text-xs outline-none focus:border-slate-900 bg-white"
+                                >
+                                    <option value="string">String</option>
+                                    <option value="number">Number</option>
+                                    <option value="boolean">Boolean</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-[8px] font-black uppercase text-gray-400 block mb-1">Unit (optional)</label>
+                                <input
+                                    value={createAttributeData.unit}
+                                    onChange={(e) => setCreateAttributeData({ ...createAttributeData, unit: e.target.value })}
+                                    placeholder="e.g. kg, cm, pcs"
+                                    className="w-full border border-gray-200 px-3 py-2 text-xs outline-none focus:border-slate-900"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-4 pt-6">
+                            <button
+                                onClick={() => { setShowCreateAttributeModal(false); setCreateAttributeData({ name: '', dataType: 'string', unit: '' }); }}
+                                className="flex-1 py-3 border border-gray-200 text-[10px] font-black uppercase tracking-widest hover:bg-gray-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleCreateAttribute}
+                                disabled={createAttributeLoading || !createAttributeData.name}
+                                className="flex-1 py-3 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black disabled:opacity-50"
+                            >
+                                {createAttributeLoading ? 'Creating...' : 'Create'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showCreateCategoryModal && (
+                <div className="fixed inset-0 z-[200] bg-black/30 flex items-center justify-center">
+                    <div className="bg-white w-full max-w-md p-8 shadow-xl">
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-900 mb-6">
+                            New Category
+                        </h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-[8px] font-black uppercase text-gray-400 block mb-1">Name *</label>
+                                <input
+                                    value={newCategoryName}
+                                    onChange={(e) => setNewCategoryName(e.target.value)}
+                                    placeholder="e.g. Coffee Tables, Sofas"
+                                    className="w-full border border-gray-200 px-3 py-2 text-xs outline-none focus:border-slate-900"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[8px] font-black uppercase text-gray-400 block mb-1">Parent Category (optional)</label>
+                                <select
+                                    value={newCategoryParentId ?? ''}
+                                    onChange={(e) => setNewCategoryParentId(e.target.value ? parseInt(e.target.value) : null)}
+                                    className="w-full border border-gray-200 px-3 py-2 text-xs outline-none focus:border-slate-900 bg-white"
+                                >
+                                    <option value=""> Root Category </option>
+                                    {categoriesList.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="flex gap-4 pt-6">
+                            <button
+                                onClick={() => { setShowCreateCategoryModal(false); setNewCategoryName(''); setNewCategoryParentId(null); }}
+                                className="flex-1 py-3 border border-gray-200 text-[10px] font-black uppercase tracking-widest hover:bg-gray-50"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    if (!newCategoryName) return;
+                                    setCreateCategoryLoading(true);
+                                    try {
+                                        await createCategory(newCategoryName, newCategoryParentId);
+                                        const data = await fetchCategories();
+                                        setCategoriesList(data);
+                                        setShowCreateCategoryModal(false);
+                                        setNewCategoryName('');
+                                        setNewCategoryParentId(null);
+                                    } catch (err) {
+                                        console.error('Create category failed:', err);
+                                        alert('Failed to create category');
+                                    } finally {
+                                        setCreateCategoryLoading(false);
+                                    }
+                                }}
+                                disabled={createCategoryLoading || !newCategoryName}
+                                className="flex-1 py-3 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-black disabled:opacity-50"
+                            >
+                                {createCategoryLoading ? 'Creating...' : 'Create'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+        </div>
+    );
+};
+
+export default StaffPage;

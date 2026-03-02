@@ -24,3 +24,9 @@ appsettings.Development.json
 # OS files
 Thumbs.db
 .DS_Store
+
+# Generated Text and SQL Scripts (AI traces & local scripts)
+*.txt
+!REQUIREMENTS.txt
+*.sql
+*.md

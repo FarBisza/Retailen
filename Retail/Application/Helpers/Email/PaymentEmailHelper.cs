@@ -11,7 +11,7 @@ namespace Retailen.Application.Helpers.Email
                 <p><strong>Total Amount:</strong> {total:C}</p>
                 <p>We will notify you when it ships.</p>
                 <br/>
-                <p>Belo Fur Team</p>";
+                <p>RETAILEN Team</p>";
 
             return (subject, body);
         }
