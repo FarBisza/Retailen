@@ -25,7 +25,7 @@ builder.Services.AddAuthorizationPolicies();
 
 // 4. CORS — origins from configuration
 var corsOrigins = builder.Configuration.GetSection("CorsOrigins").Get<string[]>()
-    ?? new[] { "http://localhost:3000", "http://localhost:5173" };
+    ?? new[] { "https://retailen.onrender.com", "https://retailen-frontend.onrender.com", "http://localhost:3000", "http://localhost:5173" };
 
 builder.Services.AddCors(options =>
 {
