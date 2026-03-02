@@ -1,4 +1,5 @@
 import { Review } from './types';
+import { API_URL } from './authApi';
 
 export const submitReview = async (
     productId: string,
@@ -11,7 +12,7 @@ export const submitReview = async (
         throw new Error('User not authenticated');
     }
 
-    const response = await fetch(`/api/product/${productId}/review`, {
+    const response = await fetch(`${API_URL}/product/${productId}/review`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

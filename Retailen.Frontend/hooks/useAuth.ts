@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { UserProfile } from '../api/types';
+import { API_URL } from '../api/authApi';
 
 const generateUUID = () => {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -43,7 +44,7 @@ export function useAuth() {
         const token = sessionStorage.getItem('token');
         const cached = sessionStorage.getItem('currentUser');
         if (token && !cached) {
-            fetch('/api/customer/me', {
+            fetch(`${API_URL}/customer/me`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
@@ -88,7 +89,7 @@ export function useAuth() {
 
     const handleLogout = async () => {
         try {
-            await fetch('/api/Auth/logout', {
+            await fetch(`${API_URL}/auth/logout`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
