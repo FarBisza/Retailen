@@ -32,9 +32,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod() // .AllowAnyHeader() .AllowCredentials()
-              .AllowAnyHeader();
+        policy.WithOrigins(corsOrigins)
+              .AllowAnyMethod() 
+              .AllowAnyHeader() // .AllowAnyHeader() .AllowCredentials()
+              .AllowCredentials();
     });
 });
 
