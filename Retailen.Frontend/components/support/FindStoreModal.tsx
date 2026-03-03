@@ -122,9 +122,9 @@ const FindStoreModal: React.FC<FindStoreModalProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 {/* Content */}
-                <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
+                <div className="flex flex-col lg:flex-row flex-1 min-h-0 overflow-auto lg:overflow-hidden">
                     {/* Map */}
-                    <div className="flex-1 min-h-[250px] lg:min-h-0 bg-gray-100 relative">
+                    <div className="h-[250px] lg:h-auto lg:flex-1 bg-gray-100 relative flex-shrink-0">
                         <iframe
                             src={mapSrc}
                             className="w-full h-full border-0 absolute inset-0"
@@ -133,8 +133,8 @@ const FindStoreModal: React.FC<FindStoreModalProps> = ({ isOpen, onClose }) => {
                     </div>
 
                     {/* Store List */}
-                    <div className="w-full lg:w-[360px] overflow-y-auto border-t lg:border-t-0 lg:border-l border-gray-100 flex-shrink-0">
-                        <div className="p-4">
+                    <div className="w-full lg:w-[360px] lg:overflow-y-auto border-t lg:border-t-0 lg:border-l border-gray-100 flex-shrink-0">
+                        <div className="p-4 pb-8">
                             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 px-2">Locations</h3>
                             <div className="space-y-2">
                                 {STORES.map((store) => {
