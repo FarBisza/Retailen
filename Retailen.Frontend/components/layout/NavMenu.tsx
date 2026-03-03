@@ -7,6 +7,8 @@ import {
 import { UserProfile } from '../../api/types';
 import { OrderTab } from '../order/OrderModal';
 import { getOrderCounts, OrderCounts } from '../../api/orderApi';
+import LiveChatDrawer from '../support/LiveChatDrawer';
+import FindStoreModal from '../support/FindStoreModal';
 
 interface NavMenuProps {
     isOpen: boolean;
@@ -30,6 +32,8 @@ const NavMenu: React.FC<NavMenuProps> = ({
     onProfileClick
 }) => {
     const [counts, setCounts] = useState<OrderCounts | null>(null);
+    const [liveChatOpen, setLiveChatOpen] = useState(false);
+    const [findStoreOpen, setFindStoreOpen] = useState(false);
 
     useEffect(() => {
         if (isOpen && currentUser) {
@@ -119,8 +123,8 @@ const NavMenu: React.FC<NavMenuProps> = ({
                                 <MenuItem icon={User} label="My Profile" onClick={() => { onProfileClick?.(); handleClose(); }} />
                             </MenuSection>
                             <MenuSection title="Support">
-                                <MenuItem icon={MessageSquare} label="Live Chat" />
-                                <MenuItem icon={MapPin} label="Find Store" />
+                                <MenuItem icon={MessageSquare} label="Live Chat" onClick={() => { handleClose(); setTimeout(() => setLiveChatOpen(true), 300); }} />
+                                <MenuItem icon={MapPin} label="Find Store" onClick={() => { handleClose(); setTimeout(() => setFindStoreOpen(true), 300); }} />
                             </MenuSection>
                         </div>
                     )}
@@ -131,6 +135,16 @@ const NavMenu: React.FC<NavMenuProps> = ({
                     <ExternalLink size={12} />
                 </div>
             </div>
+
+            <LiveChatDrawer
+                isOpen={liveChatOpen}
+                onClose={() => setLiveChatOpen(false)}
+                userName={currentUser?.name}
+            />
+            <FindStoreModal
+                isOpen={findStoreOpen}
+                onClose={() => setFindStoreOpen(false)}
+            />
         </>
     );
 };

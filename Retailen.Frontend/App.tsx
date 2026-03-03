@@ -277,7 +277,7 @@ const App: React.FC = () => {
             items={cartItems}
             onBackToCart={() => setCurrentView('cart')}
             onGoHome={() => setCurrentView('home')}
-            onViewOrders={() => { setCurrentView('home'); setOrderModalInitialTab('to-pay'); setIsOrderModalOpen(true); }}
+            onViewOrders={(tab) => { setCurrentView('home'); setOrderModalInitialTab((tab as any) || 'to-pay'); setIsOrderModalOpen(true); }}
             onOrderSuccess={() => setCartItems([])}
             currentUser={currentUser}
             onLoginClick={() => setIsAuthOpen(true)}

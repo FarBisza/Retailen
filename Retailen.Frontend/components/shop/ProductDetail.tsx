@@ -237,15 +237,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product: initialProduct, 
                         )}
 
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <div className={`flex items-center border border-gray-200 rounded-sm px-4 py-3 h-14 bg-white ${outOfStock ? 'opacity-40 pointer-events-none' : ''}`}>
-                                <button onClick={() => handleQuantity('dec')} className="p-1 hover:text-black text-gray-400"><Minus size={16} /></button>
+                            <div className={`flex items-center justify-center border border-gray-200 rounded-sm px-4 py-3 h-14 w-full sm:w-auto sm:min-w-[140px] bg-white ${outOfStock ? 'opacity-40 pointer-events-none' : ''}`}>
+                                <button onClick={() => handleQuantity('dec')} className="p-2 hover:text-black text-gray-400"><Minus size={16} /></button>
                                 <span className="w-12 text-center text-sm font-bold">{quantity}</span>
-                                <button onClick={() => handleQuantity('inc')} className={`p-1 hover:text-black ${quantity >= stockLimit ? 'text-gray-200 pointer-events-none' : 'text-gray-400'}`}><Plus size={16} /></button>
+                                <button onClick={() => handleQuantity('inc')} className={`p-2 hover:text-black ${quantity >= stockLimit ? 'text-gray-200 pointer-events-none' : 'text-gray-400'}`}><Plus size={16} /></button>
                             </div>
                             <button
                                 onClick={() => !outOfStock && onAddToCart(product, quantity)}
                                 disabled={outOfStock}
-                                className={`flex-1 h-14 font-bold text-[11px] uppercase tracking-[0.2em] rounded-sm transition-all ${outOfStock
+                                className={`flex-1 h-14 min-w-0 px-6 font-bold text-[11px] uppercase tracking-[0.2em] rounded-sm transition-all ${outOfStock
                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                     : 'bg-[#0c121e] text-white hover:bg-black shadow-xl shadow-[#0c121e]/10'
                                     }`}

@@ -10,7 +10,7 @@ interface CheckoutPageProps {
     items: CartItem[];
     onBackToCart: () => void;
     onGoHome?: () => void;
-    onViewOrders?: () => void;
+    onViewOrders?: (tab?: string) => void;
     onOrderSuccess?: () => void;
     currentUser?: any;
     onLoginClick?: () => void;
@@ -33,6 +33,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     const [orderSuccess, setOrderSuccess] = useState(false);
     const [orderId, setOrderId] = useState<number | null>(null);
     const [orderPaid, setOrderPaid] = useState(false);
+    const [orderSnapshot, setOrderSnapshot] = useState<{ itemCount: number; subtotal: number; total: number } | null>(null);
 
     const [checkoutCardNumber, setCheckoutCardNumber] = useState('');
     const [checkoutExpiry, setCheckoutExpiry] = useState('');
@@ -44,12 +45,13 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
     interface ShippingFormData {
         email: string;
         newsOffers: boolean;
-        fullName: string;
+        firstName: string;
+        lastName: string;
         phone: string;
         address: string;
         apartment: string;
         city: string;
-        state: string;
+        country: string;
         zip: string;
         requestInvoice: boolean;
         companyName: string;
@@ -67,12 +69,13 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
         defaultValues: {
             email: '',
             newsOffers: false,
-            fullName: '',
+            firstName: '',
+            lastName: '',
             phone: '',
             address: '',
             apartment: '',
             city: '',
-            state: '',
+            country: '',
             zip: '',
             requestInvoice: false,
             companyName: '',
@@ -352,20 +355,35 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <input
-                                            {...register('fullName', { required: 'Full Name is required' })}
-                                            placeholder="Your Full Name *"
-                                            className={`w-full border px-4 py-3 text-sm rounded-sm focus:outline-none focus:border-slate-900 ${errors.fullName
+                                            {...register('firstName', { required: 'First Name is required' })}
+                                            placeholder="First Name *"
+                                            className={`w-full border px-4 py-3 text-sm rounded-sm focus:outline-none focus:border-slate-900 ${errors.firstName
                                                 ? 'border-red-500'
                                                 : 'border-gray-200'
                                                 }`}
                                         />
-                                        {errors.fullName && (
+                                        {errors.firstName && (
                                             <span className="text-xs text-red-500 mt-1">
-                                                {errors.fullName.message}
+                                                {errors.firstName.message}
                                             </span>
                                         )}
                                     </div>
                                     <div>
+                                        <input
+                                            {...register('lastName', { required: 'Last Name is required' })}
+                                            placeholder="Last Name *"
+                                            className={`w-full border px-4 py-3 text-sm rounded-sm focus:outline-none focus:border-slate-900 ${errors.lastName
+                                                ? 'border-red-500'
+                                                : 'border-gray-200'
+                                                }`}
+                                        />
+                                        {errors.lastName && (
+                                            <span className="text-xs text-red-500 mt-1">
+                                                {errors.lastName.message}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="sm:col-span-2">
                                         <input
                                             {...register('phone', { required: 'Phone Number is required' })}
                                             placeholder="Phone Number *"
@@ -380,7 +398,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                             </span>
                                         )}
                                     </div>
-                                    <div className="col-span-2 relative">
+                                    <div className="sm:col-span-2 relative">
                                         <input
                                             {...register('address', { required: 'Street Address is required' })}
                                             placeholder="Enter Your Street Address *"
@@ -402,7 +420,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                     <input
                                         {...register('apartment')}
                                         placeholder="Apartment, suite, etc (optional)"
-                                        className="col-span-2 border border-gray-200 px-4 py-3 text-sm rounded-sm focus:outline-none focus:border-slate-900"
+                                        className="sm:col-span-2 border border-gray-200 px-4 py-3 text-sm rounded-sm focus:outline-none focus:border-slate-900"
                                     />
                                     <div>
                                         <input
@@ -419,48 +437,60 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                             </span>
                                         )}
                                     </div>
-                                    <div className="flex gap-4">
-                                        <div className="relative flex-1">
-                                            <select
-                                                {...register('state', { required: 'State is required' })}
-                                                className={`w-full appearance-none border px-4 py-3 text-sm rounded-sm focus:outline-none focus:border-slate-900 bg-white ${errors.state
-                                                    ? 'border-red-500'
-                                                    : 'border-gray-200'
-                                                    }`}
-                                            >
-                                                <option value="">Your State *</option>
-                                                <option value="MA">Massachusetts</option>
-                                                <option value="NY">New York</option>
-                                                <option value="CA">California</option>
-                                                <option value="TX">Texas</option>
-                                                <option value="IL">Illinois</option>
-                                                <option value="FL">Florida</option>
-                                            </select>
-                                            <ChevronDown
-                                                size={14}
-                                                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                                            />
-                                            {errors.state && (
-                                                <span className="text-xs text-red-500 mt-1 absolute -bottom-5 left-0">
-                                                    {errors.state.message}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div>
-                                            <input
-                                                {...register('zip', { required: 'ZIP Code is required' })}
-                                                placeholder="ZIP Code *"
-                                                className={`w-32 border px-4 py-3 text-sm rounded-sm focus:outline-none focus:border-slate-900 ${errors.zip
-                                                    ? 'border-red-500'
-                                                    : 'border-gray-200'
-                                                    }`}
-                                            />
-                                            {errors.zip && (
-                                                <span className="text-xs text-red-500 mt-1 block">
-                                                    {errors.zip.message}
-                                                </span>
-                                            )}
-                                        </div>
+                                    <div>
+                                        <input
+                                            {...register('zip', { required: 'Postal Code is required' })}
+                                            placeholder="Postal Code *"
+                                            className={`w-full border px-4 py-3 text-sm rounded-sm focus:outline-none focus:border-slate-900 ${errors.zip
+                                                ? 'border-red-500'
+                                                : 'border-gray-200'
+                                                }`}
+                                        />
+                                        {errors.zip && (
+                                            <span className="text-xs text-red-500 mt-1 block">
+                                                {errors.zip.message}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="sm:col-span-2 relative">
+                                        <select
+                                            {...register('country', { required: 'Country is required' })}
+                                            className={`w-full appearance-none border px-4 py-3 text-sm rounded-sm focus:outline-none focus:border-slate-900 bg-white ${errors.country
+                                                ? 'border-red-500'
+                                                : 'border-gray-200'
+                                                }`}
+                                        >
+                                            <option value="">Select Country *</option>
+                                            <option value="PL">Poland</option>
+                                            <option value="DE">Germany</option>
+                                            <option value="GB">United Kingdom</option>
+                                            <option value="FR">France</option>
+                                            <option value="US">United States</option>
+                                            <option value="NL">Netherlands</option>
+                                            <option value="CZ">Czech Republic</option>
+                                            <option value="ES">Spain</option>
+                                            <option value="IT">Italy</option>
+                                            <option value="SE">Sweden</option>
+                                            <option value="AT">Austria</option>
+                                            <option value="BE">Belgium</option>
+                                            <option value="DK">Denmark</option>
+                                            <option value="NO">Norway</option>
+                                            <option value="FI">Finland</option>
+                                            <option value="IE">Ireland</option>
+                                            <option value="PT">Portugal</option>
+                                            <option value="SK">Slovakia</option>
+                                            <option value="LT">Lithuania</option>
+                                            <option value="UA">Ukraine</option>
+                                        </select>
+                                        <ChevronDown
+                                            size={14}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                                        />
+                                        {errors.country && (
+                                            <span className="text-xs text-red-500 mt-1 block">
+                                                {errors.country.message}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
 
@@ -479,7 +509,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                 </div>
                                 <div className="flex items-center gap-3 text-sm text-gray-600">
                                     <Box size={16} className="text-gray-400" />
-                                    <span>{formData.fullName}</span>
+                                    <span>{formData.firstName} {formData.lastName}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-sm text-gray-600">
                                     <Box size={16} className="text-gray-400" />
@@ -497,8 +527,8 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                 <div className="flex items-center gap-3 text-sm text-gray-600">
                                     <Box size={16} className="text-gray-400" />
                                     <span>
-                                        {formData.city}, {formData.state},{' '}
-                                        {formData.zip}
+                                        {formData.city}, {formData.zip},{' '}
+                                        {formData.country}
                                     </span>
                                 </div>
                             </div>
@@ -520,7 +550,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                                 home or building.
                                             </p>
                                         </div>
-                                        <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-black uppercase tracking-widest rounded-full">
+                                        <span className="px-3 py-1 text-xs font-black uppercase tracking-widest rounded-full bg-green-100 text-green-700">
                                             Free
                                         </span>
                                     </div>
@@ -569,7 +599,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                         Standard Ground Shipping
                                     </p>
                                 </div>
-                                <span className="text-sm font-bold text-slate-900">
+                                <span className="text-sm font-bold text-green-600">
                                     Free
                                 </span>
                             </div>
@@ -833,14 +863,14 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
                                                 const addressData = {
                                                     email: formData.email,
-                                                    fullName: formData.fullName,
+                                                    fullName: `${formData.firstName} ${formData.lastName}`,
                                                     phoneNumber: formData.phone,
                                                     streetAddress: formData.address,
                                                     apartment: formData.apartment,
                                                     city: formData.city,
-                                                    state: formData.state,
+                                                    state: formData.country,
                                                     zipCode: formData.zip,
-                                                    country: 'US',
+                                                    country: formData.country,
                                                 };
 
                                                 const orderRes =
@@ -898,6 +928,11 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                                                     setOrderPaid(false);
                                                 }
 
+                                                setOrderSnapshot({
+                                                    itemCount: items.length,
+                                                    subtotal,
+                                                    total: grandTotal,
+                                                });
                                                 setOrderSuccess(true);
                                                 if (onOrderSuccess) onOrderSuccess();
                                             } catch (err: any) {
@@ -992,7 +1027,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
                             )}
                             <div className="flex justify-between text-xs text-gray-400 font-medium">
                                 <span>Shipping</span>
-                                <span className="text-slate-900 font-bold">
+                                <span className="font-bold text-green-600">
                                     Free
                                 </span>
                             </div>
@@ -1018,33 +1053,75 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
             </div>
 
             {orderSuccess && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-sm shadow-2xl w-full max-w-md p-10 text-center animate-in fade-in zoom-in duration-300">
-                        <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-yellow-50 flex items-center justify-center">
-                            <ShieldCheck size={40} className="text-yellow-500" />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md">
+                    <div className="bg-white rounded-lg shadow-2xl w-full max-w-lg mx-4 p-8 sm:p-12 text-center animate-in fade-in zoom-in duration-500">
+                        {/* Animated success icon */}
+                        <div className="relative w-24 h-24 mx-auto mb-8">
+                            <div className="absolute inset-0 rounded-full bg-green-100 animate-ping opacity-20" />
+                            <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-green-200">
+                                <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
                         </div>
-                        <h2 className="text-2xl font-black text-slate-900 mb-3">
-                            {orderPaid ? 'Order Placed & Paid!' : 'Order Created!'}
+
+                        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mb-3">
+                            {orderPaid ? 'Order Confirmed!' : 'Order Created!'}
                         </h2>
-                        <p className="text-gray-500 text-sm mb-2">
+                        <p className="text-gray-500 text-sm mb-1">
                             Your order{' '}
-                            <span className="font-bold text-slate-900">
+                            <span className="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded">
                                 #{orderId}
                             </span>{' '}
                             {orderPaid
                                 ? 'has been confirmed and is being processed.'
                                 : 'is awaiting payment.'}
                         </p>
-                        <p className="text-gray-400 text-xs mb-8">
+
+                        {/* Delivery estimate */}
+                        <div className="my-6 p-4 bg-slate-50 rounded-lg border border-slate-100">
+                            <div className="flex items-center justify-center gap-3 text-sm">
+                                <Truck size={18} className="text-slate-400" />
+                                <span className="text-gray-500">Estimated delivery:</span>
+                                <span className="font-bold text-slate-900">
+                                    {new Date(deliveryDate).toLocaleDateString('en-US', {
+                                        weekday: 'short',
+                                        month: 'long',
+                                        day: 'numeric',
+                                    })}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Order summary mini */}
+                        <div className="mb-8 space-y-2 text-sm">
+                            <div className="flex justify-between text-gray-400">
+                                <span>{orderSnapshot?.itemCount ?? 0} item{(orderSnapshot?.itemCount ?? 0) > 1 ? 's' : ''}</span>
+                                <span className="font-bold text-slate-900">${(orderSnapshot?.subtotal ?? 0).toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-gray-400">
+                                <span>Shipping</span>
+                                <span className="font-bold text-green-600">
+                                    Free
+                                </span>
+                            </div>
+                            <div className="flex justify-between pt-2 border-t border-gray-100">
+                                <span className="font-bold text-slate-900">Total</span>
+                                <span className="font-black text-lg text-slate-900">${(orderSnapshot?.total ?? 0).toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        <p className="text-gray-400 text-xs mb-6">
                             {orderPaid
-                                ? 'You can track your order from the "To Ship" tab in My Orders.'
-                                : 'Complete your payment from the "To Pay" tab in My Orders to confirm your purchase.'}
+                                ? 'Track your order from the "To Ship" tab in My Orders.'
+                                : 'Complete payment from the "To Pay" tab to confirm your purchase.'}
                         </p>
+
                         <div className="flex flex-col gap-3">
                             <button
                                 onClick={() => {
                                     setOrderSuccess(false);
-                                    if (onViewOrders) onViewOrders();
+                                    if (onViewOrders) onViewOrders(orderPaid ? 'to-ship' : 'to-pay');
                                 }}
                                 className="w-full bg-slate-900 text-white py-4 font-bold text-sm rounded-sm hover:bg-black transition-all uppercase tracking-widest"
                             >
